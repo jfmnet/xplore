@@ -156,7 +156,7 @@ xplore.prototype.Trigger = function (name) {
                 event.text = this.value;
                 event.Refresh();
             } else {
-                event(self);
+                event(this);
             }
         }
     }
@@ -171,6 +171,7 @@ xplore.Button = function (param) {
 
 xplore.Button.prototype = Object.create(xplore.prototype);
 xplore.Button.constructor = xplore.Button;
+
 
 
 //TextBox
@@ -214,11 +215,90 @@ xplore.TextBox.prototype.Events = function () {
 };
 
 
+
+//Split container
+xplore.SplitContainer = function (param) {
+    xplore.call(this, param, undefined, "split-container");
+
+    param = param || "";
+
+    this.panels = param.panels;
+    this.orientation = param.orientation;
+    this.splittersize = param.splittersize || 0;
+};
+
+xplore.SplitContainer.prototype = Object.create(xplore.prototype);
+xplore.SplitContainer.constructor = xplore.SplitContainer;
+
+xplore.SplitContainer.prototype.Refresh = function () {
+    this.object.innerHTML = "";
+
+    this.panel1 = document.createElement("div");
+    this.gap = document.createElement("div");
+    this.panel2 = document.createElement("div");
+
+    this.object.appendChild(this.panel1);
+    this.object.appendChild(this.gap);
+    this.object.appendChild(this.panel2);
+
+    this.Resize();
+};
+
+xplore.SplitContainer.prototype.Resize = function () {
+    let width = this.parent.clientWidth;
+    let height = this.parent.clientHeight;
+
+    if (this.panels) {
+
+        if (this.panels[0] && this.panels[0].size) {
+
+        } else if (this.panels[1] && this.panels[1].size) {
+        }
+    } else {
+        if (this.orientation) {
+            //Vertical
+
+        } else {
+            //Horizontal
+            this.panel1.style = "left: 0; width: 50%; top: 0; bottom: 0 ";
+            this.panel2.style = "right: 0; width: 50%; top: 0; bottom: 0 ";
+        }
+    }
+};
+
+xplore.SplitContainer.prototype.Add = function (child, index) {
+    if (child) {
+        let panel = index ? this.panel1 : this.panel2;
+
+        //Add array of components
+        if (Array.isArray(child)) {
+            for (let i = 0; i < child.length; i++) {
+                if (child[i] && child[i].Show) {
+                    child[i].Show(panel);
+                }
+            }
+        } else if (child.Show) {
+            child.Show(panel);
+
+        } else {
+            for (let name in child) {
+                if (child[child] && child[child].Show) {
+                    child[child].Show(panel);
+                }
+            }
+        }
+
+        return child;
+    }
+};
+
+
 //Enums
 xplore.STATE = {
     ENABLED: 1,
     DISABLED: 2
 };
+
 
 
 //Application start

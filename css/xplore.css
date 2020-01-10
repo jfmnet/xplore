@@ -39,3 +39,26 @@ body {
     cursor: default;
     pointer-events: none;
 }
+
+.textbox {
+    margin: 8px;
+}
+
+.textbox input {
+    border: 1px solid #CCC;
+    padding: 8px;
+}
+
+
+/* Containers */
+.dock, .split-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.split-container > div {
+    position: absolute;
+}

@@ -1,6 +1,10 @@
 xplore.main = function () {
+    let splitter = new xplore.SplitContainer();
+    splitter.Show();
+
     let container = new xplore();
-    container.Show();
+    splitter.Add(container);
+
 
     let buttons = [
         new xplore.Button({
@@ -24,11 +28,14 @@ xplore.main = function () {
         text: "Hello Earth!",
         onclick: function () {
             var textbox = new xplore.TextBox();
-            textbox.Show();
+            splitter.Add(textbox);
 
             textbox.Listen("onchange", buttons[0]);
             textbox.Listen("onchange", buttons[1]);
             textbox.Listen("onchange", buttons[2]);
+            textbox.Listen("onchange", function (object) {
+                console.log(object.value);
+            });
         }
     }));
 
