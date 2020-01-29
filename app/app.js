@@ -5,6 +5,8 @@ xplore.main = function () {
     let container = new xplore();
     splitter.Add(container);
 
+    let model = new Model ();
+    model.name = "Jonathan Manuel";
 
     let buttons = [
         new xplore.Button({
@@ -25,6 +27,14 @@ xplore.main = function () {
                 let form = new xplore.Form({
                     text: "Hello World!"
                 });
+
+                form.Add(new xplore.TextBox({
+                    bind: { object: model, name: "name" }
+                }));
+                form.Add(new xplore.TextBox({
+                    bind: { object: model, name: "country" }
+                }));
+
                 form.Show();
             }
         })
@@ -62,3 +72,9 @@ xplore.main = function () {
     // textbox.Listen("onchange", buttons[1]);
     // textbox.Listen("onchange", buttons[2]);
 };
+
+function Model () {
+    this.name = "";
+    this.mobile = "";
+    this.country = "";
+}

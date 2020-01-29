@@ -25,7 +25,7 @@ var xplore = function (param, element, classname) {
 };
 
 xplore.prototype.Show = function (parent) {
-    if (parent && parent.append) {
+    if (parent && parent.appendChild) {
         this.parent = parent;
     } else {
         this.parent = document.body;
@@ -184,15 +184,20 @@ xplore.Button.constructor = xplore.Button;
 
 
 //TextBox
+
 xplore.TextBox = function (param) {
     xplore.call(this, param, undefined, "textbox");
 
-    param = param || "";
+    param = param || {};
 
     this.value = param.value || "";
     this.type = param.type || "text";
 
     this.onchange = param.onchange;
+    this.bind = param.bind;
+
+    if (this.bind)
+        this.value = this.bind.object[this.bind.name];
 };
 
 xplore.TextBox.prototype = Object.create(xplore.prototype);
@@ -215,6 +220,9 @@ xplore.TextBox.prototype.Events = function () {
 
     input.addEventListener('input', function () {
         self.value = this.value;
+    
+        if (self.bind)
+            self.bind.object[self.bind.name] = self.value;
 
         if (self.onchange)
             self.onchange(self);
@@ -229,7 +237,7 @@ xplore.TextBox.prototype.Events = function () {
 xplore.SplitContainer = function (param) {
     xplore.call(this, param, undefined, "split-container");
 
-    param = param || "";
+    param = param || {};
 
     this.panels = param.panels;
     this.orientation = param.orientation;
@@ -303,14 +311,15 @@ xplore.SplitContainer.prototype.Add = function (child, index) {
 
 
 //Form
+
 xplore.Form = function (param) {
     xplore.call(this, param, undefined, "form");
 
-    param = param || "";
+    param = param || {};
 
     this.text = param.text || "";
-    this.width = param.width || 300;
-    this.height = param.height || 300;
+    this.width = param.width || 400;
+    this.height = param.height || 600;
     this.ok = param.oktext || "OK";
     this.cancel = param.canceltext || "Cancel";
 };
@@ -336,27 +345,86 @@ xplore.Form.prototype.Refresh = function () {
     this.header = document.createElement("div");
     this.header.classList.add("form-header");
 
-    let text = document.createElement("div");
-    text.innerHTML = this.text;
-    text.classList.add("text");
-    this.header.appendChild(text);
-
-    this.header.appendChild(xplore.DisplayIcon("close"));
-
-    
     //Body
 
     this.body = document.createElement("div");
     this.body.classList.add("form-body");
 
+    //Footer
+
     this.footer = document.createElement("div");
     this.footer.classList.add("form-footer");
+
 
     this.object.appendChild(this.header);
     this.object.appendChild(this.body);
     this.object.appendChild(this.footer);
 
+    this.RefreshHeader();
+    this.RefreshBody();
+    this.RefreshFooter();
     this.Resize();
+};
+
+xplore.Form.prototype.RefreshHeader = function () {
+    let self = this;
+
+    this.header.innerHTML = "";
+
+    let text = document.createElement("div");
+    text.innerHTML = this.text;
+    text.classList.add("text");
+    this.header.appendChild(text);
+
+    let buttons = document.createElement("div");
+    buttons.classList.add("buttons");
+    this.header.appendChild(buttons);
+
+    let button = new xplore.Button({
+        text: xplore.DisplayIcon("close"),
+        onclick: function () {
+            self.Close();
+        }
+    });
+
+    button.Show(buttons);
+};
+
+xplore.Form.prototype.RefreshBody = function () {
+    this.body.innerHTML = "";
+
+    //Children
+    for (let i = 0; i < this.children.length; i++) {
+        this.children[i].Show(this.body);
+    }
+};
+
+xplore.Form.prototype.RefreshFooter = function () {
+    let self = this;
+
+    this.footer.innerHTML = "";
+
+    let buttons = document.createElement("div");
+    buttons.classList.add("buttons");
+    this.footer.appendChild(buttons);
+
+    let button = new xplore.Button({
+        text: "OK",
+        onclick: function () {
+            self.Close();
+        }
+    });
+
+    button.Show(buttons);
+
+    button = new xplore.Button({
+        text: "Cancel",
+        onclick: function () {
+            self.Close();
+        }
+    });
+
+    button.Show(buttons);
 };
 
 xplore.Form.prototype.Resize = function () {
@@ -396,7 +464,7 @@ xplore.Form.prototype.Close = function () {
 xplore.Background = function (param) {
     xplore.call(this, param, undefined, "background");
 
-    param = param || "";
+    param = param || {}
     this.onclick = param.onclick;
 };
 
@@ -407,6 +475,7 @@ xplore.Background.prototype.Refresh = function () {
     this.object.style.zIndex = ++xplore.ZINDEX;
     this.Events();
 };
+
 
 
 //Enums

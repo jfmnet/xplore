@@ -1,5 +1,6 @@
 body {
-    font: 12px normal, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font: 13px normal, -apple-system, BlinkMacSystemFont, "Roboto", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    overflow: hidden;
 }
 
 .hidden {
@@ -84,7 +85,38 @@ body {
 }
 
 .form-header .text {
-    padding-left: 8px;
+    margin-left: 16px;
+}
+
+.form-header .buttons, .form-footer .buttons {
+    align-items: center;
+    display: flex;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 42px;
+}
+
+.form-header .button {
+    background-color: transparent;
+    color: #333;
+}
+
+.form-body {
+    top: 43px;
+    bottom: 43px;
+}
+
+.form-footer {
+    border-top: 1px solid #CCC;
+    bottom: 0;
+    height: 42px;
+}
+
+.form-footer .buttons .button {
+    margin-right: 8px;
+    width: 40px;
+    text-align: center;
 }
 
 .background {
