@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, Helvetica, sans-serif;
+    font: 12px normal, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
 .hidden {
@@ -61,4 +61,37 @@ body {
 
 .split-container > div {
     position: absolute;
+}
+
+.form {
+    background-color: #FFF;
+    box-shadow: 0 0 16px #555;
+    position: absolute;
+}
+
+.form-header, .form-body, .form-footer {
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+.form-header {
+    align-items: center;
+    border-bottom: 1px solid #CCC;
+    display: flex;
+    height: 42px;
+    top: 0;
+}
+
+.form-header .text {
+    padding-left: 8px;
+}
+
+.background {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
 }

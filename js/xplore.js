@@ -11,6 +11,10 @@ var xplore = function (param, element, classname) {
         this.classname.push(classname);
 
     this.text = param.text || "";
+
+    if (param.class)
+        this.classname.push(param.class);
+
     this.object;
     this.parent;
     this.children = [];
@@ -37,6 +41,10 @@ xplore.prototype.Show = function (parent) {
     this.parent.appendChild(this.object);
 
     this.Refresh();
+};
+
+xplore.prototype.Dispose = function () {
+    this.object.remove();
 };
 
 xplore.prototype.Refresh = function () {
@@ -165,6 +173,7 @@ xplore.prototype.Trigger = function (name) {
 
 
 //Button
+
 xplore.Button = function (param) {
     xplore.call(this, param, undefined, "button");
 };
@@ -293,12 +302,128 @@ xplore.SplitContainer.prototype.Add = function (child, index) {
 };
 
 
+//Form
+xplore.Form = function (param) {
+    xplore.call(this, param, undefined, "form");
+
+    param = param || "";
+
+    this.text = param.text || "";
+    this.width = param.width || 300;
+    this.height = param.height || 300;
+    this.ok = param.oktext || "OK";
+    this.cancel = param.canceltext || "Cancel";
+};
+
+xplore.Form.prototype = Object.create(xplore.prototype);
+xplore.Form.constructor = xplore.Form;
+
+xplore.Form.prototype.Refresh = function () {
+    let self = this;
+
+    this.background = new xplore.Background({
+        onclick: function () {
+            self.Dispose();
+        }
+    });
+
+    this.background.Show();
+
+    this.object.innerHTML = "";
+
+    //Header
+
+    this.header = document.createElement("div");
+    this.header.classList.add("form-header");
+
+    let text = document.createElement("div");
+    text.innerHTML = this.text;
+    text.classList.add("text");
+    this.header.appendChild(text);
+
+    this.header.appendChild(xplore.DisplayIcon("close"));
+
+    
+    //Body
+
+    this.body = document.createElement("div");
+    this.body.classList.add("form-body");
+
+    this.footer = document.createElement("div");
+    this.footer.classList.add("form-footer");
+
+    this.object.appendChild(this.header);
+    this.object.appendChild(this.body);
+    this.object.appendChild(this.footer);
+
+    this.Resize();
+};
+
+xplore.Form.prototype.Resize = function () {
+    let w = window.innerWidth;
+    let h = window.innerHeight;
+
+    if (this.width > w)
+        this.width = w - 32;
+
+    if (this.height > h)
+        this.height = h;
+
+    let left = (w - this.width) / 2;
+    let top = (h - this.height) / 2;
+
+    this.object.style.width = this.width + "px";
+    this.object.style.height = this.height + "px";
+    this.object.style.left = left + "px";
+    this.object.style.top = top + "px";
+
+    this.object.style.zIndex = ++xplore.ZINDEX;
+};
+
+xplore.Form.prototype.Dispose = function () {
+    xplore.ZINDEX -= 2;
+    this.object.remove();
+    this.background.Dispose();
+};
+
+xplore.Form.prototype.Close = function () {
+    this.Dispose();
+};
+
+
+//Modal Background
+
+xplore.Background = function (param) {
+    xplore.call(this, param, undefined, "background");
+
+    param = param || "";
+    this.onclick = param.onclick;
+};
+
+xplore.Background.prototype = Object.create(xplore.prototype);
+xplore.Background.constructor = xplore.Background;
+
+xplore.Background.prototype.Refresh = function () {
+    this.object.style.zIndex = ++xplore.ZINDEX;
+    this.Events();
+};
+
+
 //Enums
 xplore.STATE = {
     ENABLED: 1,
     DISABLED: 2
 };
 
+xplore.DisplayIcon = function (icon) {
+    let element = document.createElement("i");
+    element.classList.add("mdi");
+    element.classList.add("mdi-" + icon);
+
+    return element;
+};
+
+xplore.ZINDEX = 100;
 
 
 //Application start
