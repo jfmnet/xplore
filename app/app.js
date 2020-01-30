@@ -25,14 +25,18 @@ xplore.main = function () {
             text: "Open Form",
             onclick: function () {
                 let form = new xplore.Form({
-                    text: "Hello World!"
+                    text: "Hello World!",
                 });
 
                 form.Add(new xplore.TextBox({
-                    bind: { object: model, name: "name" }
+                    text: "Name",
+                    bind: { object: model, name: "name" },
+                    inline: true
                 }));
                 form.Add(new xplore.TextBox({
-                    bind: { object: model, name: "country" }
+                    text: "Country",
+                    bind: { object: model, name: "country" },
+                    inline: true
                 }));
 
                 form.Show();

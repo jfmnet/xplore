@@ -42,12 +42,35 @@ body {
 }
 
 .textbox {
-    margin: 8px;
+    margin: 8px 16px;
 }
 
 .textbox input {
-    border: 1px solid #CCC;
+    border: none;
+    outline: 1px solid #CCC;
     padding: 8px;
+    width: calc(100% - 18px);
+}
+
+.textbox label input {
+    margin-top: 4px;
+}
+
+.textbox.inline {
+    border-bottom: 1px solid #EEE;
+    padding-bottom: 8px;
+}
+
+.textbox.inline label > div {
+    display: inline-flex;
+    width: 40%;
+}
+
+.textbox.inline label > input {
+    display: inline-flex;
+    margin-top: 0;
+    padding: 4px 8px;
+    width: calc(60% - 18px);
 }
 
 
@@ -78,13 +101,15 @@ body {
 
 .form-header {
     align-items: center;
-    border-bottom: 1px solid #CCC;
+    /* border-bottom: 1px solid #CCC; */
     display: flex;
     height: 42px;
     top: 0;
 }
 
 .form-header .text {
+    font-size: 16px;
+    font-weight: bold;
     margin-left: 16px;
 }
 
@@ -108,7 +133,7 @@ body {
 }
 
 .form-footer {
-    border-top: 1px solid #CCC;
+    /* border-top: 1px solid #CCC; */
     bottom: 0;
     height: 42px;
 }

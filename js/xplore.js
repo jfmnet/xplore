@@ -196,6 +196,9 @@ xplore.TextBox = function (param) {
     this.onchange = param.onchange;
     this.bind = param.bind;
 
+    if (param.inline)
+        this.classname.push("inline");
+
     if (this.bind)
         this.value = this.bind.object[this.bind.name];
 };
@@ -206,11 +209,29 @@ xplore.TextBox.constructor = xplore.TextBox;
 xplore.TextBox.prototype.Refresh = function () {
     this.object.innerHTML = "";
 
-    let input = document.createElement("input");
-    input.type = this.type;
-    input.value = this.value;
+    if (this.text) {
+        let label = document.createElement("label");
+        this.object.appendChild(label);
 
-    this.object.appendChild(input);
+        let text = document.createElement("div");
+        text.innerText = this.text;
+        label.appendChild(text);
+
+        let input = document.createElement("input");
+        input.type = this.type;
+        input.value = this.value;
+    
+        label.appendChild(input);
+    
+    } else {
+        let input = document.createElement("input");
+        input.type = this.type;
+        input.value = this.value;
+    
+        this.object.appendChild(input);
+    
+    }
+
     this.Events();
 };
 
@@ -322,6 +343,9 @@ xplore.Form = function (param) {
     this.height = param.height || 600;
     this.ok = param.oktext || "OK";
     this.cancel = param.canceltext || "Cancel";
+
+    this.onok = param.onok;
+    this.oncancel = param.oncancel;
 };
 
 xplore.Form.prototype = Object.create(xplore.prototype);
@@ -411,6 +435,9 @@ xplore.Form.prototype.RefreshFooter = function () {
     let button = new xplore.Button({
         text: "OK",
         onclick: function () {
+            if (self.onok)
+                self.onok();
+
             self.Close();
         }
     });
@@ -420,6 +447,9 @@ xplore.Form.prototype.RefreshFooter = function () {
     button = new xplore.Button({
         text: "Cancel",
         onclick: function () {
+            if (self.oncancel)
+                self.oncancel();
+
             self.Close();
         }
     });
