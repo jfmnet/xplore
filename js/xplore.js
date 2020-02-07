@@ -5,7 +5,11 @@ var xplore = function (param, element, classname) {
     param = param || {};
 
     this.element = element || param.element || "div";
-    this.classname = [classname];
+
+    if (Array.isArray(classname))
+        this.classname = classname;
+    else
+        this.classname = [classname];
 
     if (param.class)
         this.classname.push(classname);
@@ -183,10 +187,10 @@ xplore.Button.constructor = xplore.Button;
 
 
 
-//TextBox
+//Textbox
 
-xplore.TextBox = function (param) {
-    xplore.call(this, param, undefined, "textbox");
+xplore.Textbox = function (param) {
+    xplore.call(this, param, undefined, ["input", "textbox"]);
 
     param = param || {};
 
@@ -203,10 +207,10 @@ xplore.TextBox = function (param) {
         this.value = this.bind.object[this.bind.name];
 };
 
-xplore.TextBox.prototype = Object.create(xplore.prototype);
-xplore.TextBox.constructor = xplore.TextBox;
+xplore.Textbox.prototype = Object.create(xplore.prototype);
+xplore.Textbox.constructor = xplore.Textbox;
 
-xplore.TextBox.prototype.Refresh = function () {
+xplore.Textbox.prototype.Refresh = function () {
     this.object.innerHTML = "";
 
     if (this.text) {
@@ -220,28 +224,28 @@ xplore.TextBox.prototype.Refresh = function () {
         let input = document.createElement("input");
         input.type = this.type;
         input.value = this.value;
-    
+
         label.appendChild(input);
-    
+
     } else {
         let input = document.createElement("input");
         input.type = this.type;
         input.value = this.value;
-    
+
         this.object.appendChild(input);
-    
+
     }
 
     this.Events();
 };
 
-xplore.TextBox.prototype.Events = function () {
+xplore.Textbox.prototype.Events = function () {
     let input = this.object.querySelector("input");
     let self = this;
 
     input.addEventListener('input', function () {
         self.value = this.value;
-    
+
         if (self.bind)
             self.bind.object[self.bind.name] = self.value;
 
@@ -254,6 +258,151 @@ xplore.TextBox.prototype.Events = function () {
 
 
 
+xplore.Checkbox = function (param) {
+    xplore.call(this, param, undefined, ["input", "checkbox"]);
+
+    param = param || {};
+
+    this.value = param.value || "";
+    this.type = param.type || "text";
+
+    this.onchange = param.onchange;
+    this.bind = param.bind;
+
+    if (param.inline)
+        this.classname.push("inline");
+
+    if (this.bind)
+        this.value = this.bind.object[this.bind.name];
+};
+
+xplore.Checkbox.prototype = Object.create(xplore.prototype);
+xplore.Checkbox.constructor = xplore.Checkbox;
+
+xplore.Checkbox.prototype.Refresh = function () {
+    this.object.innerHTML = "";
+
+    if (this.text) {
+        let label = document.createElement("label");
+        this.object.appendChild(label);
+
+        let text = document.createElement("div");
+        text.innerText = this.text;
+        label.appendChild(text);
+
+        let input = document.createElement("input");
+        input.type = "checkbox";
+        input.checked = this.value;
+
+        label.appendChild(input);
+
+    } else {
+        let input = document.createElement("input");
+        input.type = "checkbox";
+        input.checked = this.value;
+
+        this.object.appendChild(input);
+
+    }
+
+    this.Events();
+};
+
+xplore.Checkbox.prototype.Events = function () {
+    let input = this.object.querySelector("input");
+    let self = this;
+
+    input.onclick = function () {
+        self.value = this.checked;
+
+        if (self.bind)
+            self.bind.object[self.bind.name] = self.value;
+
+        if (self.onchange)
+            self.onchange(self);
+
+        self.Trigger("onchange");
+    };
+};
+
+
+
+xplore.Combobox = function (param) {
+    xplore.call(this, param, undefined, ["input", "combobox"]);
+
+    param = param || {};
+
+    this.value = param.value || "";
+    this.type = param.type || "text";
+
+    this.onchange = param.onchange;
+    this.bind = param.bind;
+    this.options = param.options;
+
+    if (param.inline)
+        this.classname.push("inline");
+
+    if (this.bind)
+        this.value = this.bind.object[this.bind.name];
+};
+
+xplore.Combobox.prototype = Object.create(xplore.prototype);
+xplore.Combobox.constructor = xplore.Combobox;
+
+xplore.Combobox.prototype.Refresh = function () {
+    this.object.innerHTML = "";
+
+    let select;
+
+    if (this.text) {
+        let label = document.createElement("label");
+        this.object.appendChild(label);
+
+        let text = document.createElement("div");
+        text.innerText = this.text;
+        label.appendChild(text);
+
+        select = document.createElement("select");
+        label.appendChild(select);
+
+    } else {
+        select = document.createElement("select");
+        this.object.appendChild(input);
+    }
+
+    let option;
+
+    for (let i = 0; i < this.options.length; i++) {
+        option = document.createElement("option");
+        option.value = this.options[i];
+        option.innerHTML = this.options[i];
+        select.appendChild(option);
+    }
+
+    select.selectedIndex = this.options.indexOf(this.value);
+    this.Events();
+};
+
+xplore.Combobox.prototype.Events = function () {
+    let select = this.object.querySelector("select");
+    let self = this;
+
+    select.onchange = function () {
+        self.value = this.value;
+
+        if (self.bind)
+            self.bind.object[self.bind.name] = self.value;
+
+        if (self.onchange)
+            self.onchange(self);
+
+        self.Trigger("onchange");
+    };
+};
+
+
+
+
 //Split container
 xplore.SplitContainer = function (param) {
     xplore.call(this, param, undefined, "split-container");
@@ -263,6 +412,8 @@ xplore.SplitContainer = function (param) {
     this.panels = param.panels;
     this.orientation = param.orientation;
     this.splittersize = param.splittersize || 0;
+    this.size = param.size;
+    this.resizing;
 };
 
 xplore.SplitContainer.prototype = Object.create(xplore.prototype);
@@ -273,6 +424,8 @@ xplore.SplitContainer.prototype.Refresh = function () {
 
     this.panel1 = document.createElement("div");
     this.gap = document.createElement("div");
+    this.gap.appendChild(document.createElement("div"));
+
     this.panel2 = document.createElement("div");
 
     this.object.appendChild(this.panel1);
@@ -280,17 +433,31 @@ xplore.SplitContainer.prototype.Refresh = function () {
     this.object.appendChild(this.panel2);
 
     this.Resize();
+    this.Events();
 };
 
 xplore.SplitContainer.prototype.Resize = function () {
     let width = this.parent.clientWidth;
     let height = this.parent.clientHeight;
+    let gap = this.splittersize / 2;
 
-    if (this.panels) {
+    if (this.size) {
+        if (this.orientation) {
+            //Vertical
 
-        if (this.panels[0] && this.panels[0].size) {
+        } else {
+            //Horizontal
 
-        } else if (this.panels[1] && this.panels[1].size) {
+            if (this.size[0] !== undefined) {
+                this.panel1.style = "left: 0; width: " + this.size[0] + "px; top: 0; bottom: 0 ";
+                this.panel2.style = "right: 0; left: " + (this.size[0] + this.splittersize) + "px; top: 0; bottom: 0 ";
+                this.gap.style = "left: " + this.size[0] + "px; width: " + this.splittersize + "px; top: 0; bottom: 0 ";
+
+            } else if (this.size[1]) {
+                this.panel1.style = "left: 0; right: " + (this.size[1] + this.splittersize) + "px; top: 0; bottom: 0 ";
+                this.panel2.style = "right: 0; width: " + this.size[1] + "px; top: 0; bottom: 0 ";
+                this.gap.style = "right: " + this.size[1] + "px; width: " + this.splittersize + "px; top: 0; bottom: 0 ";
+            }
         }
     } else {
         if (this.orientation) {
@@ -298,8 +465,9 @@ xplore.SplitContainer.prototype.Resize = function () {
 
         } else {
             //Horizontal
-            this.panel1.style = "left: 0; width: 50%; top: 0; bottom: 0 ";
-            this.panel2.style = "right: 0; width: 50%; top: 0; bottom: 0 ";
+            this.panel1.style = "left: 0; width: calc(50% - " + gap + "px); top: 0; bottom: 0 ";
+            this.panel2.style = "right: 0; width: calc(50% - " + gap + "px); top: 0; bottom: 0 ";
+            this.gap.style = "left: calc(50% - " + gap + "px); width: " + this.splittersize + "px; top: 0; bottom: 0 ";
         }
     }
 };
@@ -330,6 +498,40 @@ xplore.SplitContainer.prototype.Add = function (child, index) {
     }
 };
 
+xplore.SplitContainer.prototype.Events = function (child, index) {
+    let self = this;
+
+    this.gap.onmousedown = function (e) {
+        self.resizing = true;
+        self.gap.style.left = (e.clientX - 120) + "px";
+        self.gap.style.padding = "118px";
+        self.gap.style.zIndex = 1;
+    };
+
+    this.gap.onmousemove = function (e) {
+        if (self.resizing) {
+            self.gap.style.left = (e.clientX - 120) + "px";
+            self.gap.style.right = "initial";
+        }
+    };
+
+    this.gap.onmouseup = function (e) {
+        self.resizing = false;
+        self.size = [e.clientX - self.splittersize / 2];
+        self.gap.style.padding = "";
+        self.gap.style.zIndex = "";
+        self.Resize();
+    };
+
+    this.gap.onmouseleave = function (e) {
+        self.resizing = false;
+        self.size = [e.clientX - self.splittersize / 2];
+        self.gap.style.padding = "";
+        self.gap.style.zIndex = "";
+        self.Resize();
+    };
+};
+
 
 //Form
 
@@ -346,6 +548,8 @@ xplore.Form = function (param) {
 
     this.onok = param.onok;
     this.oncancel = param.oncancel;
+
+    this.resizing;
 };
 
 xplore.Form.prototype = Object.create(xplore.prototype);
@@ -388,6 +592,7 @@ xplore.Form.prototype.Refresh = function () {
     this.RefreshBody();
     this.RefreshFooter();
     this.Resize();
+    this.Events();
 };
 
 xplore.Form.prototype.RefreshHeader = function () {
@@ -487,6 +692,31 @@ xplore.Form.prototype.Dispose = function () {
 xplore.Form.prototype.Close = function () {
     this.Dispose();
 };
+
+xplore.Form.prototype.Events = function () {
+    let self = this;
+
+    this.header.onmousedown = function (e) {
+        self.resizing = true;
+        self.currentx = e.clientX;
+        self.currenty = e.clientY;
+    };
+
+    this.header.onmousemove = function (e) {
+        if (self.resizing) {
+            self.object.style.left = self.object.offsetLeft + (e.clientX - self.currentx) + "px";
+            self.object.style.top = self.object.offsetTop + (e.clientY - self.currenty) + "px";
+            
+            self.currentx = e.clientX;
+            self.currenty = e.clientY;
+        }
+    };
+
+    this.header.onmouseup = function (e) {
+        self.resizing = false;
+    };
+};
+
 
 
 //Modal Background

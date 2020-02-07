@@ -8,14 +8,20 @@ body {
 }
 
 .noselect, .button {
-    -webkit-touch-callout: none; /* iOS Safari */
-      -webkit-user-select: none; /* Safari */
-       -khtml-user-select: none; /* Konqueror HTML */
-         -moz-user-select: none; /* Old versions of Firefox */
-          -ms-user-select: none; /* Internet Explorer/Edge */
-              user-select: none; /* Non-prefixed version, currently
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Old versions of Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
                                     supported by Chrome, Opera and Firefox */
-  }
+}
 
 .button {
     background-color: #0D47A1;
@@ -41,40 +47,54 @@ body {
     pointer-events: none;
 }
 
-.textbox {
+.input {
     margin: 8px 16px;
 }
 
-.textbox input {
-    border: none;
-    outline: 1px solid #CCC;
+.input input, .input select {
+    border: 1px solid #CCC;
+    outline: none;
     padding: 8px;
     width: calc(100% - 18px);
 }
 
-.textbox label input {
+.input input[type="checkbox"] {
+    border: none;
+    transform: scale(1.5);
+}
+
+.input.inline input[type="checkbox"] {
+    margin: 4px 2px;
+    width: initial;
+}
+
+.input label input, .input label select {
     margin-top: 4px;
 }
 
-.textbox.inline {
+.input.inline {
     border-bottom: 1px solid #EEE;
     padding-bottom: 8px;
 }
 
-.textbox.inline label > div {
+.input.inline label>div {
     display: inline-flex;
     width: 40%;
 }
 
-.textbox.inline label > input {
+.input.inline label>input, .input.inline label>select {
     display: inline-flex;
     margin-top: 0;
     padding: 4px 8px;
     width: calc(60% - 18px);
 }
 
+.input.inline label>select {
+     width: 60%;
+}
 
 /* Containers */
+
 .dock, .split-container {
     position: absolute;
     top: 0;
@@ -83,8 +103,23 @@ body {
     right: 0;
 }
 
-.split-container > div {
+.split-container>div {
     position: absolute;
+}
+
+.split-container>div:nth-child(2) {
+    background-color: #EE4;
+    text-align: center;
+}
+
+.split-container>div:nth-child(2) div {
+    background-color: #EEE;
+    cursor: col-resize;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+    width: 4px;
 }
 
 .form {

@@ -1,5 +1,8 @@
 xplore.main = function () {
-    let splitter = new xplore.SplitContainer();
+    let splitter = new xplore.SplitContainer({
+        splittersize: 4,
+        size: [ undefined, 300 ]
+    });
     splitter.Show();
 
     let container = new xplore();
@@ -28,14 +31,25 @@ xplore.main = function () {
                     text: "Hello World!",
                 });
 
-                form.Add(new xplore.TextBox({
+                form.Add(new xplore.Textbox({
                     text: "Name",
                     bind: { object: model, name: "name" },
                     inline: true
                 }));
-                form.Add(new xplore.TextBox({
+                form.Add(new xplore.Textbox({
                     text: "Country",
                     bind: { object: model, name: "country" },
+                    inline: true
+                }));
+                form.Add(new xplore.Checkbox({
+                    text: "Subscribe",
+                    bind: { object: model, name: "subscribe" },
+                    inline: true
+                }));
+                form.Add(new xplore.Combobox({
+                    text: "Gender",
+                    bind: { object: model, name: "gender" },
+                    options: [ "Male", "Female" ],
                     inline: true
                 }));
 
@@ -81,4 +95,6 @@ function Model () {
     this.name = "";
     this.mobile = "";
     this.country = "";
+    this.subscribe = false;
+    this.gender = "Male";
 }
