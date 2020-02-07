@@ -503,27 +503,19 @@ xplore.SplitContainer.prototype.Events = function (child, index) {
 
     this.gap.onmousedown = function (e) {
         self.resizing = true;
-        self.gap.style.left = (e.clientX - 120) + "px";
-        self.gap.style.padding = "118px";
+        self.gap.style.left = (e.clientX - 1200) + "px";
+        self.gap.style.padding = "1198px";
         self.gap.style.zIndex = 1;
     };
 
     this.gap.onmousemove = function (e) {
         if (self.resizing) {
-            self.gap.style.left = (e.clientX - 120) + "px";
+            self.gap.style.left = (e.clientX - 1200) + "px";
             self.gap.style.right = "initial";
         }
     };
 
     this.gap.onmouseup = function (e) {
-        self.resizing = false;
-        self.size = [e.clientX - self.splittersize / 2];
-        self.gap.style.padding = "";
-        self.gap.style.zIndex = "";
-        self.Resize();
-    };
-
-    this.gap.onmouseleave = function (e) {
         self.resizing = false;
         self.size = [e.clientX - self.splittersize / 2];
         self.gap.style.padding = "";
