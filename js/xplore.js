@@ -424,8 +424,6 @@ xplore.SplitContainer.prototype.Refresh = function () {
 
     this.panel1 = document.createElement("div");
     this.gap = document.createElement("div");
-    this.gap.appendChild(document.createElement("div"));
-
     this.panel2 = document.createElement("div");
 
     this.object.appendChild(this.panel1);
@@ -503,16 +501,19 @@ xplore.SplitContainer.prototype.Events = function (child, index) {
 
     this.gap.onmousedown = function (e) {
         self.resizing = true;
-        self.gap.style.left = (e.clientX - 1200) + "px";
-        self.gap.style.padding = "1198px";
+        self.currentx = e.clientX;
+        self.currenty = e.clientY;
         self.gap.style.zIndex = 1;
-    };
+        self.gap.style.right = "initial";
 
-    this.gap.onmousemove = function (e) {
-        if (self.resizing) {
-            self.gap.style.left = (e.clientX - 1200) + "px";
-            self.gap.style.right = "initial";
-        }
+        document.body.onmousemove = function (e) {
+            if (self.resizing) {
+                self.gap.style.left = (e.clientX) + "px";
+                
+                self.currentx = e.clientX;
+                self.currenty = e.clientY;
+            }
+        };
     };
 
     this.gap.onmouseup = function (e) {
@@ -520,6 +521,8 @@ xplore.SplitContainer.prototype.Events = function (child, index) {
         self.size = [e.clientX - self.splittersize / 2];
         self.gap.style.padding = "";
         self.gap.style.zIndex = "";
+
+        document.body.onmousemove = undefined;
         self.Resize();
     };
 };
@@ -692,20 +695,21 @@ xplore.Form.prototype.Events = function () {
         self.resizing = true;
         self.currentx = e.clientX;
         self.currenty = e.clientY;
-    };
 
-    this.header.onmousemove = function (e) {
-        if (self.resizing) {
-            self.object.style.left = self.object.offsetLeft + (e.clientX - self.currentx) + "px";
-            self.object.style.top = self.object.offsetTop + (e.clientY - self.currenty) + "px";
-            
-            self.currentx = e.clientX;
-            self.currenty = e.clientY;
-        }
+        document.body.onmousemove = function (e) {
+            if (self.resizing) {
+                self.object.style.left = self.object.offsetLeft + (e.clientX - self.currentx) + "px";
+                self.object.style.top = self.object.offsetTop + (e.clientY - self.currenty) + "px";
+                
+                self.currentx = e.clientX;
+                self.currenty = e.clientY;
+            }
+        };
     };
 
     this.header.onmouseup = function (e) {
         self.resizing = false;
+        document.body.onmousemove = undefined;
     };
 };
 
