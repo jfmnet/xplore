@@ -5,8 +5,21 @@ xplore.main = function () {
     });
     splitter.Show();
 
+    let dockpanel = new xplore.DockPanel({
+        splittersize: 4
+    });
+    splitter.Set(dockpanel, 0);
+
+
+    let form = new xplore.Form({
+        text: "Hello World!",
+    });
+
+    dockpanel.Dock(form, 0);
+
+
     let container = new xplore();
-    splitter.Add(container);
+    splitter.Set(container, 1);
 
     let model = new Model ();
     model.name = "Jonathan Manuel";

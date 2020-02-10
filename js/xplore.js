@@ -404,12 +404,12 @@ xplore.Combobox.prototype.Events = function () {
 
 
 //Split container
+
 xplore.SplitContainer = function (param) {
     xplore.call(this, param, undefined, "split-container");
 
     param = param || {};
 
-    this.panels = param.panels;
     this.orientation = param.orientation;
     this.splittersize = param.splittersize || 0;
     this.size = param.size;
@@ -470,9 +470,12 @@ xplore.SplitContainer.prototype.Resize = function () {
     }
 };
 
-xplore.SplitContainer.prototype.Add = function (child, index) {
+xplore.SplitContainer.prototype.Add = function () {
+};
+
+xplore.SplitContainer.prototype.Set = function (child, index) {
     if (child) {
-        let panel = index ? this.panel1 : this.panel2;
+        let panel = index === 0 || index === undefined ? this.panel1 : this.panel2;
 
         //Add array of components
         if (Array.isArray(child)) {
@@ -509,7 +512,7 @@ xplore.SplitContainer.prototype.Events = function (child, index) {
         document.body.onmousemove = function (e) {
             if (self.resizing) {
                 self.gap.style.left = (e.clientX) + "px";
-                
+
                 self.currentx = e.clientX;
                 self.currenty = e.clientY;
             }
@@ -519,13 +522,243 @@ xplore.SplitContainer.prototype.Events = function (child, index) {
     this.gap.onmouseup = function (e) {
         self.resizing = false;
         self.size = [e.clientX - self.splittersize / 2];
-        self.gap.style.padding = "";
         self.gap.style.zIndex = "";
 
         document.body.onmousemove = undefined;
         self.Resize();
     };
 };
+
+
+//Dock panel
+
+xplore.DockPanel = function (param) {
+    xplore.call(this, param, undefined, "dock-panel");
+
+    param = param || {};
+
+    this.splittersize = param.splittersize || 0;
+    this.size = param.size;
+    this.resizing;
+};
+
+xplore.DockPanel.prototype = Object.create(xplore.prototype);
+xplore.DockPanel.constructor = xplore.DockPanel;
+
+xplore.DockPanel.prototype.Refresh = function () {
+    this.object.innerHTML = "";
+
+    this.left = document.createElement("div");
+    this.gapleft = document.createElement("div");
+    this.center = document.createElement("div");
+    this.gapright = document.createElement("div");
+    this.right = document.createElement("div");
+
+    this.object.appendChild(this.left);
+    this.object.appendChild(this.gapleft);
+    this.object.appendChild(this.center);
+    this.object.appendChild(this.gapright);
+    this.object.appendChild(this.right);
+
+    this.Resize();
+    this.Events();
+};
+
+xplore.DockPanel.prototype.Resize = function () {
+    let width = this.parent.clientWidth;
+    let height = this.parent.clientHeight;
+    let gap = this.splittersize;
+
+    if (this.size) {
+        if (this.orientation) {
+            //Vertical
+
+        } else {
+            //Horizontal
+            let center;
+
+            if (this.size[0] !== undefined) {
+                this.left.style = "left: 0; width: " + this.size[0] + "px; top: 0; bottom: 0 ";
+                this.gapleft.style = "left: " + this.size[0] + "px; width: " + gap + "px; top: 0; bottom: 0 ";
+                center = "left: " + (this.size[0] + gap) + "px;";
+
+            } else {
+                this.left.style = "left: 0; width: 25%; top: 0; bottom: 0 ";
+                this.gapleft.style = "left: 25%; width: " + gap + "px; top: 0; bottom: 0 ";
+                center = "left: calc(25% + " + gap + "px);";
+            }
+
+            if (this.size[1] !== undefined) {
+                this.gapright.style = "right: " + this.size[1] + "px; width: " + gap + "px; top: 0; bottom: 0 ";
+                this.right.style = "right: 0; width: " + this.size[1] + "px; top: 0; bottom: 0 ";
+                center += "right: " + (this.size[1] + gap) + "px;";
+
+            } else {
+                this.gapright.style = "right: 25%; width: " + gap + "px; top: 0; bottom: 0 ";
+                this.right.style = "right: 0; width: 25%; top: 0; bottom: 0 ";
+                center += "right: calc(25% + " + gap + "px);";
+            }
+
+            this.center.style = center + "top: 0; bottom: 0 ";
+        }
+    } else {
+        if (this.orientation) {
+            //Vertical
+
+        } else {
+            //Horizontal
+            this.left.style = "left: 0; width: 25%; top: 0; bottom: 0 ";
+            this.gapleft.style = "left: 25%; width: " + gap + "px; top: 0; bottom: 0 ";
+            this.center.style = "left: calc(25% + " + gap + "px); right: calc(25% + " + gap + "px); top: 0; bottom: 0 ";
+            this.gapright.style = "right: 25%; width: " + gap + "px; top: 0; bottom: 0 ";
+            this.right.style = "right: 0; width: 25%; top: 0; bottom: 0 ";
+        }
+    }
+};
+
+xplore.DockPanel.prototype.Add = function () {
+};
+
+xplore.DockPanel.prototype.Dock = function (child, index) {
+    if (child) {
+        let panel;
+
+        if (index === 0)
+            panel = this.left;
+
+        else if (index === 2)
+            panel = this.right;
+
+        else
+            panel = this.center;
+
+        if (child.Show) {
+            if (!child.classname.includes("dock"))
+                child.classname.push("dock");
+
+            if (child instanceof xplore.Form) {
+                child.modal = false;
+                child.showfooter = false;
+            }
+
+            child.Show(panel);
+        }
+
+        return child;
+    }
+};
+
+xplore.DockPanel.prototype.Set = function (child, index) {
+    if (child) {
+        let panel;
+
+        if (index === 0)
+            panel = this.left;
+
+        else if (index === 2)
+            panel = this.right;
+
+        else
+            panel = this.center;
+
+        //Add array of components
+        if (Array.isArray(child)) {
+            for (let i = 0; i < child.length; i++) {
+                if (child[i] && child[i].Show) {
+                    child[i].Show(panel);
+                }
+            }
+        } else if (child.Show) {
+            child.Show(panel);
+
+        } else {
+            for (let name in child) {
+                if (child[child] && child[child].Show) {
+                    child[child].Show(panel);
+                }
+            }
+        }
+
+        return child;
+    }
+};
+
+xplore.DockPanel.prototype.Events = function (child, index) {
+    let self = this;
+
+    this.gapleft.onmousedown = function (e) {
+        self.resizing = true;
+        self.currentx = e.clientX;
+        self.currenty = e.clientY;
+        self.gapleft.style.zIndex = 1;
+
+        document.body.onmousemove = function (e) {
+            if (self.resizing) {
+                let left = (e.clientX - self.splittersize / 2);
+
+                if (left < 0)
+                    left = 0;
+
+                self.gapleft.style.left = left + "px";
+
+                self.currentx = e.clientX;
+                self.currenty = e.clientY;
+            }
+        };
+    };
+
+    this.gapleft.onmouseup = function (e) {
+        self.resizing = false;
+
+        let left = (e.clientX - self.splittersize / 2);
+
+        if (left < 0)
+            left = 0;
+
+        self.size = [left, self.size ? self.size[1] : undefined];
+        self.gapleft.style.zIndex = "";
+
+        document.body.onmousemove = undefined;
+        self.Resize();
+    };
+
+    this.gapright.onmousedown = function (e) {
+        self.resizing = true;
+        self.currentx = e.clientX;
+        self.currenty = e.clientY;
+        self.gapright.style.zIndex = 1;
+
+        document.body.onmousemove = function (e) {
+            if (self.resizing) {
+                let right = self.object.clientWidth - (e.clientX + self.splittersize / 2);
+
+                if (right < 0)
+                    right = 0;
+
+                self.gapright.style.right = right + "px";
+
+                self.currentx = e.clientX;
+                self.currenty = e.clientY;
+            }
+        };
+    };
+
+    this.gapright.onmouseup = function (e) {
+        self.resizing = false;
+        let right = self.object.clientWidth - (e.clientX + self.splittersize / 2);
+
+        if (right < 0)
+            right = 0;
+
+        self.size = [self.size ? self.size[0] : undefined, right];
+
+        self.gapright.style.zIndex = "";
+
+        document.body.onmousemove = undefined;
+        self.Resize();
+    };
+};
+
 
 
 //Form
@@ -540,6 +773,16 @@ xplore.Form = function (param) {
     this.height = param.height || 600;
     this.ok = param.oktext || "OK";
     this.cancel = param.canceltext || "Cancel";
+    this.modal = param.modal || true;
+
+    this.showheader = param.showheader || true;
+    this.showfooter = param.showfooter || true;
+
+    if (!this.showheader)
+        this.classname.push("no-header");
+
+    if (!this.showfooter)
+        this.classname.push("no-footer");
 
     this.onok = param.onok;
     this.oncancel = param.oncancel;
@@ -553,39 +796,40 @@ xplore.Form.constructor = xplore.Form;
 xplore.Form.prototype.Refresh = function () {
     let self = this;
 
-    this.background = new xplore.Background({
-        onclick: function () {
-            self.Dispose();
-        }
-    });
+    if (this.modal) {
+        this.background = new xplore.Background({
+            onclick: function () {
+                self.Dispose();
+            }
+        });
 
-    this.background.Show();
+        this.background.Show();
+    }
 
     this.object.innerHTML = "";
 
-    //Header
-
-    this.header = document.createElement("div");
-    this.header.classList.add("form-header");
+    if (this.showheader) {
+        //Header
+        this.header = document.createElement("div");
+        this.header.classList.add("form-header");
+        this.object.appendChild(this.header);
+        this.RefreshHeader();
+    }
 
     //Body
-
     this.body = document.createElement("div");
     this.body.classList.add("form-body");
-
-    //Footer
-
-    this.footer = document.createElement("div");
-    this.footer.classList.add("form-footer");
-
-
-    this.object.appendChild(this.header);
     this.object.appendChild(this.body);
-    this.object.appendChild(this.footer);
-
-    this.RefreshHeader();
     this.RefreshBody();
-    this.RefreshFooter();
+
+    if (this.showfooter) {
+        //Footer
+        this.footer = document.createElement("div");
+        this.footer.classList.add("form-footer");
+        this.object.appendChild(this.footer);
+        this.RefreshFooter();
+    }
+
     this.Resize();
     this.Events();
 };
@@ -681,7 +925,9 @@ xplore.Form.prototype.Resize = function () {
 xplore.Form.prototype.Dispose = function () {
     xplore.ZINDEX -= 2;
     this.object.remove();
-    this.background.Dispose();
+
+    if (this.modal)
+        this.background.Dispose();
 };
 
 xplore.Form.prototype.Close = function () {
@@ -691,26 +937,28 @@ xplore.Form.prototype.Close = function () {
 xplore.Form.prototype.Events = function () {
     let self = this;
 
-    this.header.onmousedown = function (e) {
-        self.resizing = true;
-        self.currentx = e.clientX;
-        self.currenty = e.clientY;
+    if (this.showheader) {
+        this.header.onmousedown = function (e) {
+            self.resizing = true;
+            self.currentx = e.clientX;
+            self.currenty = e.clientY;
 
-        document.body.onmousemove = function (e) {
-            if (self.resizing) {
-                self.object.style.left = self.object.offsetLeft + (e.clientX - self.currentx) + "px";
-                self.object.style.top = self.object.offsetTop + (e.clientY - self.currenty) + "px";
-                
-                self.currentx = e.clientX;
-                self.currenty = e.clientY;
-            }
+            document.body.onmousemove = function (e) {
+                if (self.resizing) {
+                    self.object.style.left = self.object.offsetLeft + (e.clientX - self.currentx) + "px";
+                    self.object.style.top = self.object.offsetTop + (e.clientY - self.currenty) + "px";
+
+                    self.currentx = e.clientX;
+                    self.currenty = e.clientY;
+                }
+            };
         };
-    };
 
-    this.header.onmouseup = function (e) {
-        self.resizing = false;
-        document.body.onmousemove = undefined;
-    };
+        this.header.onmouseup = function (e) {
+            self.resizing = false;
+            document.body.onmousemove = undefined;
+        };
+    }
 };
 
 
