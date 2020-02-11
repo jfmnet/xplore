@@ -124,6 +124,10 @@ body {
     -webkit-transform: translateZ(0);
 }
 
+.dock-panel>div.drag-enter {
+    border: 2px dashed #0D47A1;
+}
+
 .form {
     background-color: #FFF;
     box-shadow: 0 0 16px #555;

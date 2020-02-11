@@ -22,7 +22,6 @@ var xplore = function (param, element, classname) {
     this.object;
     this.parent;
     this.children = [];
-    this.events = {};
 
     //Events
     this.onclick = param.onclick;
@@ -138,14 +137,14 @@ xplore.prototype.SetState = function (state) {
 xplore.prototype.Listen = function (name, event) {
     if (event) {
         //Initialize event name
-        if (!this.events[name])
-            this.events[name] = [];
+        if (!xplore.events[name])
+            xplore.events[name] = [];
 
         let add = true;
 
         //Check if event exists
-        for (let e in this.events[name]) {
-            if (this.events[name][e] === event) {
+        for (let e in xplore.events[name]) {
+            if (xplore.events[name][e] === event) {
                 add = false;
                 break;
             }
@@ -153,23 +152,17 @@ xplore.prototype.Listen = function (name, event) {
 
         //Add event
         if (add)
-            this.events[name].push(event);
+            xplore.events[name].push(event);
     }
 };
 
-xplore.prototype.Trigger = function (name) {
-    if (this.events[name]) {
+xplore.prototype.Trigger = function (name, data) {
+    if (xplore.events[name]) {
         let event;
 
-        for (let e in this.events[name]) {
-            event = this.events[name][e];
-
-            if (event.Show) {
-                event.text = this.value;
-                event.Refresh();
-            } else {
-                event(this);
-            }
+        for (let e in xplore.events[name]) {
+            event = xplore.events[name][e];
+            event(this, data);
         }
     }
 };
@@ -757,6 +750,30 @@ xplore.DockPanel.prototype.Events = function (child, index) {
         document.body.onmousemove = undefined;
         self.Resize();
     };
+
+    this.Listen("onmousemove", function (e) {
+        if (e.currentx > self.left.offsetLeft && e.currentx < (self.left.offsetLeft + self.left.offsetWidth)) {
+            if ( self.left.classList.value.indexOf("drag-enter") === -1) {
+                self.left.classList.add("drag-enter");
+            }
+
+            self.dragover = 0;
+        } else {
+            if (self.dragover === 0) {
+                self.left.classList.remove("drag-enter");
+            }
+
+            self.dragover = -1;
+        }
+    });
+
+    this.Listen("onmouseup", function (e) {
+        if (self.dragover === 0) {
+            self.left.classList.remove("drag-enter");
+        }
+
+        self.dragover = -1;
+});
 };
 
 
@@ -807,6 +824,7 @@ xplore.Form.prototype.Refresh = function () {
     }
 
     this.object.innerHTML = "";
+    //this.object.setAttribute("draggable", "true");
 
     if (this.showheader) {
         //Header
@@ -945,11 +963,22 @@ xplore.Form.prototype.Events = function () {
 
             document.body.onmousemove = function (e) {
                 if (self.resizing) {
-                    self.object.style.left = self.object.offsetLeft + (e.clientX - self.currentx) + "px";
-                    self.object.style.top = self.object.offsetTop + (e.clientY - self.currenty) + "px";
+                    if (self.object.classList.value.indexOf(" dock") !== -1) {
+                        if (Math.abs(e.clientX - self.currentx) > 10 || Math.abs(e.clientY - self.currenty) > 10) {
+                            self.object.classList.remove("dock");
+                            document.body.appendChild(self.object);
+                            self.object.style.left = (e.clientX - self.currentx) + "px";
+                            self.object.style.top = (e.clientY - self.currenty) + "px";
+                        }
+                    } else {
+                        self.object.style.left = self.object.offsetLeft + (e.clientX - self.currentx) + "px";
+                        self.object.style.top = self.object.offsetTop + (e.clientY - self.currenty) + "px";
+    
+                        self.currentx = e.clientX;
+                        self.currenty = e.clientY;
+                    }
 
-                    self.currentx = e.clientX;
-                    self.currenty = e.clientY;
+                    self.Trigger("onmousemove", e);
                 }
             };
         };
@@ -957,6 +986,8 @@ xplore.Form.prototype.Events = function () {
         this.header.onmouseup = function (e) {
             self.resizing = false;
             document.body.onmousemove = undefined;
+
+            self.Trigger("onmouseup", e);
         };
     }
 };
@@ -996,6 +1027,7 @@ xplore.DisplayIcon = function (icon) {
     return element;
 };
 
+xplore.events = {};
 xplore.ZINDEX = 100;
 
 
