@@ -752,29 +752,39 @@ xplore.DockPanel.prototype.Events = function (child, index) {
     };
 
     this.Listen("onmousemove", function (e) {
-        if (ShowDragPanel(e, self.left, 0)) {
-            self.dragover = 0;
+        if (!ShowDragPanel(e, self.left, 0))
+            if (!ShowDragPanel(e, self.center, 1))
+                if (!ShowDragPanel(e, self.right, 2)) {
+                    if (self.dragover !== -1) {
+                        self.dragpanel.remove();
+                        delete self.dragpanel;
+                    }
 
-        } else if (ShowDragPanel(e, self.center, 1)) {
-            self.dragover = 1;
-
-        } else if (ShowDragPanel(e, self.right, 2)) {
-            self.dragover = 2;
-
-        } else {
-            if (self.dragover !== -1) {
-                self.dragpanel.remove();
-                delete self.dragpanel;
-            }
-
-            self.dragover = -1;
-        }
+                    self.dragover = -1;
+                }
     });
 
     this.Listen("onmouseup", function (e) {
         if (self.dragover !== -1) {
             self.dragpanel.remove();
             delete self.dragpanel;
+        }
+
+        switch (self.dragover) {
+            case 0:
+                e.object.classList.add("dock");
+                self.left.appendChild(e.object);
+                break;
+
+            case 1:
+                e.object.classList.add("dock");
+                self.center.appendChild(e.object);
+                break;
+
+            case 2:
+                e.object.classList.add("dock");
+                self.right.appendChild(e.object);
+                break;
         }
 
         self.dragover = -1;
@@ -793,6 +803,7 @@ xplore.DockPanel.prototype.Events = function (child, index) {
                 panel.appendChild(self.dragpanel);
             }
 
+            self.dragover = index;
             return true;
         }
     }
@@ -989,8 +1000,8 @@ xplore.Form.prototype.Events = function () {
                         if (Math.abs(e.clientX - self.currentx) > 10 || Math.abs(e.clientY - self.currenty) > 10) {
                             self.object.classList.remove("dock");
                             document.body.appendChild(self.object);
-                            self.object.style.left = (e.clientX - self.currentx) + "px";
-                            self.object.style.top = (e.clientY - self.currenty) + "px";
+                            self.object.style.left = (e.clientX - e.offsetX) + "px";
+                            self.object.style.top = (e.clientY - e.offsetY) + "px";
                         }
                     } else {
                         self.object.style.left = self.object.offsetLeft + (e.clientX - self.currentx) + "px";
@@ -1008,6 +1019,7 @@ xplore.Form.prototype.Events = function () {
         this.header.onmouseup = function (e) {
             self.resizing = false;
             document.body.onmousemove = undefined;
+            e.object = self.object;
 
             self.Trigger("onmouseup", e);
         };
