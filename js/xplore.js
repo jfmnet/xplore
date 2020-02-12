@@ -752,15 +752,19 @@ xplore.DockPanel.prototype.Events = function (child, index) {
     };
 
     this.Listen("onmousemove", function (e) {
-        if (e.currentx > self.left.offsetLeft && e.currentx < (self.left.offsetLeft + self.left.offsetWidth)) {
-            if ( self.left.classList.value.indexOf("drag-enter") === -1) {
-                self.left.classList.add("drag-enter");
-            }
-
+        if (ShowDragPanel(e, self.left, 0)) {
             self.dragover = 0;
+
+        } else if (ShowDragPanel(e, self.center, 1)) {
+            self.dragover = 1;
+
+        } else if (ShowDragPanel(e, self.right, 2)) {
+            self.dragover = 2;
+
         } else {
-            if (self.dragover === 0) {
-                self.left.classList.remove("drag-enter");
+            if (self.dragover !== -1) {
+                self.dragpanel.remove();
+                delete self.dragpanel;
             }
 
             self.dragover = -1;
@@ -768,12 +772,30 @@ xplore.DockPanel.prototype.Events = function (child, index) {
     });
 
     this.Listen("onmouseup", function (e) {
-        if (self.dragover === 0) {
-            self.left.classList.remove("drag-enter");
+        if (self.dragover !== -1) {
+            self.dragpanel.remove();
+            delete self.dragpanel;
         }
 
         self.dragover = -1;
-});
+    });
+
+    function ShowDragPanel(e, panel, index) {
+        if (e.currentx > panel.offsetLeft && e.currentx < (panel.offsetLeft + panel.offsetWidth)) {
+            if (self.dragover !== index && self.dragpanel) {
+                self.dragpanel.remove();
+                delete self.dragpanel;
+            }
+
+            if (!self.dragpanel) {
+                self.dragpanel = document.createElement("div");
+                self.dragpanel.classList.add("drag-panel");
+                panel.appendChild(self.dragpanel);
+            }
+
+            return true;
+        }
+    }
 };
 
 
@@ -973,7 +995,7 @@ xplore.Form.prototype.Events = function () {
                     } else {
                         self.object.style.left = self.object.offsetLeft + (e.clientX - self.currentx) + "px";
                         self.object.style.top = self.object.offsetTop + (e.clientY - self.currenty) + "px";
-    
+
                         self.currentx = e.clientX;
                         self.currenty = e.clientY;
                     }
