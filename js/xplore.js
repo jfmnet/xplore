@@ -823,7 +823,10 @@ xplore.Form = function (param) {
     this.height = param.height || 600;
     this.ok = param.oktext || "OK";
     this.cancel = param.canceltext || "Cancel";
-    this.modal = param.modal || true;
+    this.modal = true;
+
+    if (param.modal !== undefined)
+        this.modal = param.modal;
 
     this.showheader = param.showheader || true;
     this.showfooter = param.showfooter || true;

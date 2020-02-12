@@ -42,6 +42,7 @@ xplore.main = function () {
             onclick: function () {
                 let form = new xplore.Form({
                     text: "Hello World!",
+                    modal: false
                 });
 
                 form.Add(new xplore.Textbox({
