@@ -766,25 +766,11 @@ xplore.DockPanel.prototype.Events = function (child, index) {
 
     this.Listen("onmouseup", function (e) {
         if (self.dragover !== -1) {
+            self.dragcenter.remove();
             self.dragpanel.remove();
             delete self.dragpanel;
-        }
-
-        switch (self.dragover) {
-            case 0:
-                e.object.classList.add("dock");
-                self.left.appendChild(e.object);
-                break;
-
-            case 1:
-                e.object.classList.add("dock");
-                self.center.appendChild(e.object);
-                break;
-
-            case 2:
-                e.object.classList.add("dock");
-                self.right.appendChild(e.object);
-                break;
+            delete self.dragcenter;
+            delete self.dragobject;
         }
 
         self.dragover = -1;
@@ -801,12 +787,57 @@ xplore.DockPanel.prototype.Events = function (child, index) {
                 self.dragpanel = document.createElement("div");
                 self.dragpanel.classList.add("drag-panel");
                 panel.appendChild(self.dragpanel);
+
+                self.dragcenter = document.createElement("i");
+                self.dragcenter.classList.add("mdi");
+                self.dragcenter.classList.add("mdi-arrow-expand-all");
+                self.dragpanel.appendChild(self.dragcenter);
+
+                self.dragobject = e;
+
+                self.dragcenter.onmouseup = function () {
+                    Dock();
+                };
+
+                self.dragpanel.onmouseup = function () {
+                    self.dragobject.TerminateDrag();
+                };
             }
 
             self.dragover = index;
             return true;
         }
     }
+
+    function Dock() {
+        let object = self.dragobject.object;
+        object.offsetX = 0;
+        object.offsetY = 0;
+
+        object.style.left = self.dragpanel.parentElement.offsetLeft + "px";
+        object.style.top = self.dragpanel.parentElement.offsetTop + "px";
+
+        switch (self.dragover) {
+            case 0:
+                object.classList.add("dock");
+                self.left.appendChild(object);
+
+                break;
+
+            case 1:
+                object.classList.add("dock");
+                self.center.appendChild(object);
+                break;
+
+            case 2:
+                object.classList.add("dock");
+                self.right.appendChild(object);
+                break;
+        }
+
+        self.dragobject.TerminateDrag();
+    }
+
 };
 
 
@@ -1014,6 +1045,7 @@ xplore.Form.prototype.Events = function () {
                         self.currenty = e.clientY;
                     }
 
+                    e.object = self;
                     self.Trigger("onmousemove", e);
                 }
             };
@@ -1024,9 +1056,15 @@ xplore.Form.prototype.Events = function () {
             document.body.onmousemove = undefined;
             e.object = self.object;
 
-            self.Trigger("onmouseup", e);
+            self.Trigger("onmouseup");
         };
     }
+};
+
+xplore.Form.prototype.TerminateDrag = function () {
+    self.resizing = false;
+    document.body.onmousemove = undefined;
+    self.Trigger("onmouseup");
 };
 
 
