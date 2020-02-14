@@ -631,7 +631,6 @@ xplore.DockPanel.prototype.Dock = function (child, index) {
 
             if (child instanceof xplore.Form) {
                 child.modal = false;
-                child.showfooter = false;
             }
 
             child.Show(panel);
@@ -1001,10 +1000,19 @@ xplore.Form.prototype.Events = function () {
                 if (self.resizing) {
                     if (self.object.classList.value.indexOf(" dock") !== -1) {
                         if (Math.abs(e.clientX - self.currentx) > 10 || Math.abs(e.clientY - self.currenty) > 10) {
+                            let width = self.object.offsetWidth;
+
                             self.object.classList.remove("dock");
                             document.body.appendChild(self.object);
-                            self.object.style.left = (e.clientX - e.offsetX) + "px";
-                            self.object.style.top = (e.clientY - e.offsetY) + "px";
+
+                            if (e.clientX > width) {
+                                self.object.style.left = (e.clientX - (width - e.offsetX)) + "px";
+                                self.object.style.top = (e.clientY - e.offsetY) + "px";
+
+                            } else {
+                                self.object.style.left = (e.clientX - e.offsetX) + "px";
+                                self.object.style.top = (e.clientY - e.offsetY) + "px";
+                            }
                         }
                     } else {
                         self.object.style.left = self.object.offsetLeft + (e.clientX - self.currentx) + "px";
