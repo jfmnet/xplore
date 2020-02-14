@@ -216,6 +216,25 @@ body {
     top: 0;
 }
 
+.drag-panel .mdi {
+    align-items: center;
+    background-color: #1976D2;
+    border-radius: 8px;
+    color: #FFF;
+    display: inline-flex;
+    font-size: 48px;
+    height: 64px;
+    justify-content: center;
+    position: absolute;
+    width: 64px;
+    z-index: 1000;
+}
+
+.mdi-arrow-expand-all {
+    left: calc(50% - 24px);
+    top: calc(50% - 24px);
+}
+
 .background {
     background-color: rgba(0, 0, 0, 0.5);
     position: absolute;
