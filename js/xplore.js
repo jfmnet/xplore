@@ -394,6 +394,39 @@ xplore.Combobox.prototype.Events = function () {
 };
 
 
+//Menu
+
+xplore.Menu = function (param) {
+    xplore.call(this, param, undefined, "menu");
+
+    param = param || {};
+
+    this.splittersize = param.splittersize || 0;
+    this.size = param.size;
+    this.resizing;
+};
+
+xplore.Menu.prototype = Object.create(xplore.prototype);
+xplore.Menu.constructor = xplore.Menu;
+
+xplore.Menu.prototype.Refresh = function () {
+    this.object.innerHTML = "";
+
+    let text = document.createElement("div");
+    text.innerText = this.text;
+    let submenu = document.createElement("div");
+
+    this.object.appendChild(text);
+    this.object.appendChild(submenu);
+
+    //Children
+    for (let i = 0; i < this.children.length; i++) {
+        this.children[i].Show(submenu);
+    }
+
+    this.Events();
+};
+
 
 
 //Split container

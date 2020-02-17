@@ -1,7 +1,24 @@
 xplore.main = function () {
+    DemoMenuToolbar();
+};
+
+function DemoMenuToolbar() {
+    let menu = new xplore.Menu({ text: "File" });
+    menu.Add(new xplore.Menu({ text: "New", onclick: function (sender) { alert(sender.text) } }));
+    menu.Add(new xplore.Menu({ text: "Open", onclick: function (sender) { alert(sender.text) }  }));
+    menu.Add(new xplore.Menu({ text: "Save", onclick: function (sender) { alert(sender.text) }  }));
+    menu.Show();
+
+    menu = new xplore.Menu({ text: "Edit" });
+    menu.Add(new xplore.Menu({ text: "Undo" }));
+    menu.Add(new xplore.Menu({ text: "Redo" }));
+    menu.Show();
+}
+
+function Demo1() {
     let splitter = new xplore.SplitContainer({
         splittersize: 4,
-        size: [ undefined, 300 ]
+        size: [undefined, 300]
     });
     splitter.Show();
 
@@ -21,7 +38,7 @@ xplore.main = function () {
     let container = new xplore();
     splitter.Set(container, 1);
 
-    let model = new Model ();
+    let model = new Model();
     model.name = "Jonathan Manuel";
 
     let buttons = [
@@ -50,6 +67,7 @@ xplore.main = function () {
                     bind: { object: model, name: "name" },
                     inline: true
                 }));
+
                 form.Add(new xplore.Textbox({
                     text: "Country",
                     bind: { object: model, name: "country" },
@@ -63,7 +81,7 @@ xplore.main = function () {
                 form.Add(new xplore.Combobox({
                     text: "Gender",
                     bind: { object: model, name: "gender" },
-                    options: [ "Male", "Female" ],
+                    options: ["Male", "Female"],
                     inline: true
                 }));
 
@@ -103,9 +121,9 @@ xplore.main = function () {
     // textbox.Listen("onchange", buttons[0]);
     // textbox.Listen("onchange", buttons[1]);
     // textbox.Listen("onchange", buttons[2]);
-};
+}
 
-function Model () {
+function Model() {
     this.name = "";
     this.mobile = "";
     this.country = "";

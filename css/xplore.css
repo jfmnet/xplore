@@ -1,6 +1,8 @@
 body {
     font: 13px normal, -apple-system, BlinkMacSystemFont, "Roboto", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     overflow: hidden;
+    margin: 0;
+    padding: 0;
 }
 
 .hidden {
@@ -242,4 +244,42 @@ body {
     top: 0;
     right: 0;
     bottom: 0;
+}
+
+.menu {
+    align-items: center;
+    cursor: pointer;
+    display: inline-flex;
+    height: 32px;
+    padding: 0 8px;
+    position: relative;
+}
+
+.menu:hover {
+    background-color: #EEE;
+}
+
+.menu>div:nth-child(1) {
+    padding: 4px 8px;
+}
+
+.menu>div:nth-child(2) {
+    background-color: #EEE;
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 32px;
+}
+
+.menu .menu {
+    display: flex;
+    padding: 0 8px;
+}
+
+.menu .menu:hover {
+    background-color: #DDD;
+}
+
+.menu:hover>div:nth-child(2) {
+    display: block;
 }
