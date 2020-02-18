@@ -15,6 +15,7 @@ var xplore = function (param, element, classname) {
         this.classname.push(classname);
 
     this.text = param.text || "";
+    this.icon = param.icon || "";
 
     if (param.class)
         this.classname.push(param.class);
@@ -52,6 +53,12 @@ xplore.prototype.Dispose = function () {
 
 xplore.prototype.Refresh = function () {
     this.object.innerHTML = "";
+
+    //Show icon
+    if (this.icon)
+        xplore.DisplayIcon(this.icon)
+
+    //Show text
     this.object.append(this.text);
 
     //Children
@@ -403,6 +410,7 @@ xplore.Menu = function (param) {
 
     this.splittersize = param.splittersize || 0;
     this.size = param.size;
+    this.shortcut = param.shortcut;
     this.resizing;
 };
 
@@ -411,20 +419,91 @@ xplore.Menu.constructor = xplore.Menu;
 
 xplore.Menu.prototype.Refresh = function () {
     this.object.innerHTML = "";
+    this.object.tabIndex = '1';
 
     let text = document.createElement("div");
-    text.innerText = this.text;
-    let submenu = document.createElement("div");
+
+    if (this.icon)
+        text.appendChild(xplore.DisplayIcon(this.icon));
+    else
+        text.appendChild(document.createElement("div"));
+
+    text.append(this.text);
+
+    if (this.shortcut) {
+        let shortcut = document.createElement("div");
+        shortcut.innerText = this.shortcut;
+        text.appendChild(shortcut);
+    }
 
     this.object.appendChild(text);
-    this.object.appendChild(submenu);
 
-    //Children
-    for (let i = 0; i < this.children.length; i++) {
-        this.children[i].Show(submenu);
+    if (this.children.length) {
+        //Children
+        let submenu = document.createElement("div");
+        this.object.appendChild(submenu);
+
+        for (let i = 0; i < this.children.length; i++) {
+            this.children[i].parentmenu = this;
+            this.children[i].Show(submenu);
+        }
     }
 
     this.Events();
+};
+
+xplore.Menu.prototype.Events = function () {
+    let self = this;
+
+    if (this.children.length !== 0) {
+        this.object.tabIndex = -1;
+    }
+
+    this.object.onclick = function (e) {
+        e.stopPropagation();
+
+        if (self.onclick) {
+            self.parentmenu.Collapse();
+            self.onclick(self);
+        }
+        else if (self.children.length) {
+            self.object.classList.add("display");
+            xplore.activemenu = self;
+
+        } else {
+            self.parentmenu.Collapse();
+        }
+    };
+
+    this.object.onmouseenter = function () {
+        self.onmenu = true;
+
+        if (xplore.activemenu && self.children.length) {
+            xplore.activemenu.Collapse();
+
+            self.object.focus();
+            self.object.classList.add("display");
+            xplore.activemenu = self;
+        }
+    };
+
+    this.object.onmouseleave = function () {
+        self.onmenu = false;
+    };
+
+    this.object.addEventListener('focusout', function (event) {
+        if (!self.onmenu) {
+            self.onmenu = false;
+            self.object.classList.remove("display");
+            delete xplore.activemenu;
+        }
+    });
+};
+
+xplore.Menu.prototype.Collapse = function () {
+    this.onmenu = false;
+    this.object.classList.remove("display");
+    delete xplore.activemenu;
 };
 
 

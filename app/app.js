@@ -4,9 +4,9 @@ xplore.main = function () {
 
 function DemoMenuToolbar() {
     let menu = new xplore.Menu({ text: "File" });
-    menu.Add(new xplore.Menu({ text: "New", onclick: function (sender) { alert(sender.text) } }));
-    menu.Add(new xplore.Menu({ text: "Open", onclick: function (sender) { alert(sender.text) }  }));
-    menu.Add(new xplore.Menu({ text: "Save", onclick: function (sender) { alert(sender.text) }  }));
+    menu.Add(new xplore.Menu({ icon: "account", text: "New", shortcut: "CTRL+N", onclick: function (sender) { console.log(sender.text) } }));
+    menu.Add(new xplore.Menu({ text: "Open", shortcut: "CTRL+O", onclick: function (sender) { console.log(sender.text) }  }));
+    menu.Add(new xplore.Menu({ text: "Save", shortcut: "CTRL+S", onclick: function (sender) { console.log(sender.text) }  }));
     menu.Show();
 
     menu = new xplore.Menu({ text: "Edit" });
@@ -59,7 +59,10 @@ function Demo1() {
             onclick: function () {
                 let form = new xplore.Form({
                     text: "Hello World!",
-                    modal: false
+                    modal: false,
+                    onok: function () {
+                        alert(model.name);
+                    }
                 });
 
                 form.Add(new xplore.Textbox({
@@ -73,11 +76,13 @@ function Demo1() {
                     bind: { object: model, name: "country" },
                     inline: true
                 }));
+
                 form.Add(new xplore.Checkbox({
                     text: "Subscribe",
                     bind: { object: model, name: "subscribe" },
                     inline: true
                 }));
+
                 form.Add(new xplore.Combobox({
                     text: "Gender",
                     bind: { object: model, name: "gender" },

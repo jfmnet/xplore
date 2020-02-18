@@ -248,6 +248,8 @@ body {
 
 .menu {
     align-items: center;
+    border: none;
+    outline: none;
     cursor: pointer;
     display: inline-flex;
     height: 32px;
@@ -260,7 +262,26 @@ body {
 }
 
 .menu>div:nth-child(1) {
+    display: flex;
     padding: 4px 8px;
+}
+
+.menu>div:nth-child(1) i {
+    display: inline-flex;
+    margin-right: 16px;
+}
+
+.menu .menu>div:nth-child(1)>div:nth-child(1) {
+    width: 28px;
+}
+
+.menu>div:nth-child(1)>div:nth-child(2)  {
+    align-items: center;
+    display: flex;
+    position: absolute;
+    top: 0;
+    right: 16px;
+    height: 32px;
 }
 
 .menu>div:nth-child(2) {
@@ -273,13 +294,14 @@ body {
 
 .menu .menu {
     display: flex;
-    padding: 0 8px;
+    padding: 0 92px 0 8px;
+
 }
 
 .menu .menu:hover {
     background-color: #DDD;
 }
 
-.menu:hover>div:nth-child(2) {
+.menu.display>div:nth-child(2) {
     display: block;
 }
