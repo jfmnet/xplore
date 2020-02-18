@@ -5,6 +5,10 @@ body {
     padding: 0;
 }
 
+i.mdi {
+    font-size: 20px;
+}
+
 .hidden {
     display: none;
 }
@@ -27,7 +31,6 @@ body {
 
 .button {
     background-color: #0D47A1;
-    border-radius: 8px;
     color: #FFF;
     cursor: pointer;
     display: inline-block;
@@ -304,4 +307,42 @@ body {
 
 .menu.display>div:nth-child(2) {
     display: block;
+}
+
+.toolbar {
+    align-items: center;
+    background-color: #EEE;
+    display: inline-flex;
+    height: 40px;
+}
+
+.toolbar .button {
+    align-items: center;
+    background-color: #EEE;
+    color: #333;
+    display: inline-flex;
+    padding: 0 8px;
+    height: 32px;
+}
+
+.toolbar .button:hover {
+    background-color: #DDD;
+    color: #333;
+}
+
+.toolbar .button:active {
+    background-color: #CCD;
+    color: #333;
+}
+
+.toolbar .input {
+    align-items: center;
+    display: inline-flex;
+    height: 32px;
+    margin: 0;
+}
+
+.toolbar .input select {
+    background-color: #EEE;
+    width: 120px;
 }

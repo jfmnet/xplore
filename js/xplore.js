@@ -56,7 +56,7 @@ xplore.prototype.Refresh = function () {
 
     //Show icon
     if (this.icon)
-        xplore.DisplayIcon(this.icon)
+        this.object.appendChild(xplore.DisplayIcon(this.icon));
 
     //Show text
     this.object.append(this.text);
@@ -367,7 +367,7 @@ xplore.Combobox.prototype.Refresh = function () {
 
     } else {
         select = document.createElement("select");
-        this.object.appendChild(input);
+        this.object.appendChild(select);
     }
 
     let option;
@@ -407,11 +407,7 @@ xplore.Menu = function (param) {
     xplore.call(this, param, undefined, "menu");
 
     param = param || {};
-
-    this.splittersize = param.splittersize || 0;
-    this.size = param.size;
     this.shortcut = param.shortcut;
-    this.resizing;
 };
 
 xplore.Menu.prototype = Object.create(xplore.prototype);
@@ -505,6 +501,19 @@ xplore.Menu.prototype.Collapse = function () {
     this.object.classList.remove("display");
     delete xplore.activemenu;
 };
+
+
+//Toolbar
+
+xplore.Toolbar = function (param) {
+    xplore.call(this, param, undefined, "toolbar");
+
+    param = param || {};
+    this.shortcut = param.shortcut;
+};
+
+xplore.Toolbar.prototype = Object.create(xplore.prototype);
+xplore.Toolbar.constructor = xplore.Toolbar;
 
 
 

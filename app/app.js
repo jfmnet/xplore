@@ -4,15 +4,37 @@ xplore.main = function () {
 
 function DemoMenuToolbar() {
     let menu = new xplore.Menu({ text: "File" });
-    menu.Add(new xplore.Menu({ icon: "account", text: "New", shortcut: "CTRL+N", onclick: function (sender) { console.log(sender.text) } }));
-    menu.Add(new xplore.Menu({ text: "Open", shortcut: "CTRL+O", onclick: function (sender) { console.log(sender.text) }  }));
-    menu.Add(new xplore.Menu({ text: "Save", shortcut: "CTRL+S", onclick: function (sender) { console.log(sender.text) }  }));
+    menu.Add(new xplore.Menu({
+        icon: "account", text: "New", shortcut: "CTRL+N",
+        onclick: function (sender) {
+            let form = new xplore.Form({
+                text: "Test"
+            });
+
+            form.Show();
+        }
+    }));
+    menu.Add(new xplore.Menu({ text: "Open", shortcut: "CTRL+O", onclick: function (sender) { console.log(sender.text) } }));
+    menu.Add(new xplore.Menu({ text: "Save", shortcut: "CTRL+S", onclick: function (sender) { console.log(sender.text) } }));
     menu.Show();
 
     menu = new xplore.Menu({ text: "Edit" });
     menu.Add(new xplore.Menu({ text: "Undo" }));
     menu.Add(new xplore.Menu({ text: "Redo" }));
     menu.Show();
+
+    let toolbar = new xplore.Toolbar();
+    toolbar.Add(new xplore.Button({ icon: "folder" }));
+    toolbar.Add(new xplore.Button({ icon: "account" }));
+    toolbar.Show();
+
+    toolbar = new xplore.Toolbar();
+    toolbar.Add(new xplore.Button({ icon: "folder" }));
+    toolbar.Add(new xplore.Button({ icon: "account" }));
+    toolbar.Add(new xplore.Combobox({
+        options: ["Male", "Female"]
+    }));
+    toolbar.Show();
 }
 
 function Demo1() {
