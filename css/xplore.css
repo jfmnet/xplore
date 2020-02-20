@@ -35,6 +35,7 @@ i.mdi {
     cursor: pointer;
     align-items: center;
     display: inline-flex;
+    justify-content: center;
     height: 32px;
     padding: 0 16px;
 }
@@ -52,10 +53,6 @@ i.mdi {
     color: #333;
     cursor: default;
     pointer-events: none;
-}
-
-.button>i {
-    margin-right: 16px;
 }
 
 .input {
@@ -363,7 +360,7 @@ i.mdi {
     width: 120px;
 }
 
-.tab, .tab-header, .tab-body {
+.tab, .tab-header, .tab-body, .tab-body>div {
     position: absolute;
     left: 0;
     right: 0;
@@ -371,17 +368,38 @@ i.mdi {
     bottom: 0;
 }
 
+.tab .button>i {
+    margin-right: 16px;
+}
+
 .tab-header {
     bottom: unset;
+    display: flex;
     height: 32px;
+}
+
+.tab-header>div {
+    border-right: 1px solid #CCC;
+    border-top: 1px solid #CCC;
+}
+
+.tab-header>div.full {
+    background-color: #FFF;
+    color: #333;
+    flex-basis: 0;
+    flex-grow: 1;
+}
+
+.tab-header>div.full:hover {
+    background-color: #EEE;
+}
+
+.tab-header>div.full:active {
+    background-color: #CCC;
 }
 
 .tab-body {
     background-color: #EEE;
     border-top: 1px solid #CCC;
     top: 32px;
-}
-
-.tab-header>div {
-    border-right: 1px solid #CCC;
 }

@@ -16,6 +16,7 @@ var xplore = function (param, element, classname) {
 
     this.text = param.text || "";
     this.icon = param.icon || "";
+    this.tag = param.tag;
 
     if (param.class)
         this.classname.push(param.class);
@@ -515,6 +516,7 @@ xplore.Menu.prototype.Collapse = function () {
 
 
 //Toolbar
+
 xplore.ToolbarContainer = function (param) {
     xplore.call(this, param, undefined, "toolbar-container");
 
@@ -996,6 +998,7 @@ xplore.Tab.prototype = Object.create(xplore.prototype);
 xplore.Tab.constructor = xplore.Tab;
 
 xplore.Tab.prototype.Refresh = function () {
+    let self = this;
     this.object.innerHTML = "";
 
     let header = document.createElement("div");
@@ -1010,7 +1013,23 @@ xplore.Tab.prototype.Refresh = function () {
     this.contents = [];
 
     for (let i = 0; i < this.tabs.length; i++) {
-        this.tabs[i].Show(header);
+        item = new xplore.Button({
+            icon: this.tabs[i].icon,
+            text: this.tabs[i].text,
+            tag: i,
+            onclick: function (object) {
+                self.contents[object.tag].style.zIndex = 100;
+
+                for (let i = 0; i < self.tabs.length; i++)
+                    if (object.tag !== i)
+                        self.contents[i].style.zIndex = 0;
+            }
+        });
+
+        if (this.style === xplore.TABSTYLE.FULL)
+            item.classname.push("full");
+
+        item.Show(header);
 
         item = document.createElement("div");
         body.appendChild(item);
@@ -1018,7 +1037,16 @@ xplore.Tab.prototype.Refresh = function () {
         this.contents.push(item);
     }
 
-    this.Events();
+    this.contents[0].style.zIndex = 100;
+};
+
+xplore.Tab.prototype.Set = function (object, index) {
+    if (this.contents[index]) {
+        if (object.object)
+            this.contents[index].appendChild(object.object);
+        else
+            object.Show(this.contents[index]);
+    }
 };
 
 

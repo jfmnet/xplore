@@ -4,15 +4,38 @@ xplore.main = function () {
 };
 
 function DemoTab() {
-    let tab = new xplore.Tab({
-        tabs: [
-            new xplore.Button({ icon: "folder", text: "Tab 1"}),
-            new xplore.Button({ icon: "file", text: "Tab 2"}),
-            new xplore.Button({ icon: "account", text: "Tab 3"}),
-        ]
+    let form = new xplore.Form({
+        text: "Demo"
     });
 
-    tab.Show();
+    let tab = form.Add(new xplore.Tab({
+        tabs: [
+            { icon: "folder", text: "Tab 1"},
+            { icon: "file", text: "Tab 2"},
+            { icon: "account", text: "Tab 3"},
+        ],
+        style: xplore.TABSTYLE.FULL
+    }));
+
+    form.Show();
+
+    let button = new xplore.Button({
+        text: "Button 1"
+    });
+
+    tab.Set(button, 0);
+
+    button = new xplore.Button({
+        text: "Button 2"
+    });
+
+    tab.Set(button, 1);
+
+    button = new xplore.Button({
+        text: "Button 3"
+    });
+
+    tab.Set(button, 2);
 }
 
 function DemoMenuToolbar() {
