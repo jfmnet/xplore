@@ -33,8 +33,10 @@ i.mdi {
     background-color: #0D47A1;
     color: #FFF;
     cursor: pointer;
-    display: inline-block;
-    padding: 8px 16px;
+    align-items: center;
+    display: inline-flex;
+    height: 32px;
+    padding: 0 16px;
 }
 
 .button:hover {
@@ -50,6 +52,10 @@ i.mdi {
     color: #333;
     cursor: default;
     pointer-events: none;
+}
+
+.button>i {
+    margin-right: 16px;
 }
 
 .input {
@@ -265,8 +271,10 @@ i.mdi {
 }
 
 .menu>div:nth-child(1) {
+    align-items: center;
     display: flex;
     padding: 4px 8px;
+    white-space: nowrap;
 }
 
 .menu>div:nth-child(1) i {
@@ -309,11 +317,18 @@ i.mdi {
     display: block;
 }
 
+
+.toolbar-container {
+    background-color: #EEE;
+    display: flex;
+    height: 32px;
+}
+
 .toolbar {
     align-items: center;
     background-color: #EEE;
     display: inline-flex;
-    height: 40px;
+    height: 32px;
 }
 
 .toolbar .button {
@@ -344,5 +359,29 @@ i.mdi {
 
 .toolbar .input select {
     background-color: #EEE;
+    padding: 4px 8px;
     width: 120px;
+}
+
+.tab, .tab-header, .tab-body {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.tab-header {
+    bottom: unset;
+    height: 32px;
+}
+
+.tab-body {
+    background-color: #EEE;
+    border-top: 1px solid #CCC;
+    top: 32px;
+}
+
+.tab-header>div {
+    border-right: 1px solid #CCC;
 }

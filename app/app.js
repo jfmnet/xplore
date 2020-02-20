@@ -1,9 +1,24 @@
 xplore.main = function () {
-    DemoMenuToolbar();
+    DemoTab();
+    //DemoMenuToolbar();
 };
 
+function DemoTab() {
+    let tab = new xplore.Tab({
+        tabs: [
+            new xplore.Button({ icon: "folder", text: "Tab 1"}),
+            new xplore.Button({ icon: "file", text: "Tab 2"}),
+            new xplore.Button({ icon: "account", text: "Tab 3"}),
+        ]
+    });
+
+    tab.Show();
+}
+
 function DemoMenuToolbar() {
-    let menu = new xplore.Menu({ text: "File" });
+    let menucontainer = new xplore.MenuContainer();
+
+    let menu = menucontainer.Add(new xplore.Menu({ text: "File" }));
     menu.Add(new xplore.Menu({
         icon: "account", text: "New", shortcut: "CTRL+N",
         onclick: function (sender) {
@@ -16,25 +31,28 @@ function DemoMenuToolbar() {
     }));
     menu.Add(new xplore.Menu({ text: "Open", shortcut: "CTRL+O", onclick: function (sender) { console.log(sender.text) } }));
     menu.Add(new xplore.Menu({ text: "Save", shortcut: "CTRL+S", onclick: function (sender) { console.log(sender.text) } }));
-    menu.Show();
 
-    menu = new xplore.Menu({ text: "Edit" });
-    menu.Add(new xplore.Menu({ text: "Undo" }));
-    menu.Add(new xplore.Menu({ text: "Redo" }));
-    menu.Show();
+    menucontainer.Show();
 
-    let toolbar = new xplore.Toolbar();
+
+    let toolbarcontainer = new xplore.ToolbarContainer();
+    let toolbar = toolbarcontainer.Add(new xplore.Toolbar());
     toolbar.Add(new xplore.Button({ icon: "folder" }));
     toolbar.Add(new xplore.Button({ icon: "account" }));
-    toolbar.Show();
 
-    toolbar = new xplore.Toolbar();
+    toolbar = toolbarcontainer.Add(new xplore.Toolbar());
     toolbar.Add(new xplore.Button({ icon: "folder" }));
     toolbar.Add(new xplore.Button({ icon: "account" }));
     toolbar.Add(new xplore.Combobox({
         options: ["Male", "Female"]
     }));
-    toolbar.Show();
+
+    menu = toolbar.Add(new xplore.Menu({ text: "Edit" }));
+
+    for (let i = 0; i < 50; i++)
+        menu.Add(new xplore.Menu({ text: "Menu " + i }));
+
+    toolbarcontainer.Show();
 }
 
 function Demo1() {
@@ -141,13 +159,6 @@ function Demo1() {
 
     demo.SetVisibility(false);
     demo.Show();
-
-    // var textbox = new xplore.TextBox();
-    // textbox.Show();
-
-    // textbox.Listen("onchange", buttons[0]);
-    // textbox.Listen("onchange", buttons[1]);
-    // textbox.Listen("onchange", buttons[2]);
 }
 
 function Model() {

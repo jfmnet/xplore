@@ -403,6 +403,17 @@ xplore.Combobox.prototype.Events = function () {
 
 //Menu
 
+xplore.MenuContainer = function (param) {
+    xplore.call(this, param, undefined, "menu-container");
+
+    param = param || {};
+    this.shortcut = param.shortcut;
+};
+
+xplore.MenuContainer.prototype = Object.create(xplore.prototype);
+xplore.MenuContainer.constructor = xplore.MenuContainer;
+
+
 xplore.Menu = function (param) {
     xplore.call(this, param, undefined, "menu");
 
@@ -504,6 +515,16 @@ xplore.Menu.prototype.Collapse = function () {
 
 
 //Toolbar
+xplore.ToolbarContainer = function (param) {
+    xplore.call(this, param, undefined, "toolbar-container");
+
+    param = param || {};
+    this.shortcut = param.shortcut;
+};
+
+xplore.ToolbarContainer.prototype = Object.create(xplore.prototype);
+xplore.ToolbarContainer.constructor = xplore.ToolbarContainer;
+
 
 xplore.Toolbar = function (param) {
     xplore.call(this, param, undefined, "toolbar");
@@ -524,7 +545,7 @@ xplore.SplitContainer = function (param) {
 
     param = param || {};
 
-    this.orientation = param.orientation;
+    this.orientation = param.orientation || xplore.ORIENTATION.HORIZONTAL;
     this.splittersize = param.splittersize || 0;
     this.size = param.size;
     this.resizing;
@@ -961,6 +982,45 @@ xplore.DockPanel.prototype.Events = function (child, index) {
 };
 
 
+//Tab
+
+xplore.Tab = function (param) {
+    xplore.call(this, param, undefined, "tab");
+
+    param = param || {};
+    this.style = param.style || xplore.TABSTYLE.NORMAL;
+    this.tabs = param.tabs || [];
+};
+
+xplore.Tab.prototype = Object.create(xplore.prototype);
+xplore.Tab.constructor = xplore.Tab;
+
+xplore.Tab.prototype.Refresh = function () {
+    this.object.innerHTML = "";
+
+    let header = document.createElement("div");
+    header.classList.add("tab-header");
+    this.object.appendChild(header);
+
+    let body = document.createElement("div");
+    body.classList.add("tab-body");
+    this.object.appendChild(body);
+
+    let item;
+    this.contents = [];
+
+    for (let i = 0; i < this.tabs.length; i++) {
+        this.tabs[i].Show(header);
+
+        item = document.createElement("div");
+        body.appendChild(item);
+
+        this.contents.push(item);
+    }
+
+    this.Events();
+};
+
 
 //Form
 
@@ -1222,6 +1282,23 @@ xplore.STATE = {
     ENABLED: 1,
     DISABLED: 2
 };
+
+xplore.TABSTYLE = {
+    NORMAL: 1,
+    FULL: 2
+};
+
+xplore.POSITION = {
+    TOP: 1,
+    BOTTOM: 2,
+    LEFT: 3,
+    RIGHT: 4
+};
+
+xplore.ORIENTATION = {
+    HORIZONTAL: 0,
+    VERTICAL: 1
+}
 
 xplore.DisplayIcon = function (icon) {
     let element = document.createElement("i");
