@@ -1003,6 +1003,10 @@ xplore.Tab.prototype.Refresh = function () {
 
     let header = document.createElement("div");
     header.classList.add("tab-header");
+
+    if (this.style === xplore.TABSTYLE.FULL)
+        header.classList.add("full");
+
     this.object.appendChild(header);
 
     let body = document.createElement("div");
@@ -1010,6 +1014,8 @@ xplore.Tab.prototype.Refresh = function () {
     this.object.appendChild(body);
 
     let item;
+
+    this.header = [];
     this.contents = [];
 
     for (let i = 0; i < this.tabs.length; i++) {
@@ -1018,18 +1024,12 @@ xplore.Tab.prototype.Refresh = function () {
             text: this.tabs[i].text,
             tag: i,
             onclick: function (object) {
-                self.contents[object.tag].style.zIndex = 100;
-
-                for (let i = 0; i < self.tabs.length; i++)
-                    if (object.tag !== i)
-                        self.contents[i].style.zIndex = 0;
+                self.SelectedIndex(object.tag);
             }
         });
 
-        if (this.style === xplore.TABSTYLE.FULL)
-            item.classname.push("full");
-
         item.Show(header);
+        this.header.push(item);
 
         item = document.createElement("div");
         body.appendChild(item);
@@ -1037,7 +1037,20 @@ xplore.Tab.prototype.Refresh = function () {
         this.contents.push(item);
     }
 
-    this.contents[0].style.zIndex = 100;
+    this.SelectedIndex(0);
+};
+
+xplore.Tab.prototype.SelectedIndex = function (index) {
+    if (this.contents[index]) {
+        this.header[index].object.classList.add("selected");
+        this.contents[index].style.zIndex = 100;
+
+        for (let i = 0; i < this.tabs.length; i++)
+            if (index !== i) {
+                this.header[i].object.classList.remove("selected");
+                this.contents[i].style.zIndex = 0;
+            }
+    }
 };
 
 xplore.Tab.prototype.Set = function (object, index) {

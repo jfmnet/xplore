@@ -374,20 +374,34 @@ i.mdi {
 
 .tab-header {
     bottom: unset;
-    display: flex;
     height: 32px;
 }
 
+.tab-header.full {
+    display: flex;
+}
+
 .tab-header>div {
-    border-right: 1px solid #CCC;
+    border-bottom: 1px solid #CCC;
     border-top: 1px solid #CCC;
 }
 
-.tab-header>div.full {
+.tab-header.full>div {
     background-color: #FFF;
-    color: #333;
+    color: #666;
     flex-basis: 0;
     flex-grow: 1;
+}
+
+.tab-header>div.selected {
+    background-color: #EEE;
+    border-left: 1px solid #CCC;
+    border-right: 1px solid #CCC;
+    border-bottom: 1px solid #EEE;
+    color: #000;
+    flex-basis: 0;
+    flex-grow: 1;
+    z-index: 1;
 }
 
 .tab-header>div.full:hover {
@@ -400,6 +414,5 @@ i.mdi {
 
 .tab-body {
     background-color: #EEE;
-    border-top: 1px solid #CCC;
-    top: 32px;
+    top: 34px;
 }
