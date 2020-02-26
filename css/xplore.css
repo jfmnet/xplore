@@ -136,6 +136,71 @@ i.mdi {
     border: 2px dashed #0D47A1;
 }
 
+.view {
+    background-color: #FFF;
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.view-header, .view-body {
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+.view-header {
+    align-items: center;
+    background-color: #6200ee;
+    color: #FFF;
+    display: flex;
+    font-size: 18px;
+    height: 64px;
+    top: 0;
+}
+
+.view-header i {
+    color: #FFF;
+}
+
+.view-header .text {
+    font-weight: bold;
+    margin-left: 16px;
+}
+
+.view-header .buttons {
+    align-items: center;
+    display: flex;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 64px;
+}
+
+.view-header .button {
+    background-color: transparent;
+    color: #333;
+}
+
+.view-body {
+    top: 64px;
+    bottom: 0;
+}
+
+
+
+
+
 .form {
     background-color: #FFF;
     box-shadow: 0 0 16px #555;

@@ -1070,7 +1070,6 @@ xplore.Form = function (param) {
 
     param = param || {};
 
-    this.text = param.text || "";
     this.width = param.width || 400;
     this.height = param.height || 600;
     this.ok = param.oktext || "OK";
@@ -1295,6 +1294,78 @@ xplore.Form.prototype.TerminateDrag = function () {
     self.resizing = false;
     document.body.onmousemove = undefined;
     self.Trigger("onmouseup");
+};
+
+
+xplore.View = function (param) {
+    xplore.call(this, param, undefined, "view");
+
+    param = param || {};
+};
+
+xplore.View.prototype = Object.create(xplore.prototype);
+xplore.View.constructor = xplore.View;
+
+xplore.View.prototype.Refresh = function () {
+    let self = this;
+
+    this.object.innerHTML = "";
+
+    //Header
+    this.header = document.createElement("div");
+    this.header.classList.add("view-header");
+    this.object.appendChild(this.header);
+    this.RefreshHeader();
+
+    //Body
+    this.body = document.createElement("div");
+    this.body.classList.add("view-body");
+    this.object.appendChild(this.body);
+    this.RefreshBody();
+
+    this.Events();
+};
+
+xplore.View.prototype.RefreshHeader = function () {
+    let self = this;
+
+    this.header.innerHTML = "";
+
+    let button = new xplore.Button({
+        text: xplore.DisplayIcon("menu"),
+        onclick: function () {
+            self.Close();
+        }
+    });
+
+    button.Show(this.header);
+
+    let text = document.createElement("div");
+    text.innerHTML = this.text;
+    text.classList.add("text");
+    this.header.appendChild(text);
+
+    let buttons = document.createElement("div");
+    buttons.classList.add("buttons");
+    this.header.appendChild(buttons);
+
+    button = new xplore.Button({
+        text: xplore.DisplayIcon("close"),
+        onclick: function () {
+            self.Close();
+        }
+    });
+
+    button.Show(buttons);
+};
+
+xplore.View.prototype.RefreshBody = function () {
+    this.body.innerHTML = "";
+
+    //Children
+    for (let i = 0; i < this.children.length; i++) {
+        this.children[i].Show(this.body);
+    }
 };
 
 

@@ -1,7 +1,25 @@
 xplore.main = function () {
-    DemoTab();
+    DemoView();
+    //DemoTab();
     //DemoMenuToolbar();
 };
+
+function DemoView() {
+    let view = new xplore.View({
+        text: "View"
+    });
+
+    let tab = view.Add(new xplore.Tab({
+        tabs: [
+            { icon: "folder", text: "Tab 1"},
+            { icon: "file", text: "Tab 2"},
+            { icon: "account", text: "Tab 3"},
+        ],
+        style: xplore.TABSTYLE.FULL
+    }));
+
+    view.Show();
+}
 
 function DemoTab() {
     let form = new xplore.Form({
