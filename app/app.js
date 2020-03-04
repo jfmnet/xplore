@@ -1,8 +1,14 @@
 xplore.main = function () {
-    DemoView();
+    DemoCanvas();
+    //DemoView();
     //DemoTab();
     //DemoMenuToolbar();
 };
+
+function DemoCanvas() {
+    let canvas = new xplore.Canvas2D();
+    canvas.Show();
+}
 
 function DemoView() {
     let view = new xplore.View({
