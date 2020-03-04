@@ -8,6 +8,11 @@ xplore.main = function () {
 function DemoCanvas() {
     let canvas = new xplore.Canvas2D();
     canvas.Show();
+
+    let line = new xplore.Canvas2dGraphics.Line(0, 0, 2, 2);
+    line.Rotate(Math.PI / 2);
+    canvas.Add(line);
+    canvas.Render();
 }
 
 function DemoView() {
