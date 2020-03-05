@@ -6,7 +6,7 @@ xplore.main = function () {
 };
 
 function DemoCanvas() {
-    let canvas = new xplore.Canvas2D();
+    let canvas = new xplore.Canvas3D();
     canvas.Show();
 }
 

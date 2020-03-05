@@ -1,12 +1,22 @@
 xplore.Canvas3D = function (param) {
-    xplore.call(this, param, undefined, "canvas3d");
+    xplore.call(this, param, undefined, "canvas");
+
+    this.canvas;
+    this.engine;
 };
 
 xplore.Canvas3D.prototype = Object.create(xplore.prototype);
 xplore.Canvas3D.constructor = xplore.Canvas3D;
 
 xplore.Canvas2D.prototype.Refresh = function () {
-    let scene = new BABYLON.Scene(engine);
+    this.object.innerHTML = "";
+
+    this.canvas = document.createElement("canvas");
+    this.object.appendChild(this.canvas);
+
+    this.engine = new BABYLON.Engine(this.canvas, true, { preserveDrawingBuffer: true, stencil: true });
+
+    let scene = new BABYLON.Scene(this.engine);
 
     // This creates and positions a free camera (non-mesh)
     let camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 5, -10), scene);
