@@ -6,13 +6,37 @@ xplore.main = function () {
 };
 
 function DemoCanvas() {
-    let canvas = new xplore.Canvas3D();
+    let canvas = new xplore.Canvas2D();
     canvas.Show();
+}
 
-    let line = new xplore.Canvas2dGraphics.Line(0, 0, 2, 2);
-    line.Rotate(Math.PI / 2);
-    canvas.Add(line);
-    canvas.Render();
+function AddElements(canvas, data) {
+    let positions = [];
+    let indices = [];
+    let colors = [];
+
+    for (let i = 0; i < data.vertices.length; i++) {
+        positions.push(data.vertices[i].X);
+        positions.push(data.vertices[i].Y);
+        positions.push(data.vertices[i].Z);
+
+        indices.push(i);
+
+        colors.push(1);
+        colors.push(0);
+        colors.push(0);
+        colors.push(1);
+    }
+
+    let normals = [];
+   
+    for (let i = 0; i < data.normals.length; i++) {
+        normals.push(data.normals[i].X);
+        normals.push(data.normals[i].Y);
+        normals.push(data.normals[i].Z);
+    }
+
+    canvas.DrawMesh(positions, indices, normals, colors);
 }
 
 function DemoView() {
@@ -22,9 +46,9 @@ function DemoView() {
 
     let tab = view.Add(new xplore.Tab({
         tabs: [
-            { icon: "folder", text: "Tab 1"},
-            { icon: "file", text: "Tab 2"},
-            { icon: "account", text: "Tab 3"},
+            { icon: "folder", text: "Tab 1" },
+            { icon: "file", text: "Tab 2" },
+            { icon: "account", text: "Tab 3" },
         ],
         style: xplore.TABSTYLE.FULL
     }));
@@ -39,9 +63,9 @@ function DemoTab() {
 
     let tab = form.Add(new xplore.Tab({
         tabs: [
-            { icon: "folder", text: "Tab 1"},
-            { icon: "file", text: "Tab 2"},
-            { icon: "account", text: "Tab 3"},
+            { icon: "folder", text: "Tab 1" },
+            { icon: "file", text: "Tab 2" },
+            { icon: "account", text: "Tab 3" },
         ],
         style: xplore.TABSTYLE.FULL
     }));

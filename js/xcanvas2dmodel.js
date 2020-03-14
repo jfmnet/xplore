@@ -9,6 +9,7 @@ xplore.Canvas2DModel = function () {
     this.action = "";
 };
 
+
 //Render
 
 xplore.Canvas2DModel.prototype.Render = function (canvas) {
@@ -16,6 +17,7 @@ xplore.Canvas2DModel.prototype.Render = function (canvas) {
         this.list[i].Render(canvas);
     }
 };
+
 
 
 //List
@@ -45,6 +47,7 @@ xplore.Canvas2DModel.prototype.MouseUp = function (canvas, mouse, button) {
 
 xplore.Canvas2DModel.prototype.MouseWheel = function (canvas, mouse, button) {
 };
+
 
 
 //Events handling
@@ -115,9 +118,17 @@ xplore.Canvas2DModel.prototype.HandleMouseMoveLeftButton = function (canvas, mou
     }
 };
 
+xplore.Canvas2DModel.prototype.HandleMouseMoveMiddleButton = function (canvas, mouse, button) {
+};
+
 xplore.Canvas2DModel.prototype.HandleMouseMoveRightButton = function (canvas, mouse) {
     if (canvas.settings.allowpan) {
-        canvas.Pan(mouse.rawcurrent.x - mouse.rawprevious.x, mouse.rawprevious.y - mouse.rawcurrent.y);
-        canvas.Render();
+        let x = mouse.rawcurrent.x - mouse.rawprevious.x;
+        let y = mouse.rawprevious.y - mouse.rawcurrent.y;
+
+        if (!(x === 0 && y === 0)) {
+            canvas.Pan(x, y);
+            canvas.Render();
+        }
     }
 };

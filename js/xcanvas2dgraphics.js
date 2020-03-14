@@ -28,12 +28,14 @@ xplore.Canvas2dGraphics = function () {
 
 xplore.Canvas2dGraphics.constructor = xplore.Canvas2dGraphics;
 
-
 xplore.Canvas2dGraphics.prototype.Clone = function () {
     let object = Object.create(this);
 
     for (let name in this) {
-        object[name] = this[name];
+        if (Array.isArray(this[name]))
+            object[name] = JSON.parse(JSON.stringify(this[name]));
+        else
+            object[name] = this[name];
     }
 
     return object;

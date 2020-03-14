@@ -1390,6 +1390,7 @@ xplore.Background.prototype.Refresh = function () {
 
 
 //Enums
+
 xplore.STATE = {
     ENABLED: 1,
     DISABLED: 2
@@ -1412,6 +1413,14 @@ xplore.ORIENTATION = {
     VERTICAL: 1
 }
 
+xplore.FILEFORMAT = {
+    NONE: 1,
+    TEXT: 2
+}
+
+
+//Functions
+
 xplore.DisplayIcon = function (icon) {
     let element = document.createElement("i");
     element.classList.add("mdi");
@@ -1419,6 +1428,51 @@ xplore.DisplayIcon = function (icon) {
 
     return element;
 };
+
+xplore.OpenFile = function(format, extension, res) {
+    let content = document.createElement("input");
+    content.classList.add("hidden");
+    content.setAttribute("type", "file");
+    content.setAttribute("name", "options");
+
+    if (extension)
+        content.setAttribute("accept", extension);
+
+    document.body.appendChild(content);
+    content.click();
+
+    content.addEventListener('change', function (e, data) {
+        let files = [];
+
+        for (let i = 0; i < this.files.length; i++) {
+            if (format === xplore.FILEFORMAT.TEXT) {
+                var reader = new FileReader();
+                reader.readAsText(this.files[i]);
+
+                reader.onload = function (readEvent) {
+                    res(readEvent.target.result);
+                }
+
+            } else {
+                res(this.files[i]);
+            }
+        }
+
+        content.remove();
+    });
+}
+
+xplore.ReadFile = function (file) {
+    var reader = new FileReader();
+
+    reader.onload = function (e) {
+        var contents = e.target.result;
+        displayContents(contents);
+    };
+
+    reader.readAsText(file);
+}
+
 
 xplore.events = {};
 xplore.ZINDEX = 100;
