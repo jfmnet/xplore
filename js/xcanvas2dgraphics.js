@@ -4,7 +4,7 @@ xplore.DrawProperties = function () {
     this.scale = true;
 
     this.fillcolor = "#CCC";
-    this.linecolor = "#000";
+    this.linecolor = "#FFF";
     this.thickness = 1;
 };
 
@@ -89,32 +89,39 @@ xplore.Canvas2dGraphics.prototype.Property = function (x, y) {
 xplore.Canvas2dGraphics.Line = function (x1, y1, x2, y2) {
     xplore.Canvas2dGraphics.call(this);
 
-    this.points = [{ x: x1, y: y1 }, { x: x2, y: y2 }];
-
-    Object.defineProperty(xplore.Canvas2dGraphics.Line.prototype, 'x1', {
-        get: function () { return this.points[0].x },
-        set: function (value) { this.points[0].x = value }
-    });
-
-    Object.defineProperty(xplore.Canvas2dGraphics.Line.prototype, 'x2', {
-        get: function () { return this.points[1].x },
-        set: function (value) { this.points[2].x = value }
-    });
-
-    Object.defineProperty(xplore.Canvas2dGraphics.Line.prototype, 'y1', {
-        get: function () { return this.points[0].y },
-        set: function (value) { this.points[0].y = value }
-    });
-
-    Object.defineProperty(xplore.Canvas2dGraphics.Line.prototype, 'y2', {
-        get: function () { return this.points[1].y },
-        set: function (value) { this.points[2].y = value }
-    });
+    if (x1 !== undefined && x1.x !== undefined)
+        this.points = [{ x: x1.x || 0, y: x1.y || 0 }, { x: x1.x || 0, y: x1.y || 0 }];
+    else
+        this.points = [{ x: x1 || 0, y: y1 || 0 }, { x: x2 || 0, y: y2 || 0 }];
 };
 
 xplore.Canvas2dGraphics.Line.prototype = Object.create(xplore.Canvas2dGraphics.prototype);
 xplore.Canvas2dGraphics.Line.constructor = xplore.Canvas2dGraphics.Line;
 
+Object.defineProperty(xplore.Canvas2dGraphics.Line.prototype, 'x1', {
+    get: function () { return this.points[0].x },
+    set: function (value) { this.points[0].x = value }
+});
+
+Object.defineProperty(xplore.Canvas2dGraphics.Line.prototype, 'x2', {
+    get: function () { return this.points[1].x },
+    set: function (value) { this.points[2].x = value }
+});
+
+Object.defineProperty(xplore.Canvas2dGraphics.Line.prototype, 'y1', {
+    get: function () { return this.points[0].y },
+    set: function (value) { this.points[0].y = value }
+});
+
+Object.defineProperty(xplore.Canvas2dGraphics.Line.prototype, 'y2', {
+    get: function () { return this.points[1].y },
+    set: function (value) { this.points[2].y = value }
+});
+
 xplore.Canvas2dGraphics.Line.prototype.Render = function (canvas) {
     canvas.DrawLine(this.x1, this.y1, this.x2, this.y2, this.Property());
+};
+
+xplore.Canvas2dGraphics.Line.prototype.Update = function (mouse) {
+    this.points[1] = { x: mouse.x, y: mouse.y };
 };

@@ -6,15 +6,35 @@ xplore.Canvas2DSettings = function () {
     this.allowzoom = true;
     this.allowpan = true;
 
-    this.background = "#FFF";
-    this.axis = "#CCC";
-    this.major = "#DDD";
-    this.minor = "#EEE";
-    this.ruler = "#FFF";
-    this.rulerposition = 1;     //0 - Outer; 1 - At (0, 0)
-    this.rulertext = "#555";
-    this.rulerline = "#AAA";
-    this.fontcolor = "#000";
+    //Snap
+    this.snap = true;
+    this.snaptogrid = true;
+
+    this.LightTheme = function () {
+        this.background = "#FFF";
+        this.axis = "#CCC";
+        this.major = "#DDD";
+        this.minor = "#EEE";
+        this.ruler = "#FFF";
+        this.rulerposition = 1;     //0 - Outer; 1 - At (0, 0)
+        this.rulertext = "#555";
+        this.rulerline = "#AAA";
+        this.fontcolor = "#000";
+    };
+
+    this.DarkTheme = function () {
+        this.background = "#000";
+        this.axis = "#333";
+        this.major = "#222";
+        this.minor = "#111";
+        this.ruler = "#111";
+        this.rulerposition = 1;     //0 - Outer; 1 - At (0, 0)
+        this.rulertext = "#888";
+        this.rulerline = "#222";
+        this.fontcolor = "#000";
+    };
+
+    this.DarkTheme();
 };
 
 xplore.Mouse = function (c) {
@@ -82,6 +102,7 @@ xplore.Canvas2D = function (param) {
     this.gridvalue = { x: 1, y: 1 };
     this.middle = { x: 0, y: 0 };
     this.gridsize = 100;
+    this.gridinterval = 1;
     this.rulersize = 30;
     this.width = 100;
     this.height = 100;
@@ -96,6 +117,10 @@ xplore.Canvas2D = function (param) {
 
 xplore.Canvas2D.prototype = Object.create(xplore.prototype);
 xplore.Canvas2D.constructor = xplore.Canvas2D;
+
+xplore.Canvas2D.prototype.Draw = function (drawobject) {
+    this.model.Draw(drawobject);
+};
 
 xplore.Canvas2D.prototype.Add = function (object) {
     this.model.Add(object);
@@ -123,8 +148,9 @@ xplore.Canvas2D.prototype.Refresh = function () {
 };
 
 xplore.Canvas2D.prototype.Resize = function () {
-    this.top = this.object.offsetTop;
-    this.left = this.object.offsetLeft;
+    let rect = this.object.getBoundingClientRect();
+    this.top = rect.top;
+    this.left = rect.left;
 
     this.width = this.object.clientWidth;
     this.height = this.object.clientHeight;
@@ -243,8 +269,9 @@ xplore.Canvas2D.prototype.DrawGrid = function () {
     if (minorinterval < 10) {
         minorinterval *= 10;
         majorinterval *= 10;
-        gridinterval *= 10;
     }
+
+    this.gridinterval = this.ToPointWidth(minorinterval);
 
     //Minor x
     if (minorinterval >= 10) {
@@ -960,8 +987,8 @@ xplore.Canvas2D.prototype.Events = function () {
         onmousedown = true;
         button = event.which;
 
-        var x = event.pageX - self.left;
-        var y = event.pageY - self.top;
+        let x = event.layerX;
+        let y = event.layerY;
 
         self.MouseDown(x, y, button);
 
@@ -979,8 +1006,8 @@ xplore.Canvas2D.prototype.Events = function () {
 
             event.preventDefault();
 
-            var x = event.pageX - self.left;
-            var y = event.pageY - self.top;
+            let x = event.layerX;
+            let y = event.layerY;
 
             self.MouseMove(x, y, button);
         }
@@ -993,8 +1020,9 @@ xplore.Canvas2D.prototype.Events = function () {
 
         button = 0;
 
-        var x = event.pageX - self.left;
-        var y = event.pageY - self.top;
+        let x = event.layerX;
+        let y = event.layerY;
+
 
         self.MouseUp(x, y, movebutton);
     });
@@ -1152,8 +1180,8 @@ xplore.Canvas2D.prototype.Events = function () {
             if (event.wheelDelta)
                 delta = event.wheelDelta / 240;
 
-            let x = event.pageX - self.left;
-            let y = event.pageY - self.top;
+            let x = event.layerX;
+            let y = event.layerY;
 
             self.MouseWheel(x, y, delta);
         }
@@ -1161,8 +1189,8 @@ xplore.Canvas2D.prototype.Events = function () {
 };
 
 xplore.Canvas2D.prototype.MouseDown = function (x, y, button) {
-    this.mouse.down.x = this.ToCoordX(x);
-    this.mouse.down.y = this.ToCoordY(y);
+    this.mouse.down.x = this.ToPointX(x);
+    this.mouse.down.y = this.ToPointY(y);
 
     this.mouse.rawdown.x = x;
     this.mouse.rawdown.y = y;
@@ -1177,8 +1205,8 @@ xplore.Canvas2D.prototype.MouseDown = function (x, y, button) {
 };
 
 xplore.Canvas2D.prototype.MouseMove = function (x, y, button) {
-    this.mouse.current.x = this.ToCoordX(x);
-    this.mouse.current.y = this.ToCoordY(y);
+    this.mouse.current.x = this.ToPointX(x);
+    this.mouse.current.y = this.ToPointY(y);
 
     this.mouse.rawcurrent.x = x;
     this.mouse.rawcurrent.y = y;
@@ -1193,8 +1221,8 @@ xplore.Canvas2D.prototype.MouseMove = function (x, y, button) {
 };
 
 xplore.Canvas2D.prototype.MouseUp = function (x, y, button) {
-    this.mouse.current.x = this.ToCoordX(x);
-    this.mouse.current.y = this.ToCoordY(y);
+    this.mouse.current.x = this.ToPointX(x);
+    this.mouse.current.y = this.ToPointY(y);
 
     this.model.MouseUp(this, this.mouse, button);
 };

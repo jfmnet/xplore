@@ -566,8 +566,13 @@ xplore.SplitContainer.prototype.Refresh = function () {
     this.object.appendChild(this.panel1);
     this.object.appendChild(this.gap);
     this.object.appendChild(this.panel2);
-
     this.Resize();
+
+    //Children
+    for (let i = 0; i < this.children.length && i < 2; i++) {
+        this.Set(this.children[i], i);
+    }
+
     this.Events();
 };
 
@@ -607,9 +612,6 @@ xplore.SplitContainer.prototype.Resize = function () {
     }
 };
 
-xplore.SplitContainer.prototype.Add = function () {
-};
-
 xplore.SplitContainer.prototype.Set = function (child, index) {
     if (child) {
         let panel = index === 0 || index === undefined ? this.panel1 : this.panel2;
@@ -618,6 +620,7 @@ xplore.SplitContainer.prototype.Set = function (child, index) {
         if (Array.isArray(child)) {
             for (let i = 0; i < child.length; i++) {
                 if (child[i] && child[i].Show) {
+                    this.components
                     child[i].Show(panel);
                 }
             }
@@ -1297,6 +1300,8 @@ xplore.Form.prototype.TerminateDrag = function () {
 };
 
 
+//View
+
 xplore.View = function (param) {
     xplore.call(this, param, undefined, "view");
 
@@ -1334,7 +1339,6 @@ xplore.View.prototype.RefreshHeader = function () {
     let button = new xplore.Button({
         text: xplore.DisplayIcon("menu"),
         onclick: function () {
-            self.Close();
         }
     });
 
@@ -1349,14 +1353,14 @@ xplore.View.prototype.RefreshHeader = function () {
     buttons.classList.add("buttons");
     this.header.appendChild(buttons);
 
-    button = new xplore.Button({
-        text: xplore.DisplayIcon("close"),
-        onclick: function () {
-            self.Close();
-        }
-    });
+    // button = new xplore.Button({
+    //     text: xplore.DisplayIcon("close"),
+    //     onclick: function () {
+    //         self.Close();
+    //     }
+    // });
 
-    button.Show(buttons);
+    // button.Show(buttons);
 };
 
 xplore.View.prototype.RefreshBody = function () {
@@ -1367,6 +1371,17 @@ xplore.View.prototype.RefreshBody = function () {
         this.children[i].Show(this.body);
     }
 };
+
+
+//Tree
+
+xplore.Tree = function (param) {
+    xplore.call(this, param, undefined, "tree");
+};
+
+xplore.Tree.prototype = Object.create(xplore.prototype);
+xplore.Tree.constructor = xplore.Tree;
+
 
 
 
@@ -1429,7 +1444,7 @@ xplore.DisplayIcon = function (icon) {
     return element;
 };
 
-xplore.OpenFile = function(format, extension, res) {
+xplore.OpenFile = function (format, extension, res) {
     let content = document.createElement("input");
     content.classList.add("hidden");
     content.setAttribute("type", "file");
@@ -1473,6 +1488,11 @@ xplore.ReadFile = function (file) {
     reader.readAsText(file);
 }
 
+xplore.Round = function (num, precision) {
+    num = parseFloat(num);
+    if (!precision) return num;
+    return (Math.round(num / precision) * precision);
+};
 
 xplore.events = {};
 xplore.ZINDEX = 100;
