@@ -9,6 +9,7 @@ xplore.Canvas2DSettings = function () {
     //Snap
     this.snap = true;
     this.snaptogrid = true;
+    this.showsnapguide = true;
 
     this.LightTheme = function () {
         this.background = "#FFF";
@@ -676,8 +677,22 @@ xplore.Canvas2D.prototype.DrawRulerInner = function () {
 
 //Draw
 
-xplore.Canvas2D.prototype.PrimitiveLine = function (x1, y1, x2, y2, color, linewidth) {
+xplore.Canvas2D.prototype.PrimitiveLine = function (x1, y1, x2, y2, color, linewidth, dashline) {
     this.context.beginPath();
+
+    if (dashline) {
+        this.context.save();
+
+        if (dashline) {
+            let linedash = [];
+
+            for (let i = 0; i < dashline.length; i++)
+                linedash.push(dashline[i] * 2);
+
+            this.context.setLineDash(linedash);
+        }
+    }
+
     this.context.moveTo(x1 - 0.5, y1 - 0.5);
     this.context.lineTo(x2 - 0.5, y2 - 0.5);
     this.context.strokeStyle = color;
@@ -688,6 +703,9 @@ xplore.Canvas2D.prototype.PrimitiveLine = function (x1, y1, x2, y2, color, linew
         this.context.lineWidth = linewidth;
 
     this.context.stroke();
+
+    if (dashline)
+        this.context.restore();
 };
 
 xplore.Canvas2D.prototype.PrimitiveCircle = function () {
@@ -776,7 +794,18 @@ xplore.Canvas2D.prototype.DrawLine = function (x1, y1, x2, y2, properties) {
 xplore.Canvas2D.prototype.DrawCircle = function () {
 };
 
-xplore.Canvas2D.prototype.DrawRectangle = function () {
+xplore.Canvas2D.prototype.DrawRectangle = function (x, y, w, h, properties) {
+    let ratio = this.gridsize / this.gridvalue.x;
+    w = ratio * w;
+    h = ratio * h;
+    x = this.ToCoordX(x) - w / 2;
+    y = this.ToCoordY(y) - h / 2;
+
+    if (properties.showfill)
+        this.context.fillRect(x, y, w, h);
+
+    if (properties.showline)
+        this.context.strokeRect(x, y, w, h);
 };
 
 xplore.Canvas2D.prototype.DrawPolyline = function () {

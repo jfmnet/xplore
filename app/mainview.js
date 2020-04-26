@@ -32,5 +32,5 @@ mainview.prototype.Show = function () {
 };
 
 mainview.prototype.DrawMember = function () {
-    this.canvas.Draw(xplore.Canvas2dGraphics.Line);
+    this.canvas.Draw(structuregraphics.Frame);
 };

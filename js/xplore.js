@@ -1491,8 +1491,14 @@ xplore.ReadFile = function (file) {
 xplore.Round = function (num, precision) {
     num = parseFloat(num);
     if (!precision) return num;
-    return (Math.round(num / precision) * precision);
+
+    return Math.round(num / precision) * precision;
 };
+
+Number.prototype.CountDecimals = function () {
+    if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
+    return this.toString().split(".")[1].length || 0;
+}
 
 xplore.events = {};
 xplore.ZINDEX = 100;

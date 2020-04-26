@@ -26,8 +26,29 @@ xplore.Canvas2DModel.prototype.Render = function (canvas) {
         this.list[i].Render(canvas);
     }
 
-    if (this.draw)
+    if (canvas.settings.showsnapguide && this.snappoint) {
+        let x = canvas.ToCoordX(this.snappoint.x);
+        let y = canvas.ToCoordY(this.snappoint.y);
+
+        canvas.PrimitiveLine(x, 0, x, canvas.height, "#008", 1, [2, 2]);            
+        canvas.PrimitiveLine(0, y, canvas.width, y, "#008", 1, [2, 2]);
+        
+        let count = canvas.gridinterval.CountDecimals();
+
+        if (count > 10) {
+            canvas.gridinterval = parseFloat(canvas.gridinterval.toFixed(10));
+            count = canvas.gridinterval.CountDecimals();
+        }
+
+        let textx = this.snappoint.x.toFixed(count);
+        let texty = this.snappoint.y.toFixed(count);
+
+        canvas.PrimitiveText(textx + ", " + texty, x + 10, y - 10, "normal 12px arial", "#FFF", 0, "left", "bottom");
+    }
+
+    if (this.draw) {
         this.draw.Render(canvas);
+    }
 };
 
 
@@ -107,11 +128,12 @@ xplore.Canvas2DModel.prototype.HandleMouseUp = function (canvas, mouse, button) 
 xplore.Canvas2DModel.prototype.HandleMouseMoveNoButton = function (canvas, mouse) {
     switch (this.action) {
         case xplore.CANVASACTIONS.DRAW:
-            if (this.draw) {
-                let point = this.Snap(canvas, mouse.current);
+            let point = this.Snap(canvas, mouse.current);
+
+            if (this.draw)
                 this.draw.Update(point);
-                canvas.Render();
-            }
+
+            canvas.Render();
             break;
     }
 };
@@ -162,6 +184,7 @@ xplore.Canvas2DModel.prototype.Snap = function (canvas, mouse) {
         return mouse;
     }
 
+    this.snappoint = point;
     return point;
 };
 
