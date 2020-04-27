@@ -25,30 +25,6 @@ xplore.Canvas2DModel.prototype.Render = function (canvas) {
     for (let i = 0; i < this.list.length; i++) {
         this.list[i].Render(canvas);
     }
-
-    if (canvas.settings.showsnapguide && this.snappoint) {
-        let x = canvas.ToCoordX(this.snappoint.x);
-        let y = canvas.ToCoordY(this.snappoint.y);
-
-        canvas.PrimitiveLine(x, 0, x, canvas.height, "#008", 1, [2, 2]);            
-        canvas.PrimitiveLine(0, y, canvas.width, y, "#008", 1, [2, 2]);
-        
-        let count = canvas.gridinterval.CountDecimals();
-
-        if (count > 10) {
-            canvas.gridinterval = parseFloat(canvas.gridinterval.toFixed(10));
-            count = canvas.gridinterval.CountDecimals();
-        }
-
-        let textx = this.snappoint.x.toFixed(count);
-        let texty = this.snappoint.y.toFixed(count);
-
-        canvas.PrimitiveText(textx + ", " + texty, x + 10, y - 10, "normal 12px arial", "#FFF", 0, "left", "bottom");
-    }
-
-    if (this.draw) {
-        this.draw.Render(canvas);
-    }
 };
 
 
@@ -93,11 +69,14 @@ xplore.Canvas2DModel.prototype.HandleMouseDown = function (canvas, mouse, button
                     this.draw = new this.drawobject(point);
     
                 } else {
+                    this.draw.Update(point);
                     this.Add(this.draw);
     
                     delete this.draw;
                     this.downcount = 0;
                 }
+
+                this.UpdatePoints();
             }
         }
 };
@@ -178,19 +157,54 @@ xplore.Canvas2DModel.prototype.Snap = function (canvas, mouse) {
     let point;
 
     if (canvas.settings.snaptogrid) {
-        point = this.SnapToGrid(canvas, mouse);
-
-    } else {
-        return mouse;
+        point = this.SnapOnGrid(canvas, mouse);
     }
+
+    let snappoint = this.SnapOnPoint(canvas, mouse);
+
+    if (snappoint) {
+        if (point) {
+            let line1 = new xplore.canvasentity.Line2F(mouse.x, mouse.y, point.x, point.y);
+            let line2 = new xplore.canvasentity.Line2F(mouse.x, mouse.y, snappoint.x, snappoint.y);
+    
+            if (line2.length < line1.length) 
+                point = snappoint;
+        } else
+            point = snappoint;
+    }
+    
+    snappoint = this.SnapOnIntersection(canvas, mouse);
+
+    if (snappoint) {
+        if (point) {
+            let line1 = new xplore.canvasentity.Line2F(mouse.x, mouse.y, point.x, point.y);
+            let line2 = new xplore.canvasentity.Line2F(mouse.x, mouse.y, snappoint.x, snappoint.y);
+    
+            if (line2.length < line1.length) 
+                point = snappoint;
+        } else
+            point = snappoint;
+    }
+
+    if (!point)
+        point = mouse;
 
     this.snappoint = point;
     return point;
 };
 
-xplore.Canvas2DModel.prototype.SnapToGrid = function (canvas, mouse) {
+xplore.Canvas2DModel.prototype.SnapOnGrid = function (canvas, mouse) {
     return {
         x: xplore.Round(mouse.x, canvas.gridinterval),
         y: xplore.Round(mouse.y, canvas.gridinterval),
     }
+};
+
+xplore.Canvas2DModel.prototype.UpdatePoints = function () {
+};
+
+xplore.Canvas2DModel.prototype.SnapOnPoint = function (canvas, mouse) {
+};
+
+xplore.Canvas2DModel.prototype.SnapOnIntersection = function (canvas, mouse) {
 };

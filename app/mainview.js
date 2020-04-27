@@ -1,6 +1,7 @@
 var mainview = function () {
     this.canvas;
     this.tree;
+    this.model;
 };
 
 mainview.prototype = Object.create(xplore.prototype);
@@ -24,6 +25,9 @@ mainview.prototype.Show = function () {
 
     //Canvas
     this.canvas = new xplore.Canvas2D();
+    this.model = new structuremodel();
+    this.canvas.model = this.model;
+    
     splitter.Add(this.canvas);
 
     view.Show();

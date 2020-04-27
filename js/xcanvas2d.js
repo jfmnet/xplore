@@ -1,5 +1,5 @@
 xplore.Canvas2DSettings = function () {
-    this.showgrid = true;
+    this.showgrid = false;
     this.showruler = true;
     this.showlabel = false;
 
@@ -8,7 +8,7 @@ xplore.Canvas2DSettings = function () {
 
     //Snap
     this.snap = true;
-    this.snaptogrid = true;
+    this.snaptogrid = false;
     this.showsnapguide = true;
 
     this.LightTheme = function () {
@@ -676,6 +676,16 @@ xplore.Canvas2D.prototype.DrawRulerInner = function () {
 
 
 //Draw
+xplore.Canvas2D.prototype.SetProperties = function (properties) {
+    if (properties.linecolor)
+        this.context.strokeStyle = properties.linecolor;
+
+    if (properties.thickness)
+        this.context.lineWidth = properties.thickness;
+
+    if (properties.fillcolor)
+        this.context.fillStyle = properties.fillcolor;
+};
 
 xplore.Canvas2D.prototype.PrimitiveLine = function (x1, y1, x2, y2, color, linewidth, dashline) {
     this.context.beginPath();
@@ -791,6 +801,19 @@ xplore.Canvas2D.prototype.DrawLine = function (x1, y1, x2, y2, properties) {
     this.context.stroke();
 };
 
+xplore.Canvas2D.prototype.DrawLine_2 = function (x1, y1, x2, y2) {
+    x1 = this.ToCoordX(x1);
+    y1 = this.ToCoordY(y1);
+
+    x2 = this.ToCoordX(x2);
+    y2 = this.ToCoordY(y2);
+
+    this.context.beginPath();
+    this.context.moveTo(x1 - 0.5, y1 - 0.5);
+    this.context.lineTo(x2 - 0.5, y2 - 0.5);
+    this.context.stroke();
+};
+
 xplore.Canvas2D.prototype.DrawCircle = function () {
 };
 
@@ -808,10 +831,81 @@ xplore.Canvas2D.prototype.DrawRectangle = function (x, y, w, h, properties) {
         this.context.strokeRect(x, y, w, h);
 };
 
+xplore.Canvas2D.prototype.DrawRectangle_2 = function (x, y, w, h, showfill, showline) {
+    let ratio = this.gridsize / this.gridvalue.x;
+    w = ratio * w;
+    h = ratio * h;
+    x = this.ToCoordX(x) - w / 2;
+    y = this.ToCoordY(y) - h / 2;
+
+    if (showfill || showfill === undefined)
+        this.context.fillRect(x, y, w, h);
+
+    if (showline || showline === undefined)
+        this.context.strokeRect(x, y, w, h);
+};
+
 xplore.Canvas2D.prototype.DrawPolyline = function () {
 };
 
 xplore.Canvas2D.prototype.DrawPolygon = function () {
+};
+
+xplore.Canvas2D.prototype.DrawText = function (text, x, y, font, color, a, ha, va) {
+    x = this.ToCoordX(x);
+    y = this.ToCoordY(y);
+
+    if (ha !== undefined)
+        this.context.textAlign = ha;
+    else
+        this.context.textAlign = 'center';
+
+    if (va !== undefined)
+        this.context.textBaseline = va;
+    else
+        this.context.textBaseline = "bottom";
+
+    if (a === null) {
+        this.context.fillStyle = color;
+        this.context.font = font;
+
+        this.context.fillText(text, ax, ay);
+
+    } else {
+        this.context.save();
+        this.context.fillStyle = color;
+        this.context.font = font;
+        this.context.translate(ax, ay);
+        this.context.rotate(a);
+        this.context.fillText(text, 0, 0);
+        this.context.restore();
+    }
+};
+
+xplore.Canvas2D.prototype.DrawText_2 = function (text, x, y, a, ha, va) {
+    x = this.ToCoordX(x);
+    y = this.ToCoordY(y);
+
+    if (ha !== undefined)
+        this.context.textAlign = ha;
+    else
+        this.context.textAlign = 'center';
+
+    if (va !== undefined)
+        this.context.textBaseline = va;
+    else
+        this.context.textBaseline = "bottom";
+
+    if (a) {
+        this.context.save();
+        this.context.translate(x, y);
+        this.context.rotate(a);
+        this.context.fillText(text, 0, 0);
+        this.context.restore();
+
+    } else {
+        this.context.fillText(text, x, y);
+    }
 };
 
 
