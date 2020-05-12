@@ -2,7 +2,7 @@ var structuremodel = function () {
     xplore.Canvas2DModel.call(this);
 
     this.nodes = new structuregraphics.Nodes();
-    this.frames = new structuregraphics.Frames();
+    this.frames = new structuregraphics.Members();
     this.supports = [];
     this.nodalloads = [];
     this.frameloads = [];
@@ -13,12 +13,15 @@ var structuremodel = function () {
 structuremodel.prototype = Object.create(xplore.Canvas2DModel.prototype);
 structuremodel.constructor = structuremodel;
 
-xplore.Canvas2DModel.prototype.Add = function (object) {
+let model = structuremodel.prototype;
+
+model.Add = function (object) {
     if (object instanceof structuregraphics.Node) {
-        this.nodes.push(object);
+        this.frames.Split(object.x, object.y);
+        this.nodes.Add(object);
     }
 
-    else if (object instanceof structuregraphics.Frame) {
+    else if (object instanceof structuregraphics.Member) {
         //Split frames
         this.frames.Split(object.x1, object.y1);
         this.frames.Split(object.x2, object.y2);
@@ -32,7 +35,7 @@ xplore.Canvas2DModel.prototype.Add = function (object) {
     }
 };
 
-xplore.Canvas2DModel.prototype.Clear = function () {
+model.Clear = function () {
     this.nodes.Clear();
     this.frames.Clear();
     this.supports = [];
@@ -40,46 +43,29 @@ xplore.Canvas2DModel.prototype.Clear = function () {
     this.frameloads = [];
 };
 
-structuremodel.prototype.Render = function (canvas) {
-    //Frames
+model.Select = function () {
+    this.action = xplore.CANVASACTIONS.SELECT;
+    delete this.drawobject;
+    delete this.draw;
+    this.downcount = 0;
+};
+
+model.Render = function (canvas) {
+    //Members
     this.frames.Render(canvas);
 
     //Nodes
     this.nodes.Render(canvas);
-
-
-    //Drawing guide
-    if (canvas.settings.showsnapguide && this.snappoint) {
-        let x = canvas.ToCoordX(this.snappoint.x);
-        let y = canvas.ToCoordY(this.snappoint.y);
-
-        canvas.PrimitiveLine(x, 0, x, canvas.height, "#008", 1, [2, 2]);
-        canvas.PrimitiveLine(0, y, canvas.width, y, "#008", 1, [2, 2]);
-
-        let count = canvas.gridinterval.CountDecimals();
-
-        if (count > 10) {
-            canvas.gridinterval = parseFloat(canvas.gridinterval.toFixed(10));
-            count = canvas.gridinterval.CountDecimals();
-        }
-
-        let textx = this.snappoint.x.toFixed(count);
-        let texty = this.snappoint.y.toFixed(count);
-
-        canvas.PrimitiveText(textx + ", " + texty, x + 10, y - 10, "normal 12px arial", "#FFF", 0, "left", "bottom");
-    }
-
-    //New drawing
-    if (this.draw) {
-        this.draw.Render(canvas);
-    }
 };
 
-structuremodel.prototype.UpdatePoints = function () {
+model.UpdatePoints = function () {
     this.intersections = this.frames.UpdateIntersections();
 };
 
-structuremodel.prototype.SnapOnPoint = function (canvas, mouse) {
+
+//Snap
+
+model.SnapOnPoint = function (canvas, mouse) {
     let point;
     let tolerance = canvas.ToPointWidth(20);
 
@@ -92,7 +78,7 @@ structuremodel.prototype.SnapOnPoint = function (canvas, mouse) {
     }
 };
 
-structuremodel.prototype.SnapOnIntersection = function (canvas, mouse) {
+model.SnapOnIntersection = function (canvas, mouse) {
     let point;
     let tolerance = canvas.ToPointWidth(20);
 
@@ -103,4 +89,57 @@ structuremodel.prototype.SnapOnIntersection = function (canvas, mouse) {
             return point;
         }
     }
+};
+
+
+//Select
+
+model.SelectByPoint = function (canvas, mouse) {
+     //Members
+     this.frames.SelectByPoint(canvas, mouse.rawcurrent.x, mouse.rawcurrent.y);
+
+     //Nodes
+     this.nodes.SelectByPoint(canvas, mouse.rawcurrent.x, mouse.rawcurrent.y);
+};
+
+model.SelectByRectangle = function (canvas, mouse) {
+     //Members
+     this.frames.SelectByRectangle(mouse.down.x, mouse.down.y, mouse.current.x, mouse.current.y);
+
+     //Nodes
+     this.nodes.SelectByRectangle(mouse.down.x, mouse.down.y, mouse.current.x, mouse.current.y);
+};
+
+model.ClearSelection = function () {
+    //Members
+    this.frames.ClearSelection();
+
+    //Nodes
+    this.nodes.ClearSelection();
+};
+
+
+//Delete
+
+model.DeleteNodes = function () {
+    let nodes = this.nodes.Delete();
+
+    for (let i = 0; i < nodes.length; i++)
+        this.frames.Delete(nodes[i].x, nodes[i].y);
+};
+
+model.DeleteNodalLoads = function () {
+    //this.nodalloads.Delete();
+};
+
+model.DeleteMembers = function () {
+    this.frames.Delete();
+};
+
+model.DeleteMemberLoads = function () {
+    //this.frameloads.Delete();
+};
+
+model.DeleteSupports = function () {
+    //this.supports.Delete();
 };

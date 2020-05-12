@@ -1,14 +1,15 @@
 xplore.Canvas2DSettings = function () {
-    this.showgrid = false;
+    this.showgrid = true;
     this.showruler = true;
     this.showlabel = false;
 
     this.allowzoom = true;
     this.allowpan = true;
+    this.allowselect = true;
 
     //Snap
     this.snap = true;
-    this.snaptogrid = false;
+    this.snaptogrid = true;
     this.showsnapguide = true;
 
     this.LightTheme = function () {
@@ -119,18 +120,21 @@ xplore.Canvas2D = function (param) {
 xplore.Canvas2D.prototype = Object.create(xplore.prototype);
 xplore.Canvas2D.constructor = xplore.Canvas2D;
 
-xplore.Canvas2D.prototype.Draw = function (drawobject) {
+let canvas = xplore.Canvas2D.prototype;
+
+canvas.Draw = function (drawobject) {
     this.model.Draw(drawobject);
 };
 
-xplore.Canvas2D.prototype.Add = function (object) {
+canvas.Add = function (object) {
     this.model.Add(object);
 };
 
-xplore.Canvas2D.prototype.Refresh = function () {
+canvas.Refresh = function () {
     this.object.innerHTML = "";
 
     this.canvas = document.createElement("canvas");
+    this.canvas.setAttribute("tabindex", 1);
     this.object.appendChild(this.canvas);
 
     this.context = this.canvas.getContext('2d');
@@ -148,7 +152,7 @@ xplore.Canvas2D.prototype.Refresh = function () {
     this.Events();
 };
 
-xplore.Canvas2D.prototype.Resize = function () {
+canvas.Resize = function () {
     let rect = this.object.getBoundingClientRect();
     this.top = rect.top;
     this.left = rect.left;
@@ -168,7 +172,7 @@ xplore.Canvas2D.prototype.Resize = function () {
     this.UpdateCanvasScaleRatio();
 };
 
-xplore.Canvas2D.prototype.UpdateCenter = function () {
+canvas.UpdateCenter = function () {
     if (this.settings.showruler && this.settings.rulerposition === 0)
         this.center = {
             x: this.rulersize + Math.round((this.width - this.rulersize) / 2),
@@ -181,7 +185,7 @@ xplore.Canvas2D.prototype.UpdateCenter = function () {
         };
 };
 
-xplore.Canvas2D.prototype.UpdateCanvasScaleRatio = function () {
+canvas.UpdateCanvasScaleRatio = function () {
     let devicePixelRatio = window.devicePixelRatio || 1,
         backingStoreRatio = this.context.webkitBackingStorePixelRatio ||
             this.context.mozBackingStorePixelRatio ||
@@ -205,7 +209,7 @@ xplore.Canvas2D.prototype.UpdateCanvasScaleRatio = function () {
     }
 };
 
-xplore.Canvas2D.prototype.StoreBuffer = function () {
+canvas.StoreBuffer = function () {
     let self = this;
 
     this.buffer = this.RenderToCanvas(function (context) {
@@ -216,15 +220,15 @@ xplore.Canvas2D.prototype.StoreBuffer = function () {
     this.context = this.canvas.getContext('2d');
 };
 
-xplore.Canvas2D.prototype.RestoreBuffer = function () {
+canvas.RestoreBuffer = function () {
     if (!this.buffer)
-        self.StoreBuffer();
+        this.StoreBuffer();
 
     this.context.imageSmoothingEnabled = false;
-    this.context.drawImage(buffer, 0, 0);
+    this.context.drawImage(this.buffer, 0, 0);
 };
 
-xplore.Canvas2D.prototype.RenderToCanvas = function (renderFunction) {
+canvas.RenderToCanvas = function (renderFunction) {
     let canvas = document.createElement('canvas');
     canvas.width = this.canvas.width;
     canvas.height = this.canvas.height;
@@ -239,7 +243,7 @@ xplore.Canvas2D.prototype.RenderToCanvas = function (renderFunction) {
 
 //Render
 
-xplore.Canvas2D.prototype.Render = function () {
+canvas.Render = function () {
     //Clear
     this.PrimitiveRectangle(0, 0, this.width, this.height, this.settings.background);
 
@@ -252,7 +256,7 @@ xplore.Canvas2D.prototype.Render = function () {
         this.DrawRuler();
 };
 
-xplore.Canvas2D.prototype.DrawGrid = function () {
+canvas.DrawGrid = function () {
     let root = Math.pow(10, Math.round(Math.log(this.gridsize * this.gridvalue.x) / Math.LN10)) / 100;
     let gridinterval = this.gridvalue.x / root;
 
@@ -325,14 +329,14 @@ xplore.Canvas2D.prototype.DrawGrid = function () {
     this.PrimitiveLine(0, y1, this.width, y1, this.settings.axis, 2);
 };
 
-xplore.Canvas2D.prototype.DrawRuler = function () {
+canvas.DrawRuler = function () {
     if (this.settings.rulerposition === 0)
         this.DrawRulerOuter();
     else
         this.DrawRulerInner();
 };
 
-xplore.Canvas2D.prototype.DrawRulerOuter = function () {
+canvas.DrawRulerOuter = function () {
     let font = "normal 10px sans-serif";
     let fontcolor = this.settings.rulertext;
 
@@ -475,7 +479,7 @@ xplore.Canvas2D.prototype.DrawRulerOuter = function () {
     this.PrimitiveLine(x, y, this.width, y, this.settings.rulerline, 2);
 };
 
-xplore.Canvas2D.prototype.DrawRulerInner = function () {
+canvas.DrawRulerInner = function () {
     let font = "normal 10px sans-serif";
     let fontcolor = this.settings.rulertext;
 
@@ -676,7 +680,7 @@ xplore.Canvas2D.prototype.DrawRulerInner = function () {
 
 
 //Draw
-xplore.Canvas2D.prototype.SetProperties = function (properties) {
+canvas.SetProperties = function (properties) {
     if (properties.linecolor)
         this.context.strokeStyle = properties.linecolor;
 
@@ -687,7 +691,7 @@ xplore.Canvas2D.prototype.SetProperties = function (properties) {
         this.context.fillStyle = properties.fillcolor;
 };
 
-xplore.Canvas2D.prototype.PrimitiveLine = function (x1, y1, x2, y2, color, linewidth, dashline) {
+canvas.PrimitiveLine = function (x1, y1, x2, y2, color, linewidth, dashline) {
     this.context.beginPath();
 
     if (dashline) {
@@ -718,13 +722,13 @@ xplore.Canvas2D.prototype.PrimitiveLine = function (x1, y1, x2, y2, color, linew
         this.context.restore();
 };
 
-xplore.Canvas2D.prototype.PrimitiveCircle = function () {
+canvas.PrimitiveCircle = function () {
 };
 
-xplore.Canvas2D.prototype.PrimitiveArc = function () {
+canvas.PrimitiveArc = function () {
 };
 
-xplore.Canvas2D.prototype.PrimitiveRectangle = function (x, y, w, h, fillcolor, linecolor) {
+canvas.PrimitiveRectangle = function (x, y, w, h, fillcolor, linecolor) {
     let aw = w;
     let ah = h;
     let ax = x;
@@ -742,7 +746,7 @@ xplore.Canvas2D.prototype.PrimitiveRectangle = function (x, y, w, h, fillcolor, 
     }
 };
 
-xplore.Canvas2D.prototype.PrimitiveText = function (text, x, y, font, color, a, ha, va) {
+canvas.PrimitiveText = function (text, x, y, font, color, a, ha, va) {
     if (a === null) {
         let ax = x;
         let ay = y;
@@ -781,7 +785,24 @@ xplore.Canvas2D.prototype.PrimitiveText = function (text, x, y, font, color, a, 
     }
 };
 
-xplore.Canvas2D.prototype.DrawLine = function (x1, y1, x2, y2, properties) {
+canvas.SelectRectangle = function (x, y, w, h, linecolor) {
+    var aw = w;
+    var ah = h;
+    var ax = x;
+    var ay = y;
+
+    this.context.save();
+    this.context.strokeStyle = linecolor;
+    this.context.lineWidth = 1;
+
+    this.context.setLineDash([4, 2]);
+    this.context.lineDashOffset = 2;
+    this.context.strokeRect(ax, ay, aw, ah);
+    this.context.restore();
+};
+
+
+canvas.DrawLine = function (x1, y1, x2, y2, properties) {
     x1 = this.ToCoordX(x1);
     y1 = this.ToCoordY(y1);
 
@@ -801,7 +822,7 @@ xplore.Canvas2D.prototype.DrawLine = function (x1, y1, x2, y2, properties) {
     this.context.stroke();
 };
 
-xplore.Canvas2D.prototype.DrawLine_2 = function (x1, y1, x2, y2) {
+canvas.DrawLine_2 = function (x1, y1, x2, y2) {
     x1 = this.ToCoordX(x1);
     y1 = this.ToCoordY(y1);
 
@@ -814,10 +835,10 @@ xplore.Canvas2D.prototype.DrawLine_2 = function (x1, y1, x2, y2) {
     this.context.stroke();
 };
 
-xplore.Canvas2D.prototype.DrawCircle = function () {
+canvas.DrawCircle = function () {
 };
 
-xplore.Canvas2D.prototype.DrawRectangle = function (x, y, w, h, properties) {
+canvas.DrawRectangle = function (x, y, w, h, properties) {
     let ratio = this.gridsize / this.gridvalue.x;
     w = ratio * w;
     h = ratio * h;
@@ -831,7 +852,7 @@ xplore.Canvas2D.prototype.DrawRectangle = function (x, y, w, h, properties) {
         this.context.strokeRect(x, y, w, h);
 };
 
-xplore.Canvas2D.prototype.DrawRectangle_2 = function (x, y, w, h, showfill, showline) {
+canvas.DrawRectangle_2 = function (x, y, w, h, showfill, showline) {
     let ratio = this.gridsize / this.gridvalue.x;
     w = ratio * w;
     h = ratio * h;
@@ -845,13 +866,13 @@ xplore.Canvas2D.prototype.DrawRectangle_2 = function (x, y, w, h, showfill, show
         this.context.strokeRect(x, y, w, h);
 };
 
-xplore.Canvas2D.prototype.DrawPolyline = function () {
+canvas.DrawPolyline = function () {
 };
 
-xplore.Canvas2D.prototype.DrawPolygon = function () {
+canvas.DrawPolygon = function () {
 };
 
-xplore.Canvas2D.prototype.DrawText = function (text, x, y, font, color, a, ha, va) {
+canvas.DrawText = function (text, x, y, font, color, a, ha, va) {
     x = this.ToCoordX(x);
     y = this.ToCoordY(y);
 
@@ -882,7 +903,7 @@ xplore.Canvas2D.prototype.DrawText = function (text, x, y, font, color, a, ha, v
     }
 };
 
-xplore.Canvas2D.prototype.DrawText_2 = function (text, x, y, a, ha, va) {
+canvas.DrawText_2 = function (text, x, y, a, ha, va) {
     x = this.ToCoordX(x);
     y = this.ToCoordY(y);
 
@@ -911,34 +932,34 @@ xplore.Canvas2D.prototype.DrawText_2 = function (text, x, y, a, ha, va) {
 
 //Conversions
 
-xplore.Canvas2D.prototype.ToCoordX = function (pointX) {
+canvas.ToCoordX = function (pointX) {
     return Math.round(this.center.x + (pointX / this.gridvalue.x - this.middle.x) * this.gridsize);
 };
 
-xplore.Canvas2D.prototype.ToCoordY = function (pointY) {
+canvas.ToCoordY = function (pointY) {
     return Math.round(this.center.y - (pointY / this.gridvalue.y - this.middle.y) * this.gridsize);
 };
 
-xplore.Canvas2D.prototype.ToPointX = function (coordX) {
+canvas.ToPointX = function (coordX) {
     return (this.middle.x - (this.center.x - coordX) / this.gridsize) * this.gridvalue.x;
 };
 
-xplore.Canvas2D.prototype.ToPointY = function (coordY) {
+canvas.ToPointY = function (coordY) {
     return (this.middle.y + (this.center.y - coordY) / this.gridsize) * this.gridvalue.y;
 };
 
-xplore.Canvas2D.prototype.ToPointWidth = function (pointWidth) {
+canvas.ToPointWidth = function (pointWidth) {
     return (pointWidth / this.gridsize) * this.gridvalue.y;
 };
 
-xplore.Canvas2D.prototype.ToCoordWidth = function (coordWidth) {
+canvas.ToCoordWidth = function (coordWidth) {
     return (coordWidth * this.gridsize) / this.gridvalue.x;
 };
 
 
 //Zoom
 
-xplore.Canvas2D.prototype.ZoomAll = function (inbounds, infactor) {
+canvas.ZoomAll = function (inbounds, infactor) {
     var bounds;
     var factor = 1.5;
 
@@ -1012,7 +1033,7 @@ xplore.Canvas2D.prototype.ZoomAll = function (inbounds, infactor) {
     }
 };
 
-xplore.Canvas2D.prototype.Zoom = function (x, y, d) {
+canvas.Zoom = function (x, y, d) {
     var prev = { x: this.ToPointX(x), y: this.ToPointY(y) };
     this.ZoomRealtime(d);
 
@@ -1023,7 +1044,7 @@ xplore.Canvas2D.prototype.Zoom = function (x, y, d) {
     this.Render();
 };
 
-xplore.Canvas2D.prototype.ZoomIn = function () {
+canvas.ZoomIn = function () {
     gridsize *= 1.15;
 
     if (gridvalue.x <= 1 && gridsize > 200)
@@ -1034,7 +1055,7 @@ xplore.Canvas2D.prototype.ZoomIn = function () {
     self.Render();
 };
 
-xplore.Canvas2D.prototype.ZoomOut = function () {
+canvas.ZoomOut = function () {
     gridsize /= 1.15;
 
     if (gridvalue.x <= 1 && gridsize > 200)
@@ -1044,7 +1065,7 @@ xplore.Canvas2D.prototype.ZoomOut = function () {
     self.Render();
 };
 
-xplore.Canvas2D.prototype.ZoomRealtime = function (d) {
+canvas.ZoomRealtime = function (d) {
     var mult = this.gridsize * d;
     var size = this.gridsize + (mult / 100);
 
@@ -1063,20 +1084,20 @@ xplore.Canvas2D.prototype.ZoomRealtime = function (d) {
     }
 };
 
-xplore.Canvas2D.prototype.ZoomFactor = function (factor) {
+canvas.ZoomFactor = function (factor) {
     gridsize *= factor;
     zoomvalue = gridsize / (defaultgridsize * gridvalue.x);
     this.Render();
 };
 
-xplore.Canvas2D.prototype.MoveByPoint = function (current, previous) {
+canvas.MoveByPoint = function (current, previous) {
     if (!((current.x === previous.x) && (current.y === previous.y))) {
         this.middle.x -= (current.x - previous.x) / this.gridvalue.x;
         this.middle.y -= (current.y - previous.y) / this.gridvalue.y;
     }
 };
 
-xplore.Canvas2D.prototype.Pan = function (x, y) {
+canvas.Pan = function (x, y) {
     this.middle.x -= x / this.gridsize;
     this.middle.y -= y / this.gridsize;
 };
@@ -1085,13 +1106,21 @@ xplore.Canvas2D.prototype.Pan = function (x, y) {
 
 //Events
 
-xplore.Canvas2D.prototype.Events = function () {
+canvas.Events = function () {
     let self = this;
     let button = 0;
     let ontouch = 0;
     let onenter = false;
     let onfocus = true;
     let start = 0;
+    
+    // document.body.onkeydown = function (event) {
+    //     self.model.KeyDown(event);
+    // };
+
+    // document.body.onkeyup = function (event) {
+    //     self.model.KeyUp(event);
+    // };
 
     this.canvas.addEventListener("mouseenter", function (event) {
         onenter = true;
@@ -1311,7 +1340,9 @@ xplore.Canvas2D.prototype.Events = function () {
     }
 };
 
-xplore.Canvas2D.prototype.MouseDown = function (x, y, button) {
+canvas.MouseDown = function (x, y, button) {
+    this.canvas.focus();
+
     this.mouse.down.x = this.ToPointX(x);
     this.mouse.down.y = this.ToPointY(y);
 
@@ -1327,7 +1358,7 @@ xplore.Canvas2D.prototype.MouseDown = function (x, y, button) {
     this.model.MouseDown(this, this.mouse, button);
 };
 
-xplore.Canvas2D.prototype.MouseMove = function (x, y, button) {
+canvas.MouseMove = function (x, y, button) {
     this.mouse.current.x = this.ToPointX(x);
     this.mouse.current.y = this.ToPointY(y);
 
@@ -1343,14 +1374,14 @@ xplore.Canvas2D.prototype.MouseMove = function (x, y, button) {
     this.mouse.rawprevious.y = y;
 };
 
-xplore.Canvas2D.prototype.MouseUp = function (x, y, button) {
+canvas.MouseUp = function (x, y, button) {
     this.mouse.current.x = this.ToPointX(x);
     this.mouse.current.y = this.ToPointY(y);
 
     this.model.MouseUp(this, this.mouse, button);
 };
 
-xplore.Canvas2D.prototype.MouseWheel = function (x, y, delta) {
+canvas.MouseWheel = function (x, y, delta) {
     if (this.settings.allowzoom) {
         //Set current mouse position
         this.mouse.current.x = x;

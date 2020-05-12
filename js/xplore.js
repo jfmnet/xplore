@@ -1,5 +1,29 @@
 "use strict";
 
+//Key events
+document.onkeydown = function (event) {
+    let key = "";
+
+    if (event.ctrlKey)
+        key += "ctrl+";
+
+    if (event.shiftKey)
+        key += "shift+";
+
+    if (event.altKey)
+        key += "alt+";
+
+    key += event.key;
+
+    key = key.toLowerCase();
+
+    for (let i = 0; i < xplore.keydowns.length; i++)
+        if (xplore.keydowns[i].keycode.toLowerCase() === key)
+            if (xplore.keydowns[i].action)
+                xplore.keydowns[i].action();
+};
+
+
 //Base
 var xplore = function (param, element, classname) {
     param = param || {};
@@ -174,7 +198,6 @@ xplore.prototype.Trigger = function (name, data) {
         }
     }
 };
-
 
 
 //Button
@@ -420,6 +443,10 @@ xplore.Menu = function (param) {
 
     param = param || {};
     this.shortcut = param.shortcut;
+    this.separator = param.separator;
+
+    if (this.shortcut)
+        xplore.KeyDown(this.shortcut, this.onclick);
 };
 
 xplore.Menu.prototype = Object.create(xplore.prototype);
@@ -428,6 +455,9 @@ xplore.Menu.constructor = xplore.Menu;
 xplore.Menu.prototype.Refresh = function () {
     this.object.innerHTML = "";
     this.object.tabIndex = '1';
+
+    if (this.separator)
+        this.object.classList.add("separator");
 
     let text = document.createElement("div");
 
@@ -584,6 +614,20 @@ xplore.SplitContainer.prototype.Resize = function () {
     if (this.size) {
         if (this.orientation) {
             //Vertical
+            if (this.size[0] !== undefined) {
+                this.panel1.style = "top: 0; height: " + this.size[0] + "px; left: 0; right: 0 ";
+                this.panel2.style = "bottom: 0; top: " + (this.size[0] + this.splittersize) + "px; left: 0; right: 0 ";
+
+                if (this.splittersize)
+                    this.gap.style = "top: " + this.size[0] + "px; height: " + this.splittersize + "px; left: 0; right: 0 ";
+
+            } else if (this.size[1]) {
+                this.panel1.style = "left: 0; right: " + (this.size[1] + this.splittersize) + "px; top: 0; bottom: 0 ";
+                this.panel2.style = "right: 0; width: " + this.size[1] + "px; top: 0; bottom: 0 ";
+
+                if (this.splittersize)
+                    this.gap.style = "right: " + this.size[1] + "px; width: " + this.splittersize + "px; top: 0; bottom: 0 ";
+            }
 
         } else {
             //Horizontal
@@ -602,12 +646,19 @@ xplore.SplitContainer.prototype.Resize = function () {
     } else {
         if (this.orientation) {
             //Vertical
+            this.panel1.style = "top: 0; height: calc(50% - " + gap + "px); left: 0; right: 0 ";
+            this.panel2.style = "bottom: 0; height: calc(50% - " + gap + "px); left: 0; right: 0 ";
+
+            if (this.splittersize)
+                this.gap.style = "top: calc(50% - " + gap + "px); height: " + this.splittersize + "px; left: 0; right: 0 ";
 
         } else {
             //Horizontal
             this.panel1.style = "left: 0; width: calc(50% - " + gap + "px); top: 0; bottom: 0 ";
             this.panel2.style = "right: 0; width: calc(50% - " + gap + "px); top: 0; bottom: 0 ";
-            this.gap.style = "left: calc(50% - " + gap + "px); width: " + this.splittersize + "px; top: 0; bottom: 0 ";
+
+            if (this.splittersize)
+                this.gap.style = "left: calc(50% - " + gap + "px); width: " + this.splittersize + "px; top: 0; bottom: 0 ";
         }
     }
 };
@@ -1495,12 +1546,21 @@ xplore.Round = function (num, precision) {
     return Math.round(num / precision) * precision;
 };
 
+xplore.KeyDown = function (keycode, action) {
+    xplore.keydowns.push({
+        keycode: keycode,
+        action: action
+    });
+};
+
+
 Number.prototype.CountDecimals = function () {
     if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
     return this.toString().split(".")[1].length || 0;
 }
 
 xplore.events = {};
+xplore.keydowns = [];
 xplore.ZINDEX = 100;
 
 

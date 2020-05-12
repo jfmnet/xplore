@@ -9,10 +9,13 @@ xplore.Canvas2DModel = function () {
     this.action = xplore.CANVASACTIONS.PAN;
 };
 
+xplore.Canvas2DModel.constructor = xplore.Canvas2DModel;
+
+let canvasmodel = xplore.Canvas2DModel.prototype;
 
 //Draw
 
-xplore.Canvas2DModel.prototype.Draw = function (drawobject) {
+canvasmodel.Draw = function (drawobject) {
     this.action = xplore.CANVASACTIONS.DRAW;
     this.drawobject = drawobject;
     this.downcount = 0;
@@ -21,7 +24,7 @@ xplore.Canvas2DModel.prototype.Draw = function (drawobject) {
 
 //Render
 
-xplore.Canvas2DModel.prototype.Render = function (canvas) {
+canvasmodel.Render = function (canvas) {
     for (let i = 0; i < this.list.length; i++) {
         this.list[i].Render(canvas);
     }
@@ -30,36 +33,28 @@ xplore.Canvas2DModel.prototype.Render = function (canvas) {
 
 //List
 
-xplore.Canvas2DModel.prototype.Add = function (object) {
+canvasmodel.Add = function (object) {
     this.list.push(object);
 };
 
-xplore.Canvas2DModel.prototype.Clear = function () {
+canvasmodel.Clear = function () {
 };
 
 
 //Events
 
-xplore.Canvas2DModel.prototype.MouseDown = function (canvas, mouse, button) {
-    this.HandleMouseDown(canvas, mouse, button);
+canvasmodel.KeyDown = function (event) {
 };
 
-xplore.Canvas2DModel.prototype.MouseMove = function (canvas, mouse, button) {
-    this.HandleMouseMove(canvas, mouse, button);
+canvasmodel.KeyUp = function (event) {
 };
 
-xplore.Canvas2DModel.prototype.MouseUp = function (canvas, mouse, button) {
-    this.HandleMouseUp(canvas, mouse, button);
-};
-
-xplore.Canvas2DModel.prototype.MouseWheel = function (canvas, mouse, button) {
-};
-
-
-//Events handling
-xplore.Canvas2DModel.prototype.HandleMouseDown = function (canvas, mouse, button) {
+canvasmodel.MouseDown = function (canvas, mouse, button) {
     switch (this.action) {
         case xplore.CANVASACTIONS.DRAW:
+            //Store buffer
+            canvas.StoreBuffer();
+
             if (button === 1) {
                 this.downcount++;
 
@@ -67,21 +62,41 @@ xplore.Canvas2DModel.prototype.HandleMouseDown = function (canvas, mouse, button
 
                 if (this.downcount === 1) {
                     this.draw = new this.drawobject(point);
-    
+
+                    if (this.draw.action === 1) {
+                        this.Add(this.draw);
+                        delete this.draw;
+                        this.downcount = 0;
+                        canvas.Render();
+                    }
+
                 } else {
                     this.draw.Update(point);
                     this.Add(this.draw);
-    
+
                     delete this.draw;
                     this.downcount = 0;
+                    canvas.Render();
+
+                    //Store buffer for the next drawing
+                    canvas.StoreBuffer();
                 }
 
                 this.UpdatePoints();
             }
-        }
+
+            break;
+
+        case xplore.CANVASACTIONS.SELECT:
+        case xplore.CANVASACTIONS.WINDOWZOOM:
+            if (button === 1)
+                canvas.StoreBuffer();
+
+            break;
+    }
 };
 
-xplore.Canvas2DModel.prototype.HandleMouseMove = function (canvas, mouse, button) {
+canvasmodel.MouseMove = function (canvas, mouse, button) {
     switch (button) {
         case 0: //No button
             this.HandleMouseMoveNoButton(canvas, mouse);
@@ -101,23 +116,66 @@ xplore.Canvas2DModel.prototype.HandleMouseMove = function (canvas, mouse, button
     }
 };
 
-xplore.Canvas2DModel.prototype.HandleMouseUp = function (canvas, mouse, button) {
-};
+canvasmodel.MouseUp = function (canvas, mouse, button) {
+    switch (button) {
+        case 1: //Left Button
+            this.HandleMouseUpLeftButton(canvas, mouse);
+            break;
 
-xplore.Canvas2DModel.prototype.HandleMouseMoveNoButton = function (canvas, mouse) {
-    switch (this.action) {
-        case xplore.CANVASACTIONS.DRAW:
-            let point = this.Snap(canvas, mouse.current);
+        case 2: //Middle Button
+            this.HandleMouseUpMiddleButton(canvas, mouse);
+            break;
 
-            if (this.draw)
-                this.draw.Update(point);
-
-            canvas.Render();
+        case 3: //Right Button
+            this.HandleMouseUpRightButton(canvas, mouse);
             break;
     }
 };
 
-xplore.Canvas2DModel.prototype.HandleMouseMoveLeftButton = function (canvas, mouse) {
+canvasmodel.MouseWheel = function (canvas, mouse, button) {
+};
+
+
+//Mousemove
+
+canvasmodel.HandleMouseMoveNoButton = function (canvas, mouse) {
+    switch (this.action) {
+        case xplore.CANVASACTIONS.DRAW:
+            let point = this.Snap(canvas, mouse.current);
+
+            canvas.RestoreBuffer();
+
+            //Drawing guide
+            if (canvas.settings.showsnapguide && this.drawobject && this.snappoint) {
+                let x = canvas.ToCoordX(this.snappoint.x);
+                let y = canvas.ToCoordY(this.snappoint.y);
+
+                canvas.PrimitiveLine(x, 0, x, canvas.height, "#008", 1, [2, 2]);
+                canvas.PrimitiveLine(0, y, canvas.width, y, "#008", 1, [2, 2]);
+
+                let count = canvas.gridinterval.CountDecimals();
+
+                if (count > 10) {
+                    canvas.gridinterval = parseFloat(canvas.gridinterval.toFixed(10));
+                    count = canvas.gridinterval.CountDecimals();
+                }
+
+                let textx = this.snappoint.x.toFixed(count);
+                let texty = this.snappoint.y.toFixed(count);
+
+                canvas.PrimitiveText(textx + ", " + texty, x + 10, y - 10, "normal 12px arial", "#FFF", 0, "left", "bottom");
+            }
+
+            if (this.draw) {
+                this.draw.Update(point);
+                canvas.SetProperties(this.draw.properties);
+                this.draw.Render(canvas);
+            }
+            break;
+    }
+};
+
+canvasmodel.HandleMouseMoveLeftButton = function (canvas, mouse) {
     switch (this.action) {
         case xplore.CANVASACTIONS.PAN:
             this.Pan(canvas, mouse);
@@ -125,8 +183,8 @@ xplore.Canvas2DModel.prototype.HandleMouseMoveLeftButton = function (canvas, mou
 
         case xplore.CANVASACTIONS.SELECT:
         case xplore.CANVASACTIONS.WINDOWZOOM:
-            if (canvas.settings.ALLOWSELECT)
-                this.Select(canvas, mouse);
+            if (canvas.settings.allowselect)
+                this.SelectWindow(canvas, mouse);
             break;
 
         case xplore.CANVASACTIONS.DRAW:
@@ -134,14 +192,57 @@ xplore.Canvas2DModel.prototype.HandleMouseMoveLeftButton = function (canvas, mou
     }
 };
 
-xplore.Canvas2DModel.prototype.HandleMouseMoveMiddleButton = function (canvas, mouse, button) {
+canvasmodel.HandleMouseMoveMiddleButton = function (canvas, mouse, button) {
 };
 
-xplore.Canvas2DModel.prototype.HandleMouseMoveRightButton = function (canvas, mouse) {
+canvasmodel.HandleMouseMoveRightButton = function (canvas, mouse) {
     this.Pan(canvas, mouse);
 };
 
-xplore.Canvas2DModel.prototype.Pan = function (canvas, mouse) {
+
+//Mouseup
+
+canvasmodel.HandleMouseUpLeftButton = function (canvas, mouse) {
+    switch (this.action) {
+        case xplore.CANVASACTIONS.PAN:
+            //Store buffer
+            canvas.StoreBuffer();
+
+            break;
+
+        case xplore.CANVASACTIONS.SELECT:
+        case xplore.CANVASACTIONS.WINDOWZOOM:
+            if (canvas.settings.allowselect) {
+                if (Math.abs(mouse.rawdown.x - mouse.rawcurrent.x) <= 5 && Math.abs(mouse.rawdown.y - mouse.rawcurrent.y) <= 5) {
+                    if (this.SelectByPoint)
+                        this.SelectByPoint(canvas, mouse);
+                } else {
+                    if (this.SelectByRectangle)
+                        this.SelectByRectangle(canvas, mouse);
+                }
+
+                canvas.Render();
+            }
+
+            break;
+    }
+};
+
+canvasmodel.HandleMouseUpMiddleButton = function (canvas, mouse) {
+};
+
+canvasmodel.HandleMouseUpRightButton = function (canvas, mouse) {
+    switch (this.action) {
+        case xplore.CANVASACTIONS.DRAW:
+            //Store buffer
+            canvas.StoreBuffer();
+            break;
+    }
+};
+
+
+
+canvasmodel.Pan = function (canvas, mouse) {
     if (canvas.settings.allowpan) {
         let x = mouse.rawcurrent.x - mouse.rawprevious.x;
         let y = mouse.rawprevious.y - mouse.rawcurrent.y;
@@ -153,7 +254,7 @@ xplore.Canvas2DModel.prototype.Pan = function (canvas, mouse) {
     }
 };
 
-xplore.Canvas2DModel.prototype.Snap = function (canvas, mouse) {
+canvasmodel.Snap = function (canvas, mouse) {
     let point;
 
     if (canvas.settings.snaptogrid) {
@@ -166,21 +267,21 @@ xplore.Canvas2DModel.prototype.Snap = function (canvas, mouse) {
         if (point) {
             let line1 = new xplore.canvasentity.Line2F(mouse.x, mouse.y, point.x, point.y);
             let line2 = new xplore.canvasentity.Line2F(mouse.x, mouse.y, snappoint.x, snappoint.y);
-    
-            if (line2.length < line1.length) 
+
+            if (line2.length < line1.length)
                 point = snappoint;
         } else
             point = snappoint;
     }
-    
+
     snappoint = this.SnapOnIntersection(canvas, mouse);
 
     if (snappoint) {
         if (point) {
             let line1 = new xplore.canvasentity.Line2F(mouse.x, mouse.y, point.x, point.y);
             let line2 = new xplore.canvasentity.Line2F(mouse.x, mouse.y, snappoint.x, snappoint.y);
-    
-            if (line2.length < line1.length) 
+
+            if (line2.length < line1.length)
                 point = snappoint;
         } else
             point = snappoint;
@@ -193,18 +294,29 @@ xplore.Canvas2DModel.prototype.Snap = function (canvas, mouse) {
     return point;
 };
 
-xplore.Canvas2DModel.prototype.SnapOnGrid = function (canvas, mouse) {
+canvasmodel.SnapOnGrid = function (canvas, mouse) {
     return {
         x: xplore.Round(mouse.x, canvas.gridinterval),
         y: xplore.Round(mouse.y, canvas.gridinterval),
     }
 };
 
-xplore.Canvas2DModel.prototype.UpdatePoints = function () {
+canvasmodel.UpdatePoints = function () {
 };
 
-xplore.Canvas2DModel.prototype.SnapOnPoint = function (canvas, mouse) {
+canvasmodel.SnapOnPoint = function (canvas, mouse) {
 };
 
-xplore.Canvas2DModel.prototype.SnapOnIntersection = function (canvas, mouse) {
+canvasmodel.SnapOnIntersection = function (canvas, mouse) {
+};
+
+canvasmodel.SelectWindow = function (canvas, mouse) {
+    canvas.RestoreBuffer();
+    canvas.SelectRectangle(
+        mouse.rawdown.x,
+        mouse.rawdown.y,
+        mouse.rawcurrent.x - mouse.rawdown.x,
+        mouse.rawcurrent.y - mouse.rawdown.y,
+        "#2196F3"
+    );
 };

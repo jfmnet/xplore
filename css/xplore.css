@@ -326,10 +326,11 @@ i.mdi {
     height: 32px;
     padding: 0 8px;
     position: relative;
+    z-index: 1;
 }
 
 .menu:hover {
-    background-color: #EEE;
+    background-color: #CCC;
 }
 
 .menu>div:nth-child(1) {
@@ -359,6 +360,7 @@ i.mdi {
 
 .menu>div:nth-child(2) {
     background-color: #EEE;
+    border: 1px solid #CCC;
     display: none;
     position: absolute;
     left: 0;
@@ -368,7 +370,6 @@ i.mdi {
 .menu .menu {
     display: flex;
     padding: 0 92px 0 8px;
-
 }
 
 .menu .menu:hover {
@@ -379,6 +380,9 @@ i.mdi {
     display: block;
 }
 
+.menu.separator {
+    border-bottom: 1px solid #DDD;
+}
 
 .toolbar-container {
     background-color: #EEE;
@@ -389,7 +393,8 @@ i.mdi {
 .toolbar {
     align-items: center;
     background-color: #EEE;
-    display: inline-flex;
+    border-right: 1px solid #DDD;
+    display: inline-block;
     height: 32px;
 }
 
