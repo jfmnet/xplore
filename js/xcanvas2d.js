@@ -108,6 +108,7 @@ xplore.Canvas2D = function (param) {
     this.rulersize = 30;
     this.width = 100;
     this.height = 100;
+    this.zoomvalue = 1;
 
     this.settings = new xplore.Canvas2DSettings();
     this.mouse = new xplore.Mouse();
@@ -1015,7 +1016,7 @@ canvas.ZoomAll = function (inbounds, infactor) {
         middle.x = mid.x / gridvalue.x;
         middle.y = mid.y / gridvalue.y;
 
-        zoomvalue = gridsize / (defaultgridsize * gridvalue.x);
+        this.zoomvalue = gridsize / (defaultgridsize * gridvalue.x);
         this.Render();
 
     } else {
@@ -1050,8 +1051,7 @@ canvas.ZoomIn = function () {
     if (gridvalue.x <= 1 && gridsize > 200)
         gridsize = 200;
 
-    zoomvalue = gridsize / (defaultgridsize * gridvalue.x);
-
+    this.zoomvalue = gridsize / (defaultgridsize * gridvalue.x);
     self.Render();
 };
 
@@ -1061,7 +1061,7 @@ canvas.ZoomOut = function () {
     if (gridvalue.x <= 1 && gridsize > 200)
         gridsize = 200;
 
-    zoomvalue = gridsize / (defaultgridsize * gridvalue.x);
+    this.zoomvalue = gridsize / (defaultgridsize * gridvalue.x);
     self.Render();
 };
 
@@ -1086,7 +1086,7 @@ canvas.ZoomRealtime = function (d) {
 
 canvas.ZoomFactor = function (factor) {
     gridsize *= factor;
-    zoomvalue = gridsize / (defaultgridsize * gridvalue.x);
+    this.zoomvalue = gridsize / (defaultgridsize * gridvalue.x);
     this.Render();
 };
 
@@ -1113,7 +1113,7 @@ canvas.Events = function () {
     let onenter = false;
     let onfocus = true;
     let start = 0;
-    
+
     // document.body.onkeydown = function (event) {
     //     self.model.KeyDown(event);
     // };

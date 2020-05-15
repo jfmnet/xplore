@@ -152,8 +152,8 @@ xplore.canvasentity.Line2F.prototype.EndOffset = function (offset) {
     return { x: this.x2 - ratio * dx, y: this.y2 - ratio * dy };
 };
 
-xplore.canvasentity.Line2F.prototype.Intersection = function (point, includepoints) {
-    let tolerance = 0.0001;
+xplore.canvasentity.Line2F.prototype.Intersection = function (point, includepoints, tol) {
+    let tolerance = tol || 0.0001;
     let dx = this.x2 - this.x1;
     let dy = this.y2 - this.y1;
 
@@ -223,41 +223,4 @@ xplore.canvasentity.Line2F.prototype.Intersection = function (point, includepoin
 
         return;
     }
-};
-
-this.GetPointIntersection = function (point, tolerance) {
-    if (this.IsHorizontal()) {
-        if (this.InBetweenX(point.x)) {
-            if (WithinTolerance(this.point1.y, point.y, tolerance))
-                return new graphicsentity.Point2F(point.x, this.point1.y);
-        }
-    } else if (this.IsVertical()) {
-        if (this.InBetweenY(point.y)) {
-            if (WithinTolerance(this.point1.x, point.x, tolerance))
-                return new graphicsentity.Point2F(this.point1.x, point.y);
-        }
-    } else if (this.InBetweenX(point.x) && this.InBetweenY(point.y)) {
-        var x = this.point1.x - this.point2.x;
-        var y = this.point1.y - this.point2.y;
-        var ratio = y / x;
-
-        var value = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-        var tolerancex = Math.abs(value * tolerance / x);
-        var tolerancey = Math.abs(value * tolerance / y);
-
-        if (this.InBetweenXWithTolerance(point.x, tolerancex) && this.InBetweenYWithTolerance(point.y, tolerancey)) {
-
-            if (Math.abs(x) > Math.abs(y)) {
-                var compy = this.point1.y - (this.point1.x - point.x) * ratio;
-                if (WithinTolerance(compy, point.y, tolerancex))
-                    return new graphicsentity.Point2F(point.x, compy);
-            } else {
-                var compx = this.point1.x - (this.point1.y - point.y) / ratio;
-                if (WithinTolerance(compx, point.x, tolerancey))
-                    return new graphicsentity.Point2F(compx, point.y);
-            }
-        }
-    }
-
-    return;
 };

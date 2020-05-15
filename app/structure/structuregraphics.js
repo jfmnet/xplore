@@ -67,8 +67,10 @@ structuregraphics.Nodes.prototype.Render = function (canvas) {
 };
 
 structuregraphics.Nodes.prototype.SelectByPoint = function (canvas, x, y) {
+    let width = canvas.ToPointWidth(5);
+
     for (let i = 0; i < this.list.length; i++) {
-        this.list[i].SelectByPoint(canvas, x, y);
+        this.list[i].SelectByPoint(canvas, x, y, width);
     }
 };
 
@@ -147,11 +149,8 @@ structuregraphics.Node.prototype.Render = function (canvas, parent) {
     canvas.DrawText_2(this.text, this.x + width, this.y + width);
 };
 
-structuregraphics.Node.prototype.SelectByPoint = function (canvas, x, y) {
-    let px = canvas.ToCoordX(this.x);
-    let py = canvas.ToCoordY(this.y);
-
-    if (Math.abs(px - x) < 5 && Math.abs(py - y) < 5) {
+structuregraphics.Node.prototype.SelectByPoint = function (canvas, x, y, tolerance) {
+    if (Math.abs(this.x - x) < tolerance && Math.abs(this.y - y) < tolerance) {
         this.selected = true;
         return true;
     }
@@ -326,6 +325,13 @@ structuregraphics.Member.prototype.Render = function (canvas, parent) {
 };
 
 structuregraphics.Member.prototype.SelectByPoint = function (canvas, x, y) {
+    let line = new xplore.canvasentity.Line2F(this.x1, this.y1, this.x2, this.y2);
+
+    if (line.Intersection({ x: x, y: y }, undefined, 0.1 / canvas.zoomvalue)) {
+        this.selected = true;
+        return true;
+    }
+
     return false;
 };
 

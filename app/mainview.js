@@ -122,31 +122,16 @@ view.InitializeLeftToolbar = function () {
             self.DrawMember();
         }
     }));
+    toolbar.Add(new xplore.Button({
+        icon: "triangle-outline",
+        onclick: function () {
+            self.AssignSupport();
+        }
+    }));
     toolbar.Add(new xplore.Button({ icon: "download-network-outline" }));
     toolbar.Add(new xplore.Button({ icon: "arrow-collapse-down" }));
 
     this.toolbar.Refresh();
-};
-
-view.Select = function () {
-    this.model.Select();
-    this.canvas.Render();
-};
-
-view.ClearSelection = function () {
-    this.Select();
-    this.model.ClearSelection();
-    this.canvas.Render();
-};
-
-view.DrawNode = function () {
-    this.canvas.StoreBuffer();
-    this.canvas.Draw(structuregraphics.Node);
-};
-
-view.DrawMember = function () {
-    this.canvas.StoreBuffer();
-    this.canvas.Draw(structuregraphics.Member);
 };
 
 
@@ -207,4 +192,46 @@ view.DeleteSupports = function (norender) {
 
     if (!norender)
         this.canvas.Render();
+};
+
+
+//Draw
+
+view.DrawNode = function () {
+    this.canvas.StoreBuffer();
+    this.canvas.Draw(structuregraphics.Node);
+};
+
+view.DrawMember = function () {
+    this.canvas.StoreBuffer();
+    this.canvas.Draw(structuregraphics.Member);
+};
+
+
+//Assign
+
+view.AssignSupport = function () {
+    let form = new xplore.Form({
+        text: "Assign Support",
+        height: 320
+    });
+
+    let model = new supportmodel();
+    form.Add(model);
+
+    form.Show();
+};
+
+
+//Select
+
+view.Select = function () {
+    this.model.Select();
+    this.canvas.Render();
+};
+
+view.ClearSelection = function () {
+    this.Select();
+    this.model.ClearSelection();
+    this.canvas.Render();
 };

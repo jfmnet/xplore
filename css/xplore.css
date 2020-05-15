@@ -56,23 +56,25 @@ i.mdi {
 }
 
 .input {
+    border-bottom: 1px solid #EEE;
     margin: 8px 16px;
+    position: relative;
 }
 
 .input input, .input select {
     border: 1px solid #CCC;
     outline: none;
-    padding: 8px;
+    padding: 8px 0;
     width: calc(100% - 18px);
 }
 
 .input input[type="checkbox"] {
     border: none;
     transform: scale(1.5);
+    float: right;
 }
 
 .input.inline input[type="checkbox"] {
-    margin: 4px 2px;
     width: initial;
 }
 
@@ -81,7 +83,6 @@ i.mdi {
 }
 
 .input.inline {
-    border-bottom: 1px solid #EEE;
     padding-bottom: 8px;
 }
 
@@ -197,10 +198,6 @@ i.mdi {
     bottom: 0;
 }
 
-
-
-
-
 .form {
     background-color: #FFF;
     box-shadow: 0 0 16px #555;
@@ -265,6 +262,10 @@ i.mdi {
     margin-right: 8px;
     width: 40px;
     text-align: center;
+}
+
+.form .input {
+    padding: 8px 16px;
 }
 
 .dock-panel .form .form-body {

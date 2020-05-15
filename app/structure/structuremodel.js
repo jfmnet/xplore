@@ -96,10 +96,10 @@ model.SnapOnIntersection = function (canvas, mouse) {
 
 model.SelectByPoint = function (canvas, mouse) {
      //Members
-     this.frames.SelectByPoint(canvas, mouse.rawcurrent.x, mouse.rawcurrent.y);
+     this.frames.SelectByPoint(canvas, mouse.current.x, mouse.current.y);
 
      //Nodes
-     this.nodes.SelectByPoint(canvas, mouse.rawcurrent.x, mouse.rawcurrent.y);
+     this.nodes.SelectByPoint(canvas, mouse.current.x, mouse.current.y);
 };
 
 model.SelectByRectangle = function (canvas, mouse) {

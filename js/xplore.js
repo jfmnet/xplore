@@ -126,8 +126,8 @@ xplore.prototype.Add = function (child) {
 
         } else {
             for (let name in child) {
-                if (child[child] && child[child].Show) {
-                    this.children.push(child[child]);
+                if (child[name] && child[name].Show) {
+                    this.children.push(child[name]);
 
                     if (this.object) {
                         child[name].Show(this.object);
