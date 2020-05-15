@@ -1,5 +1,5 @@
 body {
-    font: 13px normal, -apple-system, BlinkMacSystemFont, "Roboto", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font: 12px normal, -apple-system, BlinkMacSystemFont, "Roboto", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     overflow: hidden;
     margin: 0;
     padding: 0;
@@ -30,7 +30,7 @@ i.mdi {
 }
 
 .button {
-    background-color: #0D47A1;
+    background-color: #27282B;
     color: #FFF;
     cursor: pointer;
     align-items: center;
@@ -56,13 +56,14 @@ i.mdi {
 }
 
 .input {
-    border-bottom: 1px solid #EEE;
     margin: 8px 16px;
     position: relative;
 }
 
 .input input, .input select {
-    border: 1px solid #CCC;
+    border: 1px solid #27282B;
+    background-color: #27282B;
+    color: #FFF;
     outline: none;
     padding: 8px 0;
     width: calc(100% - 18px);
@@ -114,6 +115,7 @@ i.mdi {
 }
 
 .split-container, .dock-panel {
+    background-color: #27282B;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -199,8 +201,9 @@ i.mdi {
 }
 
 .form {
-    background-color: #FFF;
-    box-shadow: 0 0 16px #555;
+    background-color: #212125;
+    border: 1px solid #27282B;
+    color: #C6CCDB;
     position: absolute;
 
     transform: translateZ(0);
@@ -222,7 +225,6 @@ i.mdi {
 
 .form-header {
     align-items: center;
-    /* border-bottom: 1px solid #CCC; */
     display: flex;
     height: 42px;
     top: 0;
@@ -245,7 +247,7 @@ i.mdi {
 
 .form-header .button {
     background-color: transparent;
-    color: #333;
+    color: #C6CCDB;
 }
 
 .form-body {
@@ -265,7 +267,7 @@ i.mdi {
 }
 
 .form .input {
-    padding: 8px 16px;
+    padding: 4px 0;
 }
 
 .dock-panel .form .form-body {
@@ -316,6 +318,11 @@ i.mdi {
     top: 0;
     right: 0;
     bottom: 0;
+}
+
+.menu-container {
+    background-color: #212125;
+    color: #C6CCDB;
 }
 
 .menu {
@@ -386,26 +393,23 @@ i.mdi {
 }
 
 .toolbar-container {
-    background-color: #EEE;
+    background-color: #27282B;
+    color: #C6CCDB;
     display: flex;
-    height: 32px;
 }
 
 .toolbar {
     align-items: center;
-    background-color: #EEE;
-    border-right: 1px solid #DDD;
     display: inline-block;
-    height: 32px;
 }
 
 .toolbar .button {
     align-items: center;
-    background-color: #EEE;
-    color: #333;
+    background-color: #27282B;
+    color: #C6CCDB;
     display: inline-flex;
     padding: 0 8px;
-    height: 32px;
+    height: 40px;
 }
 
 .toolbar .button:hover {
@@ -493,6 +497,7 @@ i.mdi {
 canvas {
     height: 100%;
     width: 100%;
+    outline: none;
 }
 
 .canvas {

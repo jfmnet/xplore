@@ -157,29 +157,18 @@ xplore.canvasentity.Line2F.prototype.Intersection = function (point, includepoin
     let dx = this.x2 - this.x1;
     let dy = this.y2 - this.y1;
 
-    if (point.x !== undefined) {
+    if (!isNaN(point.x)) {
         //Point intersection
         let dxs = point.x - this.x1;
         let dys = point.y - this.y1;
+        let length = Math.sqrt(dxs * dxs + dys * dys);
+        let spoint = this.StartOffset(length);
 
-        let dxe = point.x - this.x2;
-        let dye = point.y - this.y2;
+        dxs = point.x - spoint.x;
+        dys = point.y - spoint.y;
+        length = Math.sqrt(dxs * dxs + dys * dys);
 
-        if ((dy === 0 && dys === 0) || Math.abs(dx / dy - dxs / dys) < tolerance) {
-            let offsets = Math.sqrt(dxs * dxs + dys * dys);
-            let offsete = Math.sqrt(dxe * dxe + dye * dye);
-
-            let length = this.length;
-
-            if (offsets <= length && offsete <= length ) {
-                if (includepoints)
-                    return this.StartOffset(offsets);
-                else {
-                    if (offsets > 0 && offsets < length)
-                        return this.StartOffset(offsets);
-                }
-            }
-        }
+        return length < tolerance;
 
     } else if (point.x1 !== undefined) {
         //Line intersection

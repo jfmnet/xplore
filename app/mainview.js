@@ -15,11 +15,12 @@ view.Show = function () {
     //View
     let mainsplitter = new xplore.SplitContainer({
         orientation: xplore.ORIENTATION.VERTICAL,
-        size: [64]
+        size: [72]
     });
 
     let container = mainsplitter.Add(new xplore.SplitContainer({
-        orientation: xplore.ORIENTATION.VERTICAL
+        orientation: xplore.ORIENTATION.VERTICAL,
+        size: [32]
     }));
 
     this.menu = container.Add(new xplore.MenuContainer());
@@ -27,7 +28,7 @@ view.Show = function () {
 
     //Splitter
     let splitter = mainsplitter.Add(new xplore.SplitContainer({
-        size: [32]
+        size: [40]
     }));
 
     //Left toolbar
@@ -128,8 +129,18 @@ view.InitializeLeftToolbar = function () {
             self.AssignSupport();
         }
     }));
-    toolbar.Add(new xplore.Button({ icon: "download-network-outline" }));
-    toolbar.Add(new xplore.Button({ icon: "arrow-collapse-down" }));
+    toolbar.Add(new xplore.Button({ 
+        icon: "download-network-outline",
+        onclick: function () {
+            self.AssignNodalLoad();
+        } 
+    }));
+    toolbar.Add(new xplore.Button({ 
+        icon: "arrow-collapse-down", 
+        onclick: function () {
+            self.AssignMemberLoad();
+        } 
+    }));
 
     this.toolbar.Refresh();
 };
@@ -215,6 +226,7 @@ view.AssignSupport = function () {
 
     let form = new xplore.Form({
         text: "Assign Support",
+        width: 320,
         height: 320,
         onok: function () {
             self.model.AssignSupport(model.x.value ? 1: 0, model.y.value ? 1: 0, model.rx.value ? 1: 0, model.ry.value ? 1: 0);
@@ -223,6 +235,44 @@ view.AssignSupport = function () {
     });
 
     let model = new supportmodel();
+    form.Add(model);
+
+    form.Show();
+};
+
+view.AssignNodalLoad = function () {
+    let self = this;
+
+    let form = new xplore.Form({
+        text: "Assign Joint Load",
+        width: 320,
+        height: 320,
+        onok: function () {
+            self.model.AssignNodalLoad(parseFloat(model.x.value), parseFloat(model.y.value));
+            self.canvas.Render();
+        }
+    });
+
+    let model = new jointloadmodel();
+    form.Add(model);
+
+    form.Show();
+};
+
+view.AssignMemberLoad = function () {
+    let self = this;
+
+    let form = new xplore.Form({
+        text: "Assign Member Load",
+        width: 320,
+        height: 320,
+        onok: function () {
+            self.model.AssignMemberLoad(parseFloat(model.w1.value), parseFloat(model.w2.value), parseFloat(model.l1.value), parseFloat(model.l2.value));
+            self.canvas.Render();
+        }
+    });
+
+    let model = new memberloadmodel();
     form.Add(model);
 
     form.Show();

@@ -149,3 +149,11 @@ model.DeleteSupports = function () {
 model.AssignSupport = function (x, y, rx, ry) {
     this.nodes.AssignSupport(x, y, rx, ry);
 };
+
+model.AssignNodalLoad = function (x, y) {
+    this.nodes.AssignNodalLoad(x, y);
+};
+
+model.AssignMemberLoad = function (w1, w2, l1, l2) {
+    this.nodes.AssignMemberLoad(w1, w2, l1, l2);
+};

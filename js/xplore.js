@@ -41,6 +41,7 @@ var xplore = function (param, element, classname) {
     this.text = param.text || "";
     this.icon = param.icon || "";
     this.tag = param.tag;
+    this.visible = param.visible === undefined ? true : false;
 
     if (param.class)
         this.classname.push(param.class);
@@ -140,10 +141,15 @@ xplore.prototype.Add = function (child) {
     }
 };
 
+xplore.prototype.ApplyProperties = function () {
+    this.SetVisibility(this.visible);
+};
+
 xplore.prototype.SetVisibility = function (visibility) {
     if (this.object) {
-        if (visibility)
+        if (visibility) {
             this.object.classList.remove("hidden");
+        }
         else
             this.object.classList.add("hidden");
     } else {
@@ -218,7 +224,11 @@ xplore.Textbox = function (param) {
 
     param = param || {};
 
-    this.value = param.value || "";
+    if (param.value === undefined)
+        this.value = "";
+    else
+        this.value = param.value;
+
     this.type = param.type || "text";
 
     this.onchange = param.onchange;
@@ -260,6 +270,7 @@ xplore.Textbox.prototype.Refresh = function () {
 
     }
 
+    this.ApplyProperties();
     this.Events();
 };
 

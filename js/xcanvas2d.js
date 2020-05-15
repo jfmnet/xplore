@@ -802,6 +802,18 @@ canvas.SelectRectangle = function (x, y, w, h, linecolor) {
     this.context.restore();
 };
 
+canvas.UpdateProperties = function (properties) {
+    this.context.fillStyle = properties.fillcolor;
+    this.context.strokeStyle = properties.linecolor;
+
+    if (properties.scale)
+        this.context.lineWidth = properties.thickness * gridsize / (defaultgridsize * gridvalue.x);
+    else
+        this.context.lineWidth = properties.thickness;
+
+    if (this.context.lineWidth < 1)
+        this.context.lineWidth = 1;
+};
 
 canvas.DrawLine = function (x1, y1, x2, y2, properties) {
     x1 = this.ToCoordX(x1);
@@ -836,7 +848,42 @@ canvas.DrawLine_2 = function (x1, y1, x2, y2) {
     this.context.stroke();
 };
 
-canvas.DrawCircle = function () {
+canvas.DrawCircle = function (x, y, r, properties) {
+    r = this.gridsize * r / this.gridvalue.x;
+    x = this.ToCoordX(x);
+    y = this.ToCoordY(y);
+
+    let context = this.context;
+
+    this.UpdateProperties(properties);
+
+    context.beginPath();
+    context.arc(x, y, r, 0, Math.PI * 2, false);
+    context.closePath();
+
+    if (property.showfill)
+        context.fill();
+
+    if (property.showline)
+        context.stroke();
+};
+
+canvas.DrawCircle_2 = function (x, y, r, showfill, showline) {
+    r = this.gridsize * r / this.gridvalue.x;
+    x = this.ToCoordX(x);
+    y = this.ToCoordY(y);
+
+    let context = this.context;
+
+    context.beginPath();
+    context.arc(x, y, r, 0, Math.PI * 2, false);
+    context.closePath();
+
+    if (showfill || showfill === undefined)
+        context.fill();
+
+    if (showline || showline === undefined)
+        context.stroke();
 };
 
 canvas.DrawRectangle = function (x, y, w, h, properties) {
@@ -845,6 +892,8 @@ canvas.DrawRectangle = function (x, y, w, h, properties) {
     h = ratio * h;
     x = this.ToCoordX(x) - w / 2;
     y = this.ToCoordY(y) - h / 2;
+
+    this.UpdateProperties(properties);
 
     if (properties.showfill)
         this.context.fillRect(x, y, w, h);
@@ -857,20 +906,78 @@ canvas.DrawRectangle_2 = function (x, y, w, h, showfill, showline) {
     let ratio = this.gridsize / this.gridvalue.x;
     w = ratio * w;
     h = ratio * h;
+
     x = this.ToCoordX(x) - w / 2;
     y = this.ToCoordY(y) - h / 2;
 
+    let context = this.context;
+
     if (showfill || showfill === undefined)
-        this.context.fillRect(x, y, w, h);
+        context.fillRect(x, y, w, h);
 
     if (showline || showline === undefined)
-        this.context.strokeRect(x, y, w, h);
+        context.strokeRect(x, y, w, h);
 };
 
 canvas.DrawPolyline = function () {
 };
 
-canvas.DrawPolygon = function () {
+canvas.DrawPolygon = function (points, properties) {
+    if (points.length !== 0) {
+        let context = this.context;
+
+        this.UpdateProperties(properties);
+
+        context.beginPath();
+
+        //First point
+        var x = this.ToCoordX(points[0].x);
+        var y = this.ToCoordY(points[0].y);
+        context.moveTo(x, y);
+
+        //Second to the last point
+        for (var i = 1; i < points.length; i++) {
+            x = this.ToCoordX(points[i].x);
+            y = this.ToCoordY(points[i].y);
+            context.lineTo(x, y);
+        }
+
+        context.closePath();
+
+        if (property.showfill) mainview
+        context.fill();
+
+        if (property.showline)
+            context.stroke();
+    }
+};
+
+canvas.DrawPolygon_2 = function (points, showfill, showline) {
+    if (points.length !== 0) {
+        let context = this.context;
+
+        context.beginPath();
+
+        //First point
+        var x = this.ToCoordX(points[0].x);
+        var y = this.ToCoordY(points[0].y);
+        context.moveTo(x, y);
+
+        //Second to the last point
+        for (var i = 1; i < points.length; i++) {
+            x = this.ToCoordX(points[i].x);
+            y = this.ToCoordY(points[i].y);
+            context.lineTo(x, y);
+        }
+
+        context.closePath();
+
+        if (showfill || showfill === undefined)
+            context.fill();
+
+        if (showline || showline === undefined)
+            context.stroke();
+    }
 };
 
 canvas.DrawText = function (text, x, y, font, color, a, ha, va) {

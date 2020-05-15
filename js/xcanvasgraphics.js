@@ -28,7 +28,9 @@ xplore.canvasgraphics = function () {
 
 xplore.canvasgraphics.constructor = xplore.canvasgraphics;
 
-xplore.canvasgraphics.prototype.Clone = function () {
+let canvasgraphics = xplore.canvasgraphics.prototype;
+
+canvasgraphics.Clone = function () {
     let object = Object.create(this);
 
     for (let name in this) {
@@ -41,14 +43,14 @@ xplore.canvasgraphics.prototype.Clone = function () {
     return object;
 };
 
-xplore.canvasgraphics.prototype.Move = function (x, y) {
+canvasgraphics.Move = function (x, y) {
     for (let i = 0; i < this.points.length; i++) {
         this.points[i].x += x;
         this.points[i].y += y;
     }
 };
 
-xplore.canvasgraphics.prototype.Scale = function (x, y) {
+canvasgraphics.Scale = function (x, y) {
     for (let i = 0; i < this.points.length; i++) {
         this.points[i].x *= x;
         this.points[i].y *= y;
@@ -60,7 +62,7 @@ xplore.canvasgraphics.prototype.Scale = function (x, y) {
  * @param  {float} cx    - center of rotation along x
  * @param  {float} cy    - center of rotation along y
  */
-xplore.canvasgraphics.prototype.Rotate = function (angle, cx, cy) {
+canvasgraphics.Rotate = function (angle, cx, cy) {
     if (cx === undefined)
         cx = 0;
 
@@ -76,7 +78,7 @@ xplore.canvasgraphics.prototype.Rotate = function (angle, cx, cy) {
     }
 };
 
-xplore.canvasgraphics.prototype.Property = function (x, y) {
+canvasgraphics.Property = function (x, y) {
     if (this.selected)
         return this.properties;
     else
@@ -95,34 +97,36 @@ xplore.canvasgraphics.Line = function (x1, y1, x2, y2) {
         this.points = [{ x: x1 || 0, y: y1 || 0 }, { x: x2 || 0, y: y2 || 0 }];
 };
 
-xplore.canvasgraphics.Line.prototype = Object.create(xplore.canvasgraphics.prototype);
+xplore.canvasgraphics.Line.prototype = Object.create(canvasgraphics);
 xplore.canvasgraphics.Line.constructor = xplore.canvasgraphics.Line;
 
-Object.defineProperty(xplore.canvasgraphics.Line.prototype, 'x1', {
+let line = xplore.canvasgraphics.Line.prototype;
+
+Object.defineProperty(line, 'x1', {
     get: function () { return this.points[0].x },
     set: function (value) { this.points[0].x = value }
 });
 
-Object.defineProperty(xplore.canvasgraphics.Line.prototype, 'x2', {
+Object.defineProperty(line, 'x2', {
     get: function () { return this.points[1].x },
     set: function (value) { this.points[1].x = value }
 });
 
-Object.defineProperty(xplore.canvasgraphics.Line.prototype, 'y1', {
+Object.defineProperty(line, 'y1', {
     get: function () { return this.points[0].y },
     set: function (value) { this.points[0].y = value }
 });
 
-Object.defineProperty(xplore.canvasgraphics.Line.prototype, 'y2', {
+Object.defineProperty(line, 'y2', {
     get: function () { return this.points[1].y },
     set: function (value) { this.points[1].y = value }
 });
 
-xplore.canvasgraphics.Line.prototype.Render = function (canvas) {
+line.Render = function (canvas) {
     canvas.DrawLine(this.x1, this.y1, this.x2, this.y2, this.Property());
 };
 
-xplore.canvasgraphics.Line.prototype.Update = function (mouse) {
+line.Update = function (mouse) {
     this.points[1] = { x: mouse.x, y: mouse.y };
 };
 
@@ -139,33 +143,53 @@ xplore.canvasgraphics.Rectangle = function (x, y, w, h) {
         this.points = [{ x: x || 0, y: y || 0 }, { x: w || 0, y: h || 0 }];
 };
 
-xplore.canvasgraphics.Rectangle.prototype = Object.create(xplore.canvasgraphics.prototype);
+xplore.canvasgraphics.Rectangle.prototype = Object.create(canvasgraphics);
 xplore.canvasgraphics.Rectangle.constructor = xplore.canvasgraphics.Rectangle;
 
-Object.defineProperty(xplore.canvasgraphics.Rectangle.prototype, 'x', {
+let rectangle = xplore.canvasgraphics.Rectangle.prototype;
+
+Object.defineProperty(rectangle, 'x', {
     get: function () { return this.points[0].x },
     set: function (value) { this.points[0].x = value }
 });
 
-Object.defineProperty(xplore.canvasgraphics.Rectangle.prototype, 'y', {
+Object.defineProperty(rectangle, 'y', {
     get: function () { return this.points[0].y },
     set: function (value) { this.points[0].y = value }
 });
 
-Object.defineProperty(xplore.canvasgraphics.Rectangle.prototype, 'w', {
+Object.defineProperty(rectangle, 'w', {
     get: function () { return this.points[1].x },
     set: function (value) { this.points[1].x = value }
 });
 
-Object.defineProperty(xplore.canvasgraphics.Rectangle.prototype, 'h', {
+Object.defineProperty(rectangle, 'h', {
     get: function () { return this.points[1].y },
     set: function (value) { this.points[1].y = value }
 });
 
-xplore.canvasgraphics.Rectangle.prototype.Render = function (canvas) {
+rectangle.Render = function (canvas) {
     canvas.DrawRectangle(this.x, this.y, this.w, this.h, this.Property());
 };
 
-xplore.canvasgraphics.Rectangle.prototype.Update = function (mouse) {
+rectangle.Update = function (mouse) {
     this.points[1] = { x: Math.abs(this.points[0].x - mouse.x) * 2, y: Math.abs(this.points[0].y - mouse.y) * 2 };
+};
+
+
+//Polygon
+
+xplore.canvasgraphics.Polygon = function (points) {
+    xplore.canvasgraphics.call(this);
+
+    this.points = points;
+};
+
+xplore.canvasgraphics.Polygon.prototype = Object.create(canvasgraphics);
+xplore.canvasgraphics.Polygon.constructor = xplore.canvasgraphics.Polygon;
+
+let polygon = xplore.canvasgraphics.Polygon.prototype;
+
+polygon.Render = function (canvas) {
+    canvas.DrawPolygon(this.x, this.y, this.w, this.h, this.Property());
 };
