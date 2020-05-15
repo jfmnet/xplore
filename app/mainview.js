@@ -211,9 +211,15 @@ view.DrawMember = function () {
 //Assign
 
 view.AssignSupport = function () {
+    let self = this;
+
     let form = new xplore.Form({
         text: "Assign Support",
-        height: 320
+        height: 320,
+        onok: function () {
+            self.model.AssignSupport(model.x.value ? 1: 0, model.y.value ? 1: 0, model.rx.value ? 1: 0, model.ry.value ? 1: 0);
+            self.canvas.Render();
+        }
     });
 
     let model = new supportmodel();

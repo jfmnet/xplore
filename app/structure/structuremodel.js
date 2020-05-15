@@ -3,7 +3,6 @@ var structuremodel = function () {
 
     this.nodes = new structuregraphics.Nodes();
     this.frames = new structuregraphics.Members();
-    this.supports = [];
     this.nodalloads = [];
     this.frameloads = [];
 
@@ -41,13 +40,6 @@ model.Clear = function () {
     this.supports = [];
     this.nodalloads = [];
     this.frameloads = [];
-};
-
-model.Select = function () {
-    this.action = xplore.CANVASACTIONS.SELECT;
-    delete this.drawobject;
-    delete this.draw;
-    this.downcount = 0;
 };
 
 model.Render = function (canvas) {
@@ -93,6 +85,13 @@ model.SnapOnIntersection = function (canvas, mouse) {
 
 
 //Select
+
+model.Select = function () {
+    this.action = xplore.CANVASACTIONS.SELECT;
+    delete this.drawobject;
+    delete this.draw;
+    this.downcount = 0;
+};
 
 model.SelectByPoint = function (canvas, mouse) {
      //Members
@@ -142,4 +141,11 @@ model.DeleteMemberLoads = function () {
 
 model.DeleteSupports = function () {
     //this.supports.Delete();
+};
+
+
+//Assign
+
+model.AssignSupport = function (x, y, rx, ry) {
+    this.nodes.AssignSupport(x, y, rx, ry);
 };

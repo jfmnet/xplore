@@ -27,7 +27,9 @@ structuregraphics.Nodes = function () {
 structuregraphics.Nodes.prototype = Object.create(xplore.canvasgraphics.prototype);
 structuregraphics.Nodes.constructor = structuregraphics.Nodes;
 
-structuregraphics.Nodes.prototype.Add = function (object) {
+let nodes = structuregraphics.Nodes.prototype; 
+
+nodes.Add = function (object) {
     let add = true;
 
     //Check for duplicate nodes
@@ -47,11 +49,11 @@ structuregraphics.Nodes.prototype.Add = function (object) {
     return add;
 };
 
-structuregraphics.Nodes.prototype.Clear = function (object) {
+nodes.Clear = function (object) {
     this.list = [];
 };
 
-structuregraphics.Nodes.prototype.Render = function (canvas) {
+nodes.Render = function (canvas) {
     canvas.SetProperties(this.properties);
 
     if (this.updatetext) {
@@ -66,7 +68,7 @@ structuregraphics.Nodes.prototype.Render = function (canvas) {
     }
 };
 
-structuregraphics.Nodes.prototype.SelectByPoint = function (canvas, x, y) {
+nodes.SelectByPoint = function (canvas, x, y) {
     let width = canvas.ToPointWidth(5);
 
     for (let i = 0; i < this.list.length; i++) {
@@ -74,19 +76,19 @@ structuregraphics.Nodes.prototype.SelectByPoint = function (canvas, x, y) {
     }
 };
 
-structuregraphics.Nodes.prototype.SelectByRectangle = function (x1, y1, x2, y2) {
+nodes.SelectByRectangle = function (x1, y1, x2, y2) {
     for (let i = 0; i < this.list.length; i++) {
         this.list[i].SelectByRectangle(x1, y1, x2, y2);
     }
 };
 
-structuregraphics.Nodes.prototype.ClearSelection = function () {
+nodes.ClearSelection = function () {
     for (let i = 0; i < this.list.length; i++) {
         this.list[i].selected = false;
     }
 };
 
-structuregraphics.Nodes.prototype.Delete = function () {
+nodes.Delete = function () {
     let deleted = [];
 
     for (let i = 0; i < this.list.length; i++) {
@@ -100,11 +102,30 @@ structuregraphics.Nodes.prototype.Delete = function () {
     return deleted;
 };
 
+nodes.AssignSupport = function (x, y, rx, ry) {
+    for (let i = 0; i < this.list.length; i++)
+        if (this.list[i].selected) {
+            this.list[i].support = new structuregraphics.Support(nodes[i], x, y, rx, ry);
+        }
+};
+
+nodes.GetSelectedNodes = function () {
+    let selected = [];
+
+    for (let i = 0; i < this.list.length; i++)
+        if (this.list[i].selected)
+            selected.push(i);
+
+    return selected;
+};
+
 
 //Node
 
 structuregraphics.Node = function (x, y) {
     xplore.canvasgraphics.call(this);
+
+    node.selected = false;
 
     if (x.x !== undefined)
         this.points = [{ x: x.x || 0, y: x.y || 0 }];
@@ -114,23 +135,24 @@ structuregraphics.Node = function (x, y) {
 
 structuregraphics.Node.prototype = Object.create(xplore.canvasgraphics.prototype);
 structuregraphics.Node.constructor = structuregraphics.Node;
-Object.defineProperty(structuregraphics.Node.prototype, 'action', {
+
+let node = structuregraphics.Node.prototype;
+
+Object.defineProperty(node, 'action', {
     get: function () { return 1; }
 });
 
-Object.defineProperty(structuregraphics.Node.prototype, 'x', {
+Object.defineProperty(node, 'x', {
     get: function () { return this.points[0].x },
     set: function (value) { this.points[0].x = value }
 });
 
-Object.defineProperty(structuregraphics.Node.prototype, 'y', {
+Object.defineProperty(node, 'y', {
     get: function () { return this.points[0].y },
     set: function (value) { this.points[0].y = value }
 });
 
-structuregraphics.Node.prototype.selected = false;
-
-structuregraphics.Node.prototype.Render = function (canvas, parent) {
+node.Render = function (canvas, parent) {
     let width = canvas.ToPointWidth(5);
 
     if (this.selected) {
@@ -149,7 +171,7 @@ structuregraphics.Node.prototype.Render = function (canvas, parent) {
     canvas.DrawText_2(this.text, this.x + width, this.y + width);
 };
 
-structuregraphics.Node.prototype.SelectByPoint = function (canvas, x, y, tolerance) {
+node.SelectByPoint = function (canvas, x, y, tolerance) {
     if (Math.abs(this.x - x) < tolerance && Math.abs(this.y - y) < tolerance) {
         this.selected = true;
         return true;
@@ -158,7 +180,7 @@ structuregraphics.Node.prototype.SelectByPoint = function (canvas, x, y, toleran
     return false;
 };
 
-structuregraphics.Node.prototype.SelectByRectangle = function (x1, y1, x2, y2) {
+node.SelectByRectangle = function (x1, y1, x2, y2) {
     let x = Math.abs(x1 - x2);
     let y = Math.abs(y1 - y2);
 
@@ -172,7 +194,6 @@ structuregraphics.Node.prototype.SelectByRectangle = function (x1, y1, x2, y2) {
 
 
 //Members
-
 structuregraphics.Members = function () {
     xplore.canvasgraphics.call(this);
 
@@ -193,16 +214,18 @@ structuregraphics.Members = function () {
 structuregraphics.Members.prototype = Object.create(xplore.canvasgraphics.prototype);
 structuregraphics.Members.constructor = structuregraphics.Members;
 
-structuregraphics.Members.prototype.Add = function (object) {
+let members = structuregraphics.Members.prototype;
+
+members.Add = function (object) {
     this.list.push(object);
     this.updatetext = true;
 };
 
-structuregraphics.Members.prototype.Clear = function (object) {
+members.Clear = function (object) {
     this.list = [];
 };
 
-structuregraphics.Members.prototype.Render = function (canvas) {
+members.Render = function (canvas) {
     canvas.SetProperties(this.properties);
 
     if (this.updatetext) {
@@ -217,7 +240,7 @@ structuregraphics.Members.prototype.Render = function (canvas) {
     }
 };
 
-structuregraphics.Members.prototype.Split = function (x, y) {
+members.Split = function (x, y) {
     let line;
     let point;
 
@@ -237,7 +260,7 @@ structuregraphics.Members.prototype.Split = function (x, y) {
     }
 };
 
-structuregraphics.Members.prototype.UpdateIntersections = function () {
+members.UpdateIntersections = function () {
     let line1;
     let line2;
     let intersection;
@@ -261,25 +284,25 @@ structuregraphics.Members.prototype.UpdateIntersections = function () {
     return this.intersections;
 };
 
-structuregraphics.Members.prototype.SelectByPoint = function (canvas, x, y) {
+members.SelectByPoint = function (canvas, x, y) {
     for (let i = 0; i < this.list.length; i++) {
         this.list[i].SelectByPoint(canvas, x, y);
     }
 };
 
-structuregraphics.Members.prototype.SelectByRectangle = function (x1, y1, x2, y2) {
+members.SelectByRectangle = function (x1, y1, x2, y2) {
     for (let i = 0; i < this.list.length; i++) {
         this.list[i].SelectByRectangle(x1, y1, x2, y2);
     }
 };
 
-structuregraphics.Members.prototype.ClearSelection = function () {
+members.ClearSelection = function () {
     for (let i = 0; i < this.list.length; i++) {
         this.list[i].selected = false;
     }
 };
 
-structuregraphics.Members.prototype.Delete = function (x, y) {
+members.Delete = function (x, y) {
     if (x !== undefined && y !== undefined) {
         for (let i = 0; i < this.list.length; i++) {
             if ((Math.abs(this.list[i].x1 - x) < this.tolerance && Math.abs(this.list[i].y1 - y) < this.tolerance) ||
@@ -309,7 +332,9 @@ structuregraphics.Member = function (x1, y1, x2, y2) {
 structuregraphics.Member.prototype = Object.create(xplore.canvasgraphics.Line.prototype);
 structuregraphics.Member.constructor = structuregraphics.Member;
 
-structuregraphics.Member.prototype.Render = function (canvas, parent) {
+let member = structuregraphics.Member.prototype;
+
+member.Render = function (canvas, parent) {
     if (this.selected) {
         canvas.SetProperties(parent.selectedproperties);
         canvas.DrawLine_2(this.x1, this.y1, this.x2, this.y2);
@@ -324,7 +349,7 @@ structuregraphics.Member.prototype.Render = function (canvas, parent) {
         canvas.DrawText_2(this.text, (this.x1 + this.x2) / 2, (this.y1 + this.y2) / 2);
 };
 
-structuregraphics.Member.prototype.SelectByPoint = function (canvas, x, y) {
+member.SelectByPoint = function (canvas, x, y) {
     let line = new xplore.canvasentity.Line2F(this.x1, this.y1, this.x2, this.y2);
 
     if (line.Intersection({ x: x, y: y }, undefined, 0.1 / canvas.zoomvalue)) {
@@ -335,7 +360,7 @@ structuregraphics.Member.prototype.SelectByPoint = function (canvas, x, y) {
     return false;
 };
 
-structuregraphics.Member.prototype.SelectByRectangle = function (x1, y1, x2, y2) {
+member.SelectByRectangle = function (x1, y1, x2, y2) {
     let x = Math.abs(x1 - x2);
     let y = Math.abs(y1 - y2);
 
@@ -352,62 +377,37 @@ structuregraphics.Member.prototype.SelectByRectangle = function (x1, y1, x2, y2)
 };
 
 
-//Supports
-
-structuregraphics.Supports = function () {
-    xplore.canvasgraphics.call(this);
-
-    this.tolerance = 0.001;
-    this.list = [];
-    this.updatetext;
-
-    this.properties = new xplore.DrawProperties();
-    this.properties.fillcolor = "#88f";
-    this.properties.linecolor = "#00f";
-    this.properties.font = "normal 13px arial";
-
-    this.selectedproperties = new xplore.DrawProperties();
-    this.selectedproperties.fillcolor = "#ff0";
-    this.selectedproperties.linecolor = "#ff0";
-    this.selectedproperties.font = "normal 13px arial";
-};
-
-structuregraphics.Supports.prototype = Object.create(xplore.canvasgraphics.prototype);
-structuregraphics.Supports.constructor = structuregraphics.Supports;
-
-structuregraphics.Supports.prototype.Render = function (canvas) {
-    canvas.SetProperties(this.properties);
-
-    for (let i = 0; i < this.list.length; i++) {
-        this.list[i].Render(canvas);
-    }
-};
-
-structuregraphics.Supports.prototype.Delete = function () {
-    for (let i = 0; i < this.list.length; i++) {
-        if (this.list[i].selected) {
-            this.list.splice(i, 1);
-            i--;
-        }
-    }
-};
-
-
 //Support
 
-structuregraphics.Support = function (x, y) {
+structuregraphics.Support = function (node, x, y, rx, ry) {
     xplore.canvasgraphics.call(this);
 
-    if (x.x !== undefined)
-        this.points = [{ x: x.x || 0, y: x.y || 0 }];
-    else
-        this.points = [{ x: x || 0, y: y || 0 }];
+    this.node = node;
+    this.x = x || 0;
+    this.y = y || 0;
+    this.rx = rx || 0;
+    this.ry = ry || 0;
 };
 
 structuregraphics.Support.prototype = Object.create(xplore.canvasgraphics.prototype);
 structuregraphics.Support.constructor = structuregraphics.Support;
 
-structuregraphics.Support.prototype.Render = function (canvas) {
+let support = structuregraphics.Support.prototype;
+
+support.Render = function (canvas, x, y) {
+    if (this.x === 1 && this.y === 1 && this.rx === 1 && this.ry === 1) {
+        //Fixed support
+        canvas.DrawLine_2(x, y, this.x2, this.y2);
+
+    } else if (this.x === 1 && this.y === 1) {
+        //Pin support
+
+    } else if (this.x === 1) {
+        //Roller X
+
+    } else if (this.x === 1) {
+        //Roller Y
+    }
 };
 
 
@@ -434,7 +434,9 @@ structuregraphics.NodalLoads = function () {
 structuregraphics.NodalLoads.prototype = Object.create(xplore.canvasgraphics.prototype);
 structuregraphics.NodalLoads.constructor = structuregraphics.NodalLoads;
 
-structuregraphics.NodalLoads.prototype.Render = function (canvas) {
+let nodalloads = structuregraphics.NodalLoads.prototype;
+
+nodalloads.Render = function (canvas) {
     canvas.SetProperties(this.properties);
 
     for (let i = 0; i < this.list.length; i++) {
@@ -442,7 +444,7 @@ structuregraphics.NodalLoads.prototype.Render = function (canvas) {
     }
 };
 
-structuregraphics.NodalLoads.prototype.Delete = function () {
+nodalloads.Delete = function () {
     for (let i = 0; i < this.list.length; i++) {
         if (this.list[i].selected) {
             this.list.splice(i, 1);
@@ -466,7 +468,9 @@ structuregraphics.NodalLoad = function (x, y) {
 structuregraphics.NodalLoad.prototype = Object.create(xplore.canvasgraphics.prototype);
 structuregraphics.NodalLoad.constructor = structuregraphics.NodalLoad;
 
-structuregraphics.NodalLoad.prototype.Render = function (canvas) {
+let nodalload = structuregraphics.NodalLoad.prototype;
+
+nodalload.Render = function (canvas) {
 };
 
 
@@ -493,7 +497,9 @@ structuregraphics.MemberLoads = function () {
 structuregraphics.MemberLoads.prototype = Object.create(xplore.canvasgraphics.prototype);
 structuregraphics.MemberLoads.constructor = structuregraphics.MemberLoads;
 
-structuregraphics.MemberLoads.prototype.Render = function (canvas) {
+let memberloads = structuregraphics.MemberLoads.prototype;
+
+memberloads.Render = function (canvas) {
     canvas.SetProperties(this.properties);
 
     for (let i = 0; i < this.list.length; i++) {
@@ -501,7 +507,7 @@ structuregraphics.MemberLoads.prototype.Render = function (canvas) {
     }
 };
 
-structuregraphics.MemberLoads.prototype.Delete = function () {
+memberloads.Delete = function () {
     for (let i = 0; i < this.list.length; i++) {
         if (this.list[i].selected) {
             this.list.splice(i, 1);
@@ -525,5 +531,7 @@ structuregraphics.MemberLoad = function (x, y) {
 structuregraphics.MemberLoad.prototype = Object.create(xplore.canvasgraphics.prototype);
 structuregraphics.MemberLoad.constructor = structuregraphics.MemberLoad;
 
-structuregraphics.MemberLoad.prototype.Render = function (canvas) {
+let memberload = structuregraphics.MemberLoad.prototype; 
+
+memberload.Render = function (canvas) {
 };
