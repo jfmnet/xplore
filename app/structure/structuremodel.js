@@ -2,7 +2,7 @@ var structuremodel = function () {
     xplore.Canvas2DModel.call(this);
 
     this.nodes = new structuregraphics.Nodes();
-    this.frames = new structuregraphics.Members();
+    this.members = new structuregraphics.Members();
     this.nodalloads = [];
     this.frameloads = [];
 
@@ -16,17 +16,17 @@ let model = structuremodel.prototype;
 
 model.Add = function (object) {
     if (object instanceof structuregraphics.Node) {
-        this.frames.Split(object.x, object.y);
+        this.members.Split(object.x, object.y);
         this.nodes.Add(object);
     }
 
     else if (object instanceof structuregraphics.Member) {
-        //Split frames
-        this.frames.Split(object.x1, object.y1);
-        this.frames.Split(object.x2, object.y2);
+        //Split members
+        this.members.Split(object.x1, object.y1);
+        this.members.Split(object.x2, object.y2);
 
         //Add frame
-        this.frames.Add(object);
+        this.members.Add(object);
 
         //Add nodes
         this.nodes.Add(new structuregraphics.Node(object.x1, object.y1));
@@ -36,7 +36,7 @@ model.Add = function (object) {
 
 model.Clear = function () {
     this.nodes.Clear();
-    this.frames.Clear();
+    this.members.Clear();
     this.supports = [];
     this.nodalloads = [];
     this.frameloads = [];
@@ -44,14 +44,14 @@ model.Clear = function () {
 
 model.Render = function (canvas) {
     //Members
-    this.frames.Render(canvas);
+    this.members.Render(canvas);
 
     //Nodes
     this.nodes.Render(canvas);
 };
 
 model.UpdatePoints = function () {
-    this.intersections = this.frames.UpdateIntersections();
+    this.intersections = this.members.UpdateIntersections();
 };
 
 
@@ -95,7 +95,7 @@ model.Select = function () {
 
 model.SelectByPoint = function (canvas, mouse) {
      //Members
-     this.frames.SelectByPoint(canvas, mouse.current.x, mouse.current.y);
+     this.members.SelectByPoint(canvas, mouse.current.x, mouse.current.y);
 
      //Nodes
      this.nodes.SelectByPoint(canvas, mouse.current.x, mouse.current.y);
@@ -103,7 +103,7 @@ model.SelectByPoint = function (canvas, mouse) {
 
 model.SelectByRectangle = function (canvas, mouse) {
      //Members
-     this.frames.SelectByRectangle(mouse.down.x, mouse.down.y, mouse.current.x, mouse.current.y);
+     this.members.SelectByRectangle(mouse.down.x, mouse.down.y, mouse.current.x, mouse.current.y);
 
      //Nodes
      this.nodes.SelectByRectangle(mouse.down.x, mouse.down.y, mouse.current.x, mouse.current.y);
@@ -111,7 +111,7 @@ model.SelectByRectangle = function (canvas, mouse) {
 
 model.ClearSelection = function () {
     //Members
-    this.frames.ClearSelection();
+    this.members.ClearSelection();
 
     //Nodes
     this.nodes.ClearSelection();
@@ -124,7 +124,7 @@ model.DeleteNodes = function () {
     let nodes = this.nodes.Delete();
 
     for (let i = 0; i < nodes.length; i++)
-        this.frames.Delete(nodes[i].x, nodes[i].y);
+        this.members.Delete(nodes[i].x, nodes[i].y);
 };
 
 model.DeleteNodalLoads = function () {
@@ -132,7 +132,7 @@ model.DeleteNodalLoads = function () {
 };
 
 model.DeleteMembers = function () {
-    this.frames.Delete();
+    this.members.Delete();
 };
 
 model.DeleteMemberLoads = function () {
@@ -155,5 +155,5 @@ model.AssignNodalLoad = function (x, y) {
 };
 
 model.AssignMemberLoad = function (w1, w2, l1, l2) {
-    this.nodes.AssignMemberLoad(w1, w2, l1, l2);
+    this.members.AssignMemberLoad(w1, w2, l1, l2);
 };

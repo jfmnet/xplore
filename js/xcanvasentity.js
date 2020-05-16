@@ -59,7 +59,9 @@ xplore.canvasentity.Line2F = function (x1, y1, x2, y2) {
 xplore.canvasentity.Line2F.prototype = Object.create(xplore.canvasentity.prototype);
 xplore.canvasentity.Line2F.constructor = xplore.canvasentity.Line2F;
 
-Object.defineProperty(xplore.canvasentity.Line2F.prototype, 'length', {
+let line2f = xplore.canvasentity.Line2F.prototype;
+
+Object.defineProperty(line2f, 'length', {
     get: function () {
         let x = this.x1 - this.x2;
         let y = this.y1 - this.y2;
@@ -68,13 +70,20 @@ Object.defineProperty(xplore.canvasentity.Line2F.prototype, 'length', {
     }
 });
 
-Object.defineProperty(xplore.canvasentity.Line2F.prototype, 'angle', {
+Object.defineProperty(line2f, 'angle', {
     get: function () {
         if (this.x1 === this.x2) {
             if (this.y1 > this.y2)
                 return 270;
             else
                 return 90;
+
+        } else if (this.y1 === this.y2) {
+            if (this.x1 < this.x2)
+                return 0;
+            else
+                return 180;
+
         } else {
             let x = this.x2 - this.x1;
             let y = this.y2 - this.y1;
@@ -96,7 +105,43 @@ Object.defineProperty(xplore.canvasentity.Line2F.prototype, 'angle', {
     }
 });
 
-xplore.canvasentity.Line2F.prototype.Slope = function () {
+Object.defineProperty(line2f, 'anglerad', {
+    get: function () {
+        if (this.x1 === this.x2) {
+            if (this.y1 > this.y2)
+                return Math.PI * 1.5;
+            else
+                return Math.PI * 0.5;
+
+        } else if (this.y1 === this.y2) {
+            if (this.x1 < this.x2)
+                return 0;
+            else
+                return Math.PI;
+
+        } else {
+            let x = this.x2 - this.x1;
+            let y = this.y2 - this.y1;
+
+            let angle = Math.atan(Math.abs(y) / Math.abs(x));
+
+            if (x > 0) {
+                if (y > 0)
+                    return angle;
+                else
+                    return Math.PI * 2 - angle;
+            } else {
+                if (y > 0)
+                    return Math.PI - angle;
+                else
+                    return Math.PI + angle;
+            }
+        }
+    }
+});
+
+
+line2f.Slope = function () {
     let x = this.x1 - this.x2;
     let y = this.y1 - this.y2;
 
@@ -112,11 +157,11 @@ xplore.canvasentity.Line2F.prototype.Slope = function () {
     return y / x;
 };
 
-xplore.canvasentity.Line2F.prototype.Intercept = function (slope) {
+line2f.Intercept = function (slope) {
     return this.y1 - slope * this.x1;
 };
 
-xplore.canvasentity.Line2F.prototype.Split = function (count) {
+line2f.Split = function (count) {
     if (count < 2) {
         return [
             { x: this.x1, y: this.y1 },
@@ -136,7 +181,27 @@ xplore.canvasentity.Line2F.prototype.Split = function (count) {
     }
 };
 
-xplore.canvasentity.Line2F.prototype.StartOffset = function (offset) {
+line2f.SplitBySpacing = function (spacing) {
+    if (spacing <= 0)
+        return this.Split(2);
+
+    let length = this.length;
+
+    if (length !== 0) {
+        let number = Math.ceil(length / spacing) + 1;
+        let points = [];
+        let intervalx = (this.x2 - this.x1) / (number - 1);
+        let intervaly = (this.y2 - this.y1) / (number - 1);
+
+        for (let count = 0; count < number; count++) {
+            points.push({ x: intervalx * count + this.x1, y: intervaly * count + this.y1 });
+        }
+
+        return points;
+    }
+};
+
+line2f.StartOffset = function (offset) {
     let ratio = offset / this.length;
     let dx = (this.x2 - this.x1);
     let dy = (this.y2 - this.y1);
@@ -144,7 +209,7 @@ xplore.canvasentity.Line2F.prototype.StartOffset = function (offset) {
     return { x: ratio * dx + this.x1, y: ratio * dy + this.y1 };
 };
 
-xplore.canvasentity.Line2F.prototype.EndOffset = function (offset) {
+line2f.EndOffset = function (offset) {
     let ratio = offset / this.length;
     let dx = (this.x2 - this.x1);
     let dy = (this.y2 - this.y1);
@@ -152,7 +217,7 @@ xplore.canvasentity.Line2F.prototype.EndOffset = function (offset) {
     return { x: this.x2 - ratio * dx, y: this.y2 - ratio * dy };
 };
 
-xplore.canvasentity.Line2F.prototype.Intersection = function (point, includepoints, tol) {
+line2f.Intersection = function (point, includepoints, tol) {
     let tolerance = tol || 0.0001;
     let dx = this.x2 - this.x1;
     let dy = this.y2 - this.y1;
@@ -211,5 +276,74 @@ xplore.canvasentity.Line2F.prototype.Intersection = function (point, includepoin
             return intersection;
 
         return;
+    }
+};
+
+line2f.Offset = function (offset) {
+    let dx = this.x1 - this.x2;
+    let dy = this.y1 - this.y2;
+
+    if (dx === 0 && dy === 0) {
+        return new xplore.canvasentity.Line2F(
+            this.x1,
+            this.y1,
+            this.x2,
+            this.y2
+        );
+
+    } else if (dx === 0) {
+        return new xplore.canvasentity.Line2F(
+            this.x1 + offset,
+            this.y1,
+            this.x2 + offset,
+            this.y2
+        );
+
+    } else if (dy === 0) {
+        return new xplore.canvasentity.Line2F(
+            this.x1,
+            this.y1 + offset,
+            this.x2,
+            this.y2 + offset
+        );
+
+    } else {
+        let r = dx / dy;
+        let sign = Math.sign(offset);
+        let x = Math.sqrt(offset * offset / (1 + r * r));
+        let y = Math.sqrt(offset * offset - x * x);
+
+        if (dx > 0 && dy > 0) {
+            return new xplore.canvasentity.Line2F(
+                this.x1 + sign * x,
+                this.y1 - sign * y,
+                this.x2 + sign * x,
+                this.y2 - sign * y
+            );
+
+        } else if (dx > 0 && dy < 0) {
+            return new xplore.canvasentity.Line2F(
+                this.x1 + sign * x,
+                this.y1 + sign * y,
+                this.x2 + sign * x,
+                this.y2 + sign * y
+            );
+
+        } else if (dx < 0 && dy < 0) {
+            return new xplore.canvasentity.Line2F(
+                this.x1 - sign * x,
+                this.y1 + sign * y,
+                this.x2 - sign * x,
+                this.y2 + sign * y
+            );
+
+        } else {
+            return new xplore.canvasentity.Line2F(
+                this.x1 - sign * x,
+                this.y1 - sign * y,
+                this.x2 - sign * x,
+                this.y2 - sign * y
+            );
+        }
     }
 };

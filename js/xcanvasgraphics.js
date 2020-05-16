@@ -86,6 +86,49 @@ canvasgraphics.Property = function (x, y) {
 };
 
 
+
+//Arrow
+
+xplore.canvasgraphics.Arrow = function (x1, y1, x2, y2, headratio) {
+    xplore.canvasgraphics.call(this);
+
+    //Tail
+    this.x1 = x1;
+    this.y1 = y1;
+
+    //Head
+    this.x2 = x2;
+    this.y2 = y2;
+
+    this.headratio = headratio || 0.1;
+
+    //Arrow direction
+    //To the east
+    // ------->>
+    let line = new xplore.canvasentity.Line2F(x1, y1, x2, y2);
+    let length = line.length * this.headratio;
+    let angle = line.anglerad;
+
+    this.points = [
+        { x: x2, y: y2 },
+        { x: x2 - length, y: y2 + length / 3 },
+        { x: x2 - length, y: y2 - length / 3 },
+    ];
+
+    this.Rotate(angle, x2, y2);
+};
+
+xplore.canvasgraphics.Arrow.prototype = Object.create(canvasgraphics);
+xplore.canvasgraphics.Arrow.constructor = xplore.canvasgraphics.Arrow;
+
+let arrow = xplore.canvasgraphics.Arrow.prototype;
+
+arrow.Render = function (canvas) {
+    canvas.DrawLine(this.x1, this.y1, this.x2, this.y2, this.Property());
+    canvas.DrawPolygon_2(this.points, this.Property());
+};
+
+
 //Line
 
 xplore.canvasgraphics.Line = function (x1, y1, x2, y2) {
