@@ -118,7 +118,7 @@ nodes.AssignSupport = function (x, y, rx, ry) {
     for (let i = 0; i < this.list.length; i++)
         if (this.list[i].selected) {
             this.list[i].selected = false;
-            this.list[i].support = new structuregraphics.Support(x, y, rx, ry);
+            this.list[i].support = new structuregraphics.Support(this.list[i], x, y, rx, ry);
         }
 };
 
@@ -128,17 +128,6 @@ nodes.AssignNodalLoad = function (x, y) {
             this.list[i].selected = false;
             this.list[i].load = new structuregraphics.NodalLoad(this.list[i], x, y);
         }
-};
-
-
-nodes.GetSelectedNodes = function () {
-    let selected = [];
-
-    for (let i = 0; i < this.list.length; i++)
-        if (this.list[i].selected)
-            selected.push(i);
-
-    return selected;
 };
 
 
@@ -176,7 +165,7 @@ Object.defineProperty(node, 'y', {
 
 node.Render = function (canvas, parent, width) {
     if (this.support)
-        this.support.Render(canvas, parent, this.x, this.y, width);
+        this.support.Render(canvas);
 
     if (this.load)
         this.load.Render(canvas);
@@ -227,6 +216,8 @@ structuregraphics.Members = function () {
     this.list = [];
     this.updatetext;
 
+    this.maxmemberload;
+
     this.properties = new xplore.DrawProperties();
     this.properties.linecolor = "#fff";
     this.properties.font = "normal 13px arial";
@@ -234,7 +225,10 @@ structuregraphics.Members = function () {
     this.selectedproperties = new xplore.DrawProperties();
     this.selectedproperties.fillcolor = "#ff0";
     this.selectedproperties.linecolor = "#ff0";
-    this.selectedproperties.font = "normal 13px arial";
+
+    this.memberloadproperties = new xplore.DrawProperties();
+    this.memberloadproperties.fillcolor = "#f80";
+    this.memberloadproperties.linecolor = "#f80";
 };
 
 structuregraphics.Members.prototype = Object.create(xplore.canvasgraphics.prototype);
@@ -252,7 +246,6 @@ members.Clear = function (object) {
 };
 
 members.Render = function (canvas) {
-    let width = canvas.ToPointWidth(5);
     canvas.SetProperties(this.properties);
 
     if (this.updatetext) {
@@ -263,8 +256,20 @@ members.Render = function (canvas) {
     }
 
     for (let i = 0; i < this.list.length; i++) {
-        this.list[i].Render(canvas, this, width);
+        this.list[i].Render(canvas, this);
     }
+};
+
+members.SelectedProperties = function (canvas) {
+    canvas.SetProperties(this.selectedproperties);
+};
+
+members.MemberProperties = function (canvas) {
+    canvas.SetProperties(this.properties);
+};
+
+members.MemberLoadProperties = function (canvas) {
+    canvas.SetProperties(this.memberloadproperties);
 };
 
 members.Split = function (x, y) {
@@ -355,6 +360,34 @@ members.AssignMemberLoad = function (w1, w2, l1, l2) {
             this.list[i].selected = false;
             this.list[i].load = new structuregraphics.MemberLoad(this.list[i], w1, w2, l1, l2);
         }
+
+    this.UpdateMaxMemberLoad();
+};
+
+members.UpdateMaxMemberLoad = function () {
+    this.maxmemberload = Number.NEGATIVE_INFINITY;
+
+    let load;
+
+    for (let i = 0; i < this.list.length; i++) {
+        load = this.list[i].load;
+
+        if (load) {
+            if (this.maxmemberload < Math.abs(load.w1))
+                this.maxmemberload = Math.abs(load.w1);
+
+            if (this.maxmemberload < Math.abs(load.w2))
+                this.maxmemberload = Math.abs(load.w2);
+        }
+    }
+
+    for (let i = 0; i < this.list.length; i++) {
+        load = this.list[i].load;
+
+        if (load) {
+            load.Refresh(this);
+        }
+    }
 };
 
 
@@ -369,15 +402,17 @@ structuregraphics.Member.constructor = structuregraphics.Member;
 
 let member = structuregraphics.Member.prototype;
 
-member.Render = function (canvas, parent, width) {
+member.Render = function (canvas, parent) {
     if (this.load) {
-        this.load.Render(canvas, parent, this.x1, this.y1, this.x2, this.y2, width);
+        parent.MemberLoadProperties(canvas);
+        this.load.Render(canvas);
+        parent.MemberProperties(canvas);
     }
 
     if (this.selected) {
-        canvas.SetProperties(parent.selectedproperties);
+        parent.SelectedProperties(canvas);
         canvas.DrawLine_2(this.x1, this.y1, this.x2, this.y2);
-        canvas.SetProperties(parent.properties);
+        parent.MemberProperties(canvas);
 
     } else {
         canvas.DrawLine_2(this.x1, this.y1, this.x2, this.y2);
@@ -418,13 +453,20 @@ member.SelectByRectangle = function (x1, y1, x2, y2) {
 
 //Support
 
-structuregraphics.Support = function (x, y, rx, ry) {
+structuregraphics.Support = function (node, x, y, rx, ry) {
     xplore.canvasgraphics.call(this);
 
+    this.node = node;
     this.x = x || 0;
     this.y = y || 0;
     this.rx = rx || 0;
     this.ry = ry || 0;
+
+    this.lines;
+    this.circles;
+    this.polygons;
+
+    this.Refresh();
 };
 
 structuregraphics.Support.prototype = Object.create(xplore.canvasgraphics.prototype);
@@ -432,13 +474,19 @@ structuregraphics.Support.constructor = structuregraphics.Support;
 
 let support = structuregraphics.Support.prototype;
 
-support.Render = function (canvas, parent, x, y, width) {
+support.Refresh = function () {
+    let width = 0.05;
     let offset = width * 3;
-    canvas.SetProperties(parent.supportproperties);
+    let x = this.node.x;
+    let y = this.node.y;
+
+    this.lines = [];
+    this.polygons = [];
+    this.circles = [];
 
     if (this.x === 1 && this.y === 1 && this.rx === 1 && this.ry === 1) {
         //Fixed support
-        canvas.DrawPolygon_2([
+        this.polygons.push([
             { x: x - width, y: y },
             { x: x + width, y: y },
             { x: x + width, y: y - width * 3 },
@@ -447,7 +495,7 @@ support.Render = function (canvas, parent, x, y, width) {
 
     } else if (this.x === 1 && this.y === 1) {
         //Pin support
-        canvas.DrawPolygon_2([
+        this.polygons.push([
             { x: x, y: y },
             { x: x + width * 2, y: y - width * 3 },
             { x: x - width * 2, y: y - width * 3 },
@@ -455,40 +503,53 @@ support.Render = function (canvas, parent, x, y, width) {
 
     } else if (this.x === 1) {
         //Roller X
-        canvas.DrawCircle_2(x - width * 1.5, y, width * 1.5);
+        this.circles.push({ x: x - width * 1.5, y: y, r: width * 1.5 });
 
-        canvas.SetProperties(parent.supportbaseproperties);
-
-        canvas.DrawPolygon_2([
+        this.polygons.push([
             { y: y - width * 3, x: x - offset },
             { y: y + width * 3, x: x - offset },
             { y: y + width * 3, x: x - width - offset },
             { y: y - width * 3, x: x - width - offset },
         ]);
 
-        canvas.SetProperties(parent.properties);
-        canvas.DrawLine_2(x - offset, y - width * 5, x - offset, y + width * 5);
+        this.lines.push({ x1: x - offset, y1: y - width * 5, x2: x - offset, y2: y + width * 5 });
         return;
 
     } else if (this.y === 1) {
         //Roller Y
-        canvas.DrawCircle_2(x, y - width * 1.5, width * 1.5);
+        this.circles.push({ x: x, y: y - width * 1.5, r: width * 1.5 });
 
     } else {
         return;
     }
 
-    canvas.SetProperties(parent.supportbaseproperties);
-
-    canvas.DrawPolygon_2([
+    this.polygons.push([
         { x: x - width * 3, y: y - offset },
         { x: x + width * 3, y: y - offset },
         { x: x + width * 3, y: y - width - offset },
         { x: x - width * 3, y: y - width - offset },
     ]);
 
-    canvas.SetProperties(parent.properties);
-    canvas.DrawLine_2(x - width * 5, y - offset, x + width * 5, y - offset);
+    this.lines.push({ x1: x - width * 5, y1: y - offset, x2: x + width * 5, y2: y - offset });
+};
+
+support.Render = function (canvas, parent, x, y, width) {
+    let line;
+    let circle;
+
+    for (let i = 0; i < this.lines.length; i++) {
+        line = this.lines[i];
+        canvas.DrawLine_2(line.x1, line.y1, line.x2, line.y2);
+    }
+
+    for (let i = 0; i < this.circles.length; i++) {
+        circle = this.circles[i];
+        canvas.DrawCircle_2(circle.x, circle.y, circle.r);
+    }
+
+    for (let i = 0; i < this.polygons.length; i++) {
+        canvas.DrawPolygon_2(this.polygons[i]);
+    }
 };
 
 
@@ -526,7 +587,7 @@ nodalload.Refresh = function () {
         sign = Math.sign(this.x);
         line = { x1: this.node.x - size * sign, y1: this.node.y, x2: this.node.x, y2: this.node.y };
         this.lines.push(line);
-        
+
         arrow = new xplore.canvasgraphics.Arrow(line.x1, line.y1, line.x2, line.y2);
         this.arrows.push(arrow.points);
     }
@@ -575,9 +636,14 @@ structuregraphics.MemberLoad.constructor = structuregraphics.MemberLoad;
 
 let memberload = structuregraphics.MemberLoad.prototype;
 
-memberload.Refresh = function () {
+memberload.Refresh = function (parent) {
+    let ratio = 1;
+
+    if (parent && parent.maxmemberload)
+        ratio = Math.max(Math.abs(this.w1), Math.abs(this.w2)) / parent.maxmemberload;
+
     let line = new xplore.canvasentity.Line2F(this.member.x1, this.member.y1, this.member.x2, this.member.y2);
-    let offset = line.Offset(0.5);
+    let offset = line.Offset(0.5 * ratio);
 
     this.lines = [
         { x1: offset.x1, y1: offset.y1, x2: offset.x2, y2: offset.y2 },
@@ -600,7 +666,7 @@ memberload.Refresh = function () {
     }
 };
 
-memberload.Render = function (canvas, parent) {
+memberload.Render = function (canvas) {
     let line;
 
     for (let i = 0; i < this.lines.length; i++) {
