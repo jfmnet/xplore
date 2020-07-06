@@ -153,3 +153,9 @@ var memberloadmodel = function () {
     this.l1 = new xplore.Textbox({ text: "L", type: "number", value: 0, inline: true });
     this.l2 = new xplore.Textbox({ text: "L2", type: "number", value: 0, inline: true, visible: false });
 };
+
+var sectionmodel = function (data) {
+    this.name = new xplore.Textbox({ text: "Name", value: data ? data.name : "", inline: true });
+    this.area = new xplore.Textbox({ text: "Area", type: "number", value: data ? data.area : 0, inline: true });
+    this.iy = new xplore.Textbox({ text: "Moment of Inertia", type: "number", value: data ? data.iy : 0, inline: true });
+};

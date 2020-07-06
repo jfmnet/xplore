@@ -275,19 +275,23 @@ members.MemberLoadProperties = function (canvas) {
 members.Split = function (x, y) {
     let line;
     let point;
+    let tolerance = 0.001;
 
     for (let i = 0; i < this.list.length; i++) {
         line = new xplore.canvasentity.Line2F(this.list[i]);
-        point = line.Intersection({ x: x, y: y });
 
-        if (point) {
-            this.list[i].x2 = point.x;
-            this.list[i].y2 = point.y;
-
-            this.list.splice(i + 1, 0, new structuregraphics.Member(point.x, point.y, line.x2, line.y2));
-            this.updatetext = true;
-
-            //i--;
+        if (!(Math.abs(line.x1 - x) < tolerance && Math.abs(line.y1 - y) < tolerance)) {
+            if (!(Math.abs(line.x2 - x) < tolerance && Math.abs(line.y2 - y) < tolerance)) {
+                point = line.Intersection({ x: x, y: y });
+        
+                if (point) {
+                    this.list[i].x2 = point.x;
+                    this.list[i].y2 = point.y;
+        
+                    this.list.splice(i + 1, 0, new structuregraphics.Member(point.x, point.y, line.x2, line.y2));
+                    this.updatetext = true;
+                }
+            }
         }
     }
 };

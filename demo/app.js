@@ -1,8 +1,8 @@
 xplore.main = function () {
-    DemoCanvas();
+    //DemoCanvas();
     //DemoView();
     //DemoTab();
-    //DemoMenuToolbar();
+    DemoMenuToolbar();
 };
 
 function DemoCanvas() {

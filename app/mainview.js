@@ -66,6 +66,12 @@ view.InitializeMenu = function () {
     edit.Add(new xplore.Menu({ icon: "content-save", text: "Delete Member Loads", onclick: function () { self.DeleteMemberLoads(); } }));
     edit.Add(new xplore.Menu({ icon: "content-save", text: "Supports", onclick: function () { self.DeleteSupports(); } }));
 
+    let view = this.menu.Add(new xplore.Menu({ text: "View" }));
+
+    let define = this.menu.Add(new xplore.Menu({ text: "Define" }));
+    define.Add(new xplore.Menu({ icon: "file-outline", text: "Frame Sections", onclick: function () { self.DefineFrameSections(); } }));
+    define.Add(new xplore.Menu({ icon: "file-outline", text: "Materials", onclick: function () { self.DefineMaterials(); } }));
+
     let draw = this.menu.Add(new xplore.Menu({ text: "Draw" }));
     draw.Add(new xplore.Menu({ icon: "file-outline", text: "Node", shortcut: "N", onclick: function () { self.DrawNode(); } }));
     draw.Add(new xplore.Menu({ icon: "file-outline", text: "Member", shortcut: "M", onclick: function () { self.DrawMember(); } }));
@@ -206,6 +212,22 @@ view.DeleteSupports = function (norender) {
 };
 
 
+//View
+
+
+//Define
+
+view.DefineFrameSections = function () {
+    let form = new framesectionform(this.model.sections);
+    form.Show();
+};
+
+view.DefineMaterials = function () {
+    let form = new materialform();
+    form.Show();
+};
+
+
 //Draw
 
 view.DrawNode = function () {
@@ -222,59 +244,17 @@ view.DrawMember = function () {
 //Assign
 
 view.AssignSupport = function () {
-    let self = this;
-
-    let form = new xplore.Form({
-        text: "Assign Support",
-        width: 320,
-        height: 320,
-        onok: function () {
-            self.model.AssignSupport(model.x.value ? 1: 0, model.y.value ? 1: 0, model.rx.value ? 1: 0, model.ry.value ? 1: 0);
-            self.canvas.Render();
-        }
-    });
-
-    let model = new supportmodel();
-    form.Add(model);
-
+    let form = new supportform(this.model, this.canvas);
     form.Show();
 };
 
 view.AssignNodalLoad = function () {
-    let self = this;
-
-    let form = new xplore.Form({
-        text: "Assign Joint Load",
-        width: 320,
-        height: 320,
-        onok: function () {
-            self.model.AssignNodalLoad(parseFloat(model.x.value), parseFloat(model.y.value));
-            self.canvas.Render();
-        }
-    });
-
-    let model = new jointloadmodel();
-    form.Add(model);
-
+    let form = new nodalloadform(this.model, this.canvas);
     form.Show();
 };
 
 view.AssignMemberLoad = function () {
-    let self = this;
-
-    let form = new xplore.Form({
-        text: "Assign Member Load",
-        width: 320,
-        height: 320,
-        onok: function () {
-            self.model.AssignMemberLoad(parseFloat(model.w1.value), parseFloat(model.w2.value), parseFloat(model.l1.value), parseFloat(model.l2.value));
-            self.canvas.Render();
-        }
-    });
-
-    let model = new memberloadmodel();
-    form.Add(model);
-
+    let form = new memberloadform(this.model, this.canvas);
     form.Show();
 };
 

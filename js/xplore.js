@@ -49,6 +49,7 @@ var xplore = function (param, element, classname) {
     this.object;
     this.parent;
     this.children = [];
+    this.events = [];
 
     //Events
     this.onclick = param.onclick;
@@ -74,6 +75,10 @@ xplore.prototype.Show = function (parent) {
 };
 
 xplore.prototype.Dispose = function () {
+    for (let i = 0; i < this.children.length; i++) {
+        this.children[i].Dispose();
+    }
+
     this.object.remove();
 };
 
@@ -88,19 +93,27 @@ xplore.prototype.Refresh = function () {
     this.object.append(this.text);
 
     //Children
+    this.RefreshChildren();
+    
+    this.Events();
+};
+
+xplore.prototype.RefreshChildren = function () {
+    //Children
     for (let i = 0; i < this.children.length; i++) {
         this.children[i].Show(this.object);
     }
-
-    this.Events();
 };
 
 xplore.prototype.Events = function () {
     let self = this;
 
-    if (this.onclick) {
+    if (this.onclick || this.events["onclick"]) {
         this.object.onclick = function () {
-            self.onclick(self);
+            if (self.onclick)
+                self.onclick(self);
+
+            self.Trigger("onclick");
         };
     }
 };
@@ -141,6 +154,10 @@ xplore.prototype.Add = function (child) {
     }
 };
 
+xplore.prototype.Clear = function () {
+    this.children = [];
+};
+
 xplore.prototype.ApplyProperties = function () {
     this.SetVisibility(this.visible);
 };
@@ -158,6 +175,23 @@ xplore.prototype.SetVisibility = function (visibility) {
     }
 };
 
+xplore.prototype.Highlight = function (highlight) {
+    if (highlight === undefined)
+        highlight = true;
+
+    if (this.object) {
+        if (highlight) {
+            this.object.classList.add("highlight");
+        }
+        else
+            this.object.classList.remove("highlight");
+    } else {
+        if (highlight)
+            this.classname.push("highlight");
+    }
+};
+
+
 xplore.prototype.SetState = function (state) {
     if (this.object) {
         if (state === xplore.STATE.ENABLED) {
@@ -172,17 +206,17 @@ xplore.prototype.SetState = function (state) {
     }
 };
 
-xplore.prototype.Listen = function (name, event) {
+xplore.prototype.Listen = function (name, param, event) {
     if (event) {
         //Initialize event name
-        if (!xplore.events[name])
-            xplore.events[name] = [];
+        if (!this.events[name])
+            this.events[name] = [];
 
         let add = true;
 
         //Check if event exists
-        for (let e in xplore.events[name]) {
-            if (xplore.events[name][e] === event) {
+        for (let e in this.events[name]) {
+            if (this.events[name][e].event === event) {
                 add = false;
                 break;
             }
@@ -190,17 +224,20 @@ xplore.prototype.Listen = function (name, event) {
 
         //Add event
         if (add)
-            xplore.events[name].push(event);
+            this.events[name].push({
+                param: param,
+                event: event
+            });
     }
 };
 
-xplore.prototype.Trigger = function (name, data) {
-    if (xplore.events[name]) {
+xplore.prototype.Trigger = function (name) {
+    if (this.events[name]) {
         let event;
 
-        for (let e in xplore.events[name]) {
-            event = xplore.events[name][e];
-            event(this, data);
+        for (let e in this.events[name]) {
+            event = this.events[name][e];
+            event.event(this, event.param);
         }
     }
 };
@@ -579,6 +616,63 @@ xplore.Toolbar = function (param) {
 xplore.Toolbar.prototype = Object.create(xplore.prototype);
 xplore.Toolbar.constructor = xplore.Toolbar;
 
+
+//List
+
+xplore.List = function (param) {
+    xplore.call(this, param, undefined, "list");
+};
+
+xplore.List.prototype = Object.create(xplore.prototype);
+xplore.List.constructor = xplore.List;
+
+
+//List container
+
+xplore.ListContainer = function (param) {
+    xplore.call(this, param, undefined, "list-container");
+
+    this.activelist = 0;
+};
+
+xplore.ListContainer.prototype = Object.create(xplore.prototype);
+xplore.ListContainer.constructor = xplore.ListContainer;
+
+xplore.ListContainer.prototype.RefreshChildren = function () {
+    let self = this;
+
+    //Children
+    for (let i = 0; i < this.children.length; i++) {
+        this.children[i].Listen("onclick", this.children[i], function (sender, param) {
+            for (let i = 0; i < self.children.length; i++)
+                self.children[i].Highlight(false);
+
+            sender.Highlight();
+        });
+
+        this.children[i].Show(this.object);
+    }
+
+    if (this.children[this.activelist])
+        this.children[this.activelist].Highlight();
+};
+
+
+//Scroll container
+
+xplore.ScrollContainer = function (param) {
+    xplore.call(this, param, undefined, "scroll-container");
+
+    param = param || {};
+
+    this.orientation = param.orientation || xplore.ORIENTATION.HORIZONTAL;
+    this.splittersize = param.splittersize || 0;
+    this.size = param.size;
+    this.resizing;
+};
+
+xplore.ScrollContainer.prototype = Object.create(xplore.prototype);
+xplore.ScrollContainer.constructor = xplore.ScrollContainer;
 
 
 //Split container
@@ -1141,11 +1235,32 @@ xplore.Form = function (param) {
     this.cancel = param.canceltext || "Cancel";
     this.modal = true;
 
+    this.buttons = param.buttons || [];
+
+    this.showok = true;
+    this.showcancel = true;
+    this.showclose = true;
+
+    this.showfooter = true;
+    this.showheader = true;
+
     if (param.modal !== undefined)
         this.modal = param.modal;
 
-    this.showheader = param.showheader || true;
-    this.showfooter = param.showfooter || true;
+    if (param.showok !== undefined)
+        this.showok = param.showok;
+
+    if (param.showcancel !== undefined)
+        this.showcancel = param.showcancel;
+
+    if (param.showclose !== undefined)
+        this.showclose = param.showclose;
+
+    if (param.showheader !== undefined)
+        this.showheader = param.showheader;
+
+    if (param.showfooter !== undefined)
+        this.showfooter = param.showfooter;
 
     if (!this.showheader)
         this.classname.push("no-header");
@@ -1176,7 +1291,6 @@ xplore.Form.prototype.Refresh = function () {
     }
 
     this.object.innerHTML = "";
-    //this.object.setAttribute("draggable", "true");
 
     if (this.showheader) {
         //Header
@@ -1198,6 +1312,9 @@ xplore.Form.prototype.Refresh = function () {
         this.footer.classList.add("form-footer");
         this.object.appendChild(this.footer);
         this.RefreshFooter();
+
+    } else {
+        this.object.classList.add("no-footer");
     }
 
     this.Resize();
@@ -1218,14 +1335,20 @@ xplore.Form.prototype.RefreshHeader = function () {
     buttons.classList.add("buttons");
     this.header.appendChild(buttons);
 
-    let button = new xplore.Button({
-        text: xplore.DisplayIcon("close"),
-        onclick: function () {
-            self.Close();
-        }
-    });
+    for (let i = 0; i < this.buttons.length; i++) {
+        this.buttons[i].Show(buttons);
+    }
 
-    button.Show(buttons);
+    if (this.showclose) {
+        let button = new xplore.Button({
+            text: xplore.DisplayIcon("close"),
+            onclick: function () {
+                self.Close();
+            }
+        });
+
+        button.Show(buttons);
+    }
 };
 
 xplore.Form.prototype.RefreshBody = function () {

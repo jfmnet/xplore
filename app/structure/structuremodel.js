@@ -3,8 +3,7 @@ var structuremodel = function () {
 
     this.nodes = new structuregraphics.Nodes();
     this.members = new structuregraphics.Members();
-    this.nodalloads = [];
-    this.frameloads = [];
+    this.sections = [];
 
     this.intersections = [];
 };
@@ -38,8 +37,6 @@ model.Clear = function () {
     this.nodes.Clear();
     this.members.Clear();
     this.supports = [];
-    this.nodalloads = [];
-    this.frameloads = [];
 };
 
 model.Render = function (canvas) {
@@ -128,7 +125,6 @@ model.DeleteNodes = function () {
 };
 
 model.DeleteNodalLoads = function () {
-    //this.nodalloads.Delete();
 };
 
 model.DeleteMembers = function () {
@@ -136,7 +132,6 @@ model.DeleteMembers = function () {
 };
 
 model.DeleteMemberLoads = function () {
-    //this.frameloads.Delete();
 };
 
 model.DeleteSupports = function () {

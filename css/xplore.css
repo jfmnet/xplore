@@ -13,6 +13,10 @@ i.mdi {
     display: none;
 }
 
+.highlight {
+    background-color: #0D47A1 !important;
+}
+
 .noselect, .button {
     -webkit-touch-callout: none;
     /* iOS Safari */
@@ -231,7 +235,7 @@ i.mdi {
 }
 
 .form-header .text {
-    font-size: 16px;
+    font-size: 13px;
     font-weight: bold;
     margin-left: 16px;
 }
@@ -255,6 +259,10 @@ i.mdi {
     bottom: 43px;
 }
 
+.form.no-footer .form-body {
+    bottom: 0;
+}
+
 .form-footer {
     bottom: 0;
     height: 42px;
@@ -268,6 +276,24 @@ i.mdi {
 
 .form .input {
     padding: 4px 0;
+}
+
+.split-container .form {
+    border: none;
+    position: relative;
+    left: 0 !important;
+    top: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.split-container .form .form-header{
+    background-color: #27282B;
+}
+
+.split-container .form .form-header .text{
+    font-size: inherit;
+    font-weight: normal;
 }
 
 .dock-panel .form .form-body {
@@ -338,7 +364,7 @@ i.mdi {
 }
 
 .menu:hover {
-    background-color: #CCC;
+    background-color: #27282B;
 }
 
 .menu>div:nth-child(1) {
@@ -367,8 +393,8 @@ i.mdi {
 }
 
 .menu>div:nth-child(2) {
-    background-color: #EEE;
-    border: 1px solid #CCC;
+    background-color: #212125;
+    border: 1px solid #27282B;
     display: none;
     position: absolute;
     left: 0;
@@ -381,7 +407,7 @@ i.mdi {
 }
 
 .menu .menu:hover {
-    background-color: #DDD;
+    background-color: #27282B;
 }
 
 .menu.display>div:nth-child(2) {
@@ -389,7 +415,7 @@ i.mdi {
 }
 
 .menu.separator {
-    border-bottom: 1px solid #DDD;
+    border-bottom: 1px solid #27282B;
 }
 
 .toolbar-container {
@@ -413,13 +439,13 @@ i.mdi {
 }
 
 .toolbar .button:hover {
-    background-color: #DDD;
-    color: #333;
+    background-color: #212125;
+    color: #C6CCDB;
 }
 
 .toolbar .button:active {
-    background-color: #CCD;
-    color: #333;
+    background-color: #212125;
+    color: #C6CCDB;
 }
 
 .toolbar .input {
@@ -508,4 +534,21 @@ canvas {
     right: 0 !important;
     height: unset !important;
     width: unset !important;
+}
+
+
+/* List */
+
+.list {
+    cursor: pointer;
+    padding: 8px 16px;
+}
+
+.list-container, .scroll-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto;
 }

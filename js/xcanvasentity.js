@@ -140,7 +140,6 @@ Object.defineProperty(line2f, 'anglerad', {
     }
 });
 
-
 line2f.Slope = function () {
     let x = this.x1 - this.x2;
     let y = this.y1 - this.y2;
@@ -233,7 +232,7 @@ line2f.Intersection = function (point, includepoints, tol) {
         dys = point.y - spoint.y;
         length = Math.sqrt(dxs * dxs + dys * dys);
 
-        return length < tolerance;
+        return length < tolerance ? spoint : undefined;
 
     } else if (point.x1 !== undefined) {
         //Line intersection
