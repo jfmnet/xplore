@@ -52,9 +52,9 @@ view.InitializeMenu = function () {
 
     let file = this.menu.Add(new xplore.Menu({ text: "File" }));
     file.Add(new xplore.Menu({ icon: "file-outline", text: "New", shortcut: "CTRL+N" }));
-    file.Add(new xplore.Menu({ icon: "folder-open-outline", text: "Open", shortcut: "CTRL+O", separator: true }));
-    file.Add(new xplore.Menu({ icon: "content-save", shortcut: "CTRL+S", text: "Save" }));
-    file.Add(new xplore.Menu({ icon: "content-save-move-outline", shortcut: "CTRL+SHIFT+S", text: "Save As..." }));
+    file.Add(new xplore.Menu({ icon: "folder-open-outline", text: "Open", shortcut: "CTRL+O", onclick: function () { self.FileOpen(); } , separator: true }));
+    file.Add(new xplore.Menu({ icon: "content-save", shortcut: "CTRL+S", text: "Save", onclick: function () { self.FileSave(); }  }));
+    file.Add(new xplore.Menu({ icon: "content-save-move-outline", shortcut: "CTRL+SHIFT+S", text: "Save As...", onclick: function () { self.FileSave(); }  }));
 
     let edit = this.menu.Add(new xplore.Menu({ text: "Edit" }));
     edit.Add(new xplore.Menu({ icon: "file-outline", text: "Undo" }));
@@ -161,6 +161,7 @@ view.FileOpen = function () {
 };
 
 view.FileSave = function () {
+    let file =  JSON.stringify(this.model);
 };
 
 
@@ -218,12 +219,12 @@ view.DeleteSupports = function (norender) {
 //Define
 
 view.DefineFrameSections = function () {
-    let form = new framesectionform(this.model.sections);
+    let form = new generalform("Frame Sections", this.model.sections, sectionmodel);
     form.Show();
 };
 
 view.DefineMaterials = function () {
-    let form = new materialform();
+    let form = new generalform("Materials", this.model.materials, materialmodel);
     form.Show();
 };
 
