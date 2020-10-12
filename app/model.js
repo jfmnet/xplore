@@ -159,3 +159,9 @@ var sectionmodel = function (data) {
     this.area = new xplore.Textbox({ text: "Area", type: "number", value: data ? data.area : 0, inline: true });
     this.iy = new xplore.Textbox({ text: "Moment of Inertia", type: "number", value: data ? data.iy : 0, inline: true });
 };
+
+var materialmodel = function (data) {
+    this.name = new xplore.Textbox({ text: "Name", value: data ? data.name : "", inline: true });
+    this.modulus = new xplore.Textbox({ text: "Elastic Modulus", type: "number", value: data ? data.modulus : 0, inline: true });
+    this.fc = new xplore.Textbox({ text: "Compressive Strength", type: "number", value: data ? data.fc : 0, inline: true });
+};

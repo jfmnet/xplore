@@ -4,6 +4,7 @@ var structuremodel = function () {
     this.nodes = new structuregraphics.Nodes();
     this.members = new structuregraphics.Members();
     this.sections = [];
+    this.materials = [];
 
     this.intersections = [];
 };

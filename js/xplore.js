@@ -318,8 +318,12 @@ xplore.Textbox.prototype.Events = function () {
     input.addEventListener('input', function () {
         self.value = this.value;
 
-        if (self.bind)
+        if (self.bind) {
             self.bind.object[self.bind.name] = self.value;
+
+            if (self.bind.refresh)
+                self.bind.object.Refresh();
+        }
 
         if (self.onchange)
             self.onchange(self);

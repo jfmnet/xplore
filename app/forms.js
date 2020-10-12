@@ -18,37 +18,41 @@ var supportform = function (structure, canvas) {
 };
 
 var nodalloadform = function (structure, canvas) {
-    let form = new xplore.Form({
-        text: "Assign Joint Load",
-        width: 320,
-        height: 320,
-        onok: function () {
-            structure.AssignNodalLoad(parseFloat(model.x.value), parseFloat(model.y.value));
-            canvas.Render();
-        }
-    });
+    this.Show = function () {
+        let form = new xplore.Form({
+            text: "Assign Joint Load",
+            width: 320,
+            height: 320,
+            onok: function () {
+                structure.AssignNodalLoad(parseFloat(model.x.value), parseFloat(model.y.value));
+                canvas.Render();
+            }
+        });
 
-    let model = new jointloadmodel();
-    form.Add(model);
+        let model = new jointloadmodel();
+        form.Add(model);
 
-    form.Show();
+        form.Show();
+    };
 };
 
 var memberloadform = function (structure, canvas) {
-    let form = new xplore.Form({
-        text: "Assign Member Load",
-        width: 320,
-        height: 320,
-        onok: function () {
-            structure.AssignMemberLoad(parseFloat(model.w1.value), parseFloat(model.w2.value), parseFloat(model.l1.value), parseFloat(model.l2.value));
-            canvas.Render();
-        }
-    });
+    this.Show = function () {
+        let form = new xplore.Form({
+            text: "Assign Member Load",
+            width: 320,
+            height: 320,
+            onok: function () {
+                structure.AssignMemberLoad(parseFloat(model.w1.value), parseFloat(model.w2.value), parseFloat(model.l1.value), parseFloat(model.l2.value));
+                canvas.Render();
+            }
+        });
 
-    let model = new memberloadmodel();
-    form.Add(model);
+        let model = new memberloadmodel();
+        form.Add(model);
 
-    form.Show();
+        form.Show();
+    };
 };
 
 var materialform = function () {
@@ -65,25 +69,25 @@ var newmaterialform = function () {
     };
 };
 
-var framesectionform = function (sections) {
+var generalform = function (text, model, itemmodel) {
     let leftpanel;
     let rightpanel;
     let listcontainer;
     let self = this;
-    let model;
+    let formmodel;
 
     this.Show = function () {
         let form = new xplore.Form({
-            text: "Frame Sections",
+            text: text,
             height: 400,
             width: 600,
             onok: function () {
-                for (let i = 0; i < model.length; i++) {
-                    sections[i] = {
-                        name: model[i].name.value,
-                        area: model[i].area.value,
-                        iy: model[i].iy.value
-                    };
+                for (let i = 0; i < formmodel.length; i++) {
+                    model[i] = {};
+
+                    for (let name in formmodel[i]) {
+                        model[i][name] = formmodel[i][name].value
+                    }
                 }
             }
         });
@@ -119,34 +123,44 @@ var framesectionform = function (sections) {
     this.GenerateList = function () {
         let item;
 
-        model = [];
+        formmodel = [];
 
-        for (let i = 0; i < sections.length; i++) {
-            item = new sectionmodel(sections[i]);
-            model.push(item);
+        for (let i = 0; i < model.length; i++) {
+            item = new itemmodel(model[i]);
+            formmodel.push(item);
         }
     };
 
     this.ShowList = function () {
         listcontainer.Clear();
 
-        for (let i = 0; i < model.length; i++) {
-            listcontainer.Add(new xplore.List({ 
-                text: model[i].name.value,
-                tag: model[i],
+        for (let i = 0; i < formmodel.length; i++) {
+            listcontainer.Add(new xplore.List({
+                text: formmodel[i].name.value,
+                tag: formmodel[i],
                 onclick: function (sender) {
+                    sender.tag.name.bind = { object: sender, name: "text", refresh: true };
+
                     rightpanel.Clear();
                     rightpanel.Add(sender.tag);
                     rightpanel.Refresh();
-                } 
+                }
             }));
         }
 
         listcontainer.Refresh();
+
+        if (formmodel.length) {
+            formmodel[0].name.bind = { object: listcontainer.children[0], name: "text", refresh: true };
+
+            rightpanel.Clear();
+            rightpanel.Add(formmodel[0]);
+            rightpanel.Refresh();
+        }
     };
 
     this.Add = function () {
-        let section = new sectionmodel();
+        let section = new itemmodel();
 
         let form = new xplore.Form({
             text: "New Sections",
@@ -154,9 +168,9 @@ var framesectionform = function (sections) {
             height: 300,
             onok: function () {
                 if (!section.name.value)
-                    section.name.value = "Section " + (sections.length + 1);
+                    section.name.value = "Section " + (model.length + 1);
 
-                model.push(section);
+                formmodel.push(section);
                 self.ShowList();
             }
         });

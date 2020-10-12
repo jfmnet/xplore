@@ -1,8 +1,8 @@
 xplore.main = function () {
     //DemoCanvas();
-    //DemoView();
+    DemoView();
     //DemoTab();
-    DemoMenuToolbar();
+    //DemoMenuToolbar();
 };
 
 function DemoCanvas() {
@@ -40,20 +40,14 @@ function AddElements(canvas, data) {
 }
 
 function DemoView() {
-    let view = new xplore.View({
-        text: "View"
-    });
+    // let view = new xplore.View({
+    //     text: "View"
+    // });
 
-    let tab = view.Add(new xplore.Tab({
-        tabs: [
-            { icon: "folder", text: "Tab 1" },
-            { icon: "file", text: "Tab 2" },
-            { icon: "account", text: "Tab 3" },
-        ],
-        style: xplore.TABSTYLE.FULL
-    }));
+    // view.Show();
 
-    view.Show();
+    let map = new virtualmap();
+    map.Show();
 }
 
 function DemoTab() {
