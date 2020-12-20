@@ -1,0 +1,39 @@
+.main-container {
+    padding: 16px;
+}
+
+.group-container {
+    background-color: #FFF;
+    border: 1px solid #CCC;
+    margin-bottom: 16px;
+    padding: 16px;
+    position: relative;
+}
+
+.experience-container {
+    margin-bottom: 16px;
+    padding: 16px;
+    position: relative;
+}
+
+.scroll-container {
+    background-color: #FAFAFA;
+}
+
+.group-editor {
+    background-color: #FFF;
+    border-radius: 4px;
+    color: #333;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 0 4px;
+}
+
+.group-editor:hover {
+    color: #FFF;
+}
+
+.list-title {
+    font-weight: bold;
+}

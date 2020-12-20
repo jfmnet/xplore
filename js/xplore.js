@@ -38,13 +38,23 @@ var xplore = function (param, element, classname) {
     if (param.class)
         this.classname.push(classname);
 
+    this.id = param.id;
     this.text = param.text || "";
     this.icon = param.icon || "";
     this.tag = param.tag;
-    this.visible = param.visible === undefined ? true : false;
+    this.visible = param.visible === undefined ? true : param.visible;
 
-    if (param.class)
-        this.classname.push(param.class);
+    if (param.class) {
+        if (param.class.includes(" ")) {
+            let split = param.class.split(" ");
+
+            for (let item of split) {
+                this.classname.push(item);
+            }
+        } else {
+            this.classname.push(param.class);
+        }
+    }
 
     this.object;
     this.parent;
@@ -64,6 +74,9 @@ xplore.prototype.Show = function (parent) {
 
     this.object = document.createElement(this.element);
 
+    if (this.id)
+        this.object.id = this.id;
+
     for (let i = 0; i < this.classname.length; i++) {
         if (this.classname[i])
             this.object.classList.add(this.classname[i]);
@@ -72,6 +85,7 @@ xplore.prototype.Show = function (parent) {
     this.parent.appendChild(this.object);
 
     this.Refresh();
+    this.ApplyProperties();
 };
 
 xplore.prototype.Dispose = function () {
@@ -94,7 +108,7 @@ xplore.prototype.Refresh = function () {
 
     //Children
     this.RefreshChildren();
-    
+
     this.Events();
 };
 
@@ -155,6 +169,7 @@ xplore.prototype.Add = function (child) {
 };
 
 xplore.prototype.Clear = function () {
+    this.object.innerHTML = "";
     this.children = [];
 };
 
@@ -163,6 +178,8 @@ xplore.prototype.ApplyProperties = function () {
 };
 
 xplore.prototype.SetVisibility = function (visibility) {
+    this.visible = visibility;
+
     if (this.object) {
         if (visibility) {
             this.object.classList.remove("hidden");
@@ -190,7 +207,6 @@ xplore.prototype.Highlight = function (highlight) {
             this.classname.push("highlight");
     }
 };
-
 
 xplore.prototype.SetState = function (state) {
     if (this.object) {
@@ -294,14 +310,18 @@ xplore.Textbox.prototype.Refresh = function () {
 
         let input = document.createElement("input");
         input.type = this.type;
-        input.value = this.value;
+
+        if (this.value !== undefined)
+            input.value = this.value;
 
         label.appendChild(input);
 
     } else {
         let input = document.createElement("input");
         input.type = this.type;
-        input.value = this.value;
+
+        if (this.value !== undefined)
+            input.value = this.value;
 
         this.object.appendChild(input);
 
@@ -333,6 +353,84 @@ xplore.Textbox.prototype.Events = function () {
 };
 
 
+//Textarea
+
+xplore.TextArea = function (param) {
+    xplore.call(this, param, undefined, ["input", "textarea"]);
+
+    param = param || {};
+
+    if (param.value === undefined)
+        this.value = "";
+    else
+        this.value = param.value;
+
+    this.type = param.type || "text";
+
+    this.onchange = param.onchange;
+    this.bind = param.bind;
+
+    if (param.inline)
+        this.classname.push("inline");
+
+    if (this.bind)
+        this.value = this.bind.object[this.bind.name];
+};
+
+xplore.TextArea.prototype = Object.create(xplore.prototype);
+xplore.TextArea.constructor = xplore.TextArea;
+
+xplore.TextArea.prototype.Refresh = function () {
+    this.object.innerHTML = "";
+
+    if (this.text) {
+        let label = document.createElement("label");
+        this.object.appendChild(label);
+
+        let text = document.createElement("div");
+        text.innerText = this.text;
+        label.appendChild(text);
+
+        let input = document.createElement("textarea");
+        input.value = this.value || "";
+
+        label.appendChild(input);
+
+    } else {
+        let input = document.createElement("textarea");
+        input.value = this.value || "";
+
+        this.object.appendChild(input);
+
+    }
+
+    this.ApplyProperties();
+    this.Events();
+};
+
+xplore.TextArea.prototype.Events = function () {
+    let input = this.object.querySelector("textarea");
+    let self = this;
+
+    input.addEventListener('input', function () {
+        self.value = this.value;
+
+        if (self.bind) {
+            self.bind.object[self.bind.name] = self.value;
+
+            if (self.bind.refresh)
+                self.bind.object.Refresh();
+        }
+
+        if (self.onchange)
+            self.onchange(self);
+
+        self.Trigger("onchange");
+    });
+};
+
+
+//Checkbox
 
 xplore.Checkbox = function (param) {
     xplore.call(this, param, undefined, ["input", "checkbox"]);
@@ -344,9 +442,7 @@ xplore.Checkbox = function (param) {
 
     this.onchange = param.onchange;
     this.bind = param.bind;
-
-    if (param.inline)
-        this.classname.push("inline");
+    this.classname.push("inline");
 
     if (this.bind)
         this.value = this.bind.object[this.bind.name];
@@ -402,6 +498,7 @@ xplore.Checkbox.prototype.Events = function () {
 };
 
 
+//Combobox
 
 xplore.Combobox = function (param) {
     xplore.call(this, param, undefined, ["input", "combobox"]);
@@ -431,12 +528,12 @@ xplore.Combobox.prototype.Refresh = function () {
     let select;
 
     if (this.text) {
-        let label = document.createElement("label");
-        this.object.appendChild(label);
-
         let text = document.createElement("div");
         text.innerText = this.text;
-        label.appendChild(text);
+        this.object.appendChild(text);
+
+        let label = document.createElement("label");
+        this.object.appendChild(label);
 
         select = document.createElement("select");
         label.appendChild(select);
@@ -476,6 +573,112 @@ xplore.Combobox.prototype.Events = function () {
     };
 };
 
+
+//Month-Year
+xplore.MonthYear = function (param) {
+    xplore.call(this, param, undefined, ["input", "month-year"]);
+
+    param = param || {};
+
+    this.value = param.value || "";
+    this.onchange = param.onchange;
+    this.bind = param.bind;
+
+    this.maxyear = new Date().getFullYear();
+    this.minyear = this.maxyear - 80;
+
+    if (param.inline)
+        this.classname.push("inline");
+
+    if (this.bind && this.bind.object[this.bind.name])
+        this.value = {
+            month: this.bind.object[this.bind.name].month,
+            year: this.bind.object[this.bind.name].year
+        };
+};
+
+xplore.MonthYear.prototype = Object.create(xplore.prototype);
+xplore.MonthYear.constructor = xplore.MonthYear;
+
+xplore.MonthYear.prototype.Refresh = function () {
+    this.object.innerHTML = "";
+
+    let month, year;
+
+    if (this.text) {
+        let text = document.createElement("div");
+        text.innerText = this.text;
+        this.object.appendChild(text);
+
+        let label = document.createElement("label");
+        this.object.appendChild(label);
+
+        month = document.createElement("select");
+        label.appendChild(month);
+
+        year = document.createElement("select");
+        label.appendChild(year);
+
+    } else {
+        month = document.createElement("select");
+        this.object.appendChild(month);
+
+        year = document.createElement("select");
+        this.object.appendChild(year);
+    }
+
+    let option;
+    let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    for (let i = 0; i < months.length; i++) {
+        option = document.createElement("option");
+        option.value = months[i];
+        option.innerHTML = months[i];
+        month.appendChild(option);
+    }
+
+    for (let i = this.maxyear; i >= this.minyear; i--) {
+        option = document.createElement("option");
+        option.value = i;
+        option.innerHTML = i;
+        year.appendChild(option);
+    }
+
+    month.selectedIndex = months.indexOf(this.value.month);
+    year.value = this.value.year;
+    this.Events();
+};
+
+xplore.MonthYear.prototype.Events = function () {
+    let self = this;
+    let select = this.object.querySelectorAll("select");
+    let month = select[0];
+    let year = select[1];
+
+    month.onchange = function () {
+        //self.value = this.value;
+
+        if (self.bind)
+            self.bind.object[self.bind.name].month = this.value;
+
+        if (self.onchange)
+            self.onchange(self);
+
+        self.Trigger("onchange");
+    };
+
+    year.onchange = function () {
+        //self.value = this.value;
+
+        if (self.bind)
+            self.bind.object[self.bind.name].year = this.value;
+
+        if (self.onchange)
+            self.onchange(self);
+
+        self.Trigger("onchange");
+    };
+};
 
 //Menu
 
@@ -619,6 +822,16 @@ xplore.Toolbar = function (param) {
 
 xplore.Toolbar.prototype = Object.create(xplore.prototype);
 xplore.Toolbar.constructor = xplore.Toolbar;
+
+
+//Header
+
+xplore.Header = function (param) {
+    xplore.call(this, param, undefined, "header");
+};
+
+xplore.Header.prototype = Object.create(xplore.prototype);
+xplore.Header.constructor = xplore.Header;
 
 
 //List
@@ -828,6 +1041,15 @@ xplore.SplitContainer.prototype.Events = function (child, index) {
         self.Resize();
     };
 };
+
+
+//Container
+xplore.Container = function (param) {
+    xplore.call(this, param, undefined, "container");
+};
+
+xplore.Container.prototype = Object.create(xplore.prototype);
+xplore.Container.constructor = xplore.Container;
 
 
 //Dock panel
@@ -1387,6 +1609,7 @@ xplore.Form.prototype.RefreshFooter = function () {
 
     button = new xplore.Button({
         text: "Cancel",
+        class: "button-cancel",
         onclick: function () {
             if (self.oncancel)
                 self.oncancel();
@@ -1495,15 +1718,24 @@ xplore.View = function (param) {
     xplore.call(this, param, undefined, "view");
 
     param = param || {};
+    this.tools = param.tools;
 };
 
 xplore.View.prototype = Object.create(xplore.prototype);
 xplore.View.constructor = xplore.View;
 
-xplore.View.prototype.Refresh = function () {
+let view = xplore.View.prototype;
+
+view.Refresh = function () {
     let self = this;
 
     this.object.innerHTML = "";
+
+    //Menu
+    this.menu = document.createElement("div");
+    this.menu.classList.add("view-menu");
+    this.object.appendChild(this.menu);
+    this.RefreshMenu();
 
     //Header
     this.header = document.createElement("div");
@@ -1520,7 +1752,11 @@ xplore.View.prototype.Refresh = function () {
     this.Events();
 };
 
-xplore.View.prototype.RefreshHeader = function () {
+view.RefreshMenu = function () {
+    this.menuobject.Show(this.menu);
+};
+
+view.RefreshHeader = function () {
     let self = this;
 
     this.header.innerHTML = "";
@@ -1528,6 +1764,7 @@ xplore.View.prototype.RefreshHeader = function () {
     let button = new xplore.Button({
         text: xplore.DisplayIcon("menu"),
         onclick: function () {
+            self.ShowMenu();
         }
     });
 
@@ -1542,23 +1779,33 @@ xplore.View.prototype.RefreshHeader = function () {
     buttons.classList.add("buttons");
     this.header.appendChild(buttons);
 
-    // button = new xplore.Button({
-    //     text: xplore.DisplayIcon("close"),
-    //     onclick: function () {
-    //         self.Close();
-    //     }
-    // });
-
-    // button.Show(buttons);
+    if (Array.isArray(this.tools))
+        for (let tool of this.tools) {
+            tool.Show(buttons);
+        }
 };
 
-xplore.View.prototype.RefreshBody = function () {
+view.RefreshBody = function () {
     this.body.innerHTML = "";
 
     //Children
     for (let i = 0; i < this.children.length; i++) {
         this.children[i].Show(this.body);
     }
+};
+
+view.ShowMenu = function () {
+    if (!this.menuvisible) {
+        this.menuvisible = true;
+        this.object.classList.add("menu-show");
+    } else {
+        delete this.menuvisible;
+        this.object.classList.remove("menu-show");
+    }
+};
+
+view.SetMenu = function (object) {
+    this.menuobject = object;
 };
 
 
@@ -1570,8 +1817,6 @@ xplore.Tree = function (param) {
 
 xplore.Tree.prototype = Object.create(xplore.prototype);
 xplore.Tree.constructor = xplore.Tree;
-
-
 
 
 //Modal Background
@@ -1691,6 +1936,67 @@ xplore.KeyDown = function (keycode, action) {
     });
 };
 
+xplore.GetJSON = function (url, resolve, reject) {
+    let xhttp = new XMLHttpRequest();
+    xhttp.open("GET", url, true);
+    xhttp.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            if (resolve)
+                resolve(JSON.parse(this.responseText));
+        } else {
+            if (reject)
+                resolve(this.responseText);
+        }
+    };
+    xhttp.send();
+};
+
+xplore.Get = function (url, resolve, reject) {
+    let xhttp = new XMLHttpRequest();
+    xhttp.open("GET", url, true);
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            if (resolve)
+                resolve(this.responseText);
+        } else {
+            if (reject)
+                resolve(this.responseText);
+        }
+    };
+    xhttp.send();
+};
+
+xplore.PostJSON = function (url, data, resolve, reject) {
+    let xhttp = new XMLHttpRequest();
+    xhttp.open("POST", url, true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            if (resolve)
+                resolve(this.responseText);
+        } else {
+            if (reject)
+                resolve(this.responseText);
+        }
+    };
+    xhttp.send(JSON.stringify(data));
+};
+
+xplore.Post = function (url, data, resolve, reject) {
+    let xhttp = new XMLHttpRequest();
+    xhttp.open("POST", url, true);
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            if (resolve)
+                resolve(this.responseText);
+        } else {
+            if (reject)
+                resolve(this.responseText);
+        }
+    };
+    xhttp.send(data);
+};
 
 Number.prototype.CountDecimals = function () {
     if (Math.floor(this.valueOf()) === this.valueOf()) return 0;

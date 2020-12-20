@@ -1,0 +1,60 @@
+{
+    "about": "Are you an expert in software development but a novice in resume development? To be a successful candidate for tech jobs, resume expert Kim Isaacs says it helps to have a comprehensive resume. For inspiration on how to develop your own resume, check out this sample resume for an experienced software developer that Isaacs created below. You can also download the experienced IT developer resume template.",
+    "experiences": [
+        {
+            "title": "Head of Software Development and IT",
+            "description": "The Head of Software Development (HoSD) is a leadership role accountable for the successful delivery of software and IT support infrastructure for the CCDC. Managing a team of developers and IT specialists, the HoSD will work closely with the Executive Director, the Head of Science, the Head of Database and other members of the Senior Leadership Management Team (SLMT) in order to deliver software and IT services that meet user needs and that is in keeping with our charitable aims in the service of the scientific community and for public benefit. The HoSD will be accountable for the creation and delivery of the strategic,software and IT architecture vision and leadership and all aspects of the development of the software. ",
+            "type": "Full-time",
+            "company": "AIT Solutions, Asian Institute of Technology",
+            "location": "Bangkok Metropolitan Area, Thailand",
+            "startdate": {
+                "month": "February",
+                "year": 2018
+            }
+        },
+        {
+            "title": "Head of Software Development and IT",
+            "description": "The Head of Software Development (HoSD) is a leadership role accountable for the successful delivery of software and IT support infrastructure for the CCDC. Managing a team of developers and IT specialists, the HoSD will work closely with the Executive Director, the Head of Science, the Head of Database and other members of the Senior Leadership Management Team (SLMT) in order to deliver software and IT services that meet user needs and that is in keeping with our charitable aims in the service of the scientific community and for public benefit. The HoSD will be accountable for the creation and delivery of the strategic,software and IT architecture vision and leadership and all aspects of the development of the software. ",
+            "type": "Full-time",
+            "company": "AIT Solutions, Asian Institute of Technology",
+            "location": "Bangkok Metropolitan Area, Thailand",
+            "startdate": {
+                "month": "February",
+                "year": 2018
+            }
+        }
+    ],
+    "education": [
+        {
+            "school": "University of the Cordilleras",
+            "location": "Baguio City, Philippines",
+            "degree": "Master of Information Technology",
+            "field": "Web Technology",
+            "startdate": {
+                "month": "June",
+                "year": 2006
+            },
+            "showenddate": true,
+            "enddate": {
+                "month": "December",
+                "year": 2008
+            },
+            "description": "The Head of Software Development (HoSD) is a leadership role accountable for the successful delivery of software and IT support infrastructure for the CCDC. Managing a team of developers and IT specialists, the HoSD will work closely with the Executive Director, the Head of Science, the Head of Database and other members of the Senior Leadership Management Team (SLMT) in order to deliver software and IT services that meet user needs and that is in keeping with our charitable aims in the service of the scientific community and for public benefit. The HoSD will be accountable for the creation and delivery of the strategic,software and IT architecture vision and leadership and all aspects of the development of the software. "
+        },
+        {
+            "school": "Baguio Colleges Foundation",
+            "location": "Baguio City, Philippines",
+            "degree": "Bachelor of Science in Civil Engineering",
+            "startdate": {
+                "month": "June",
+                "year": 1997
+            },
+            "showenddate": true,
+            "enddate": {
+                "month": "December",
+                "year": 2001
+            },
+            "description": "The Head of Software Development (HoSD) is a leadership role accountable for the successful delivery of software and IT support infrastructure for the CCDC. Managing a team of developers and IT specialists, the HoSD will work closely with the Executive Director, the Head of Science, the Head of Database and other members of the Senior Leadership Management Team (SLMT) in order to deliver software and IT services that meet user needs and that is in keeping with our charitable aims in the service of the scientific community and for public benefit. The HoSD will be accountable for the creation and delivery of the strategic,software and IT architecture vision and leadership and all aspects of the development of the software. "
+        }
+    ]
+}

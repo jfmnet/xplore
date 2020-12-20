@@ -1,5 +1,5 @@
 body {
-    font: 12px normal, -apple-system, BlinkMacSystemFont, "Roboto", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font: 14px normal, -apple-system, BlinkMacSystemFont, "Roboto", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     overflow: hidden;
     margin: 0;
     padding: 0;
@@ -29,19 +29,19 @@ i.mdi {
     -ms-user-select: none;
     /* Internet Explorer/Edge */
     user-select: none;
-    /* Non-prefixed version, currently
-                                    supported by Chrome, Opera and Firefox */
+    /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
 }
 
 .button {
-    background-color: #27282B;
+    background-color: #1976D2;
+    border-radius: 24px;
     color: #FFF;
     cursor: pointer;
     align-items: center;
     display: inline-flex;
     justify-content: center;
     height: 32px;
-    padding: 0 16px;
+    padding: 0 24px;
 }
 
 .button:hover {
@@ -54,9 +54,19 @@ i.mdi {
 
 .button.disabled {
     background-color: #CCC;
-    color: #333;
+    color: #888;
     cursor: default;
     pointer-events: none;
+}
+
+.button.button-cancel {
+    background-color: #CCC;
+    color: #888;
+}
+
+.button.button-cancel:hover {
+    background-color: #DDD;
+    color: #333;
 }
 
 .input {
@@ -65,12 +75,12 @@ i.mdi {
 }
 
 .input input, .input select {
-    border: 1px solid #27282B;
-    background-color: #27282B;
-    color: #FFF;
+    border: 1px solid #CCC;
+    background-color: #FFF;
+    color: #333;
     outline: none;
     padding: 8px 0;
-    width: calc(100% - 18px);
+    width: 100%;
 }
 
 .input input[type="checkbox"] {
@@ -106,6 +116,31 @@ i.mdi {
 .input.inline label>select {
      width: 60%;
 }
+
+.input.textarea > label > div {
+    margin-bottom: 4px;
+}
+
+.month-year label {
+    display: flex;
+    width: 100%;
+}
+
+.month-year select {
+    width: calc(50% - 8px);
+}
+
+.month-year select:nth-child(2) {
+    margin-left: 16px;
+}
+
+textarea {
+    border: 1px solid #CCC;
+    resize: none;
+    height: 120px;
+    width: 100%;
+}
+
 
 /* Containers */
 .dock {
@@ -152,12 +187,12 @@ i.mdi {
     top: 0;
     bottom: 0;
 
-    -webkit-touch-callout: none;
+    /* -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-    user-select: none;
+    user-select: none; */
 }
 
 .view-header, .view-body {
@@ -171,7 +206,7 @@ i.mdi {
     background-color: #6200ee;
     color: #FFF;
     display: flex;
-    font-size: 18px;
+    font-size: 24px;
     height: 64px;
     top: 0;
 }
@@ -205,9 +240,8 @@ i.mdi {
 }
 
 .form {
-    background-color: #212125;
-    border: 1px solid #27282B;
-    color: #C6CCDB;
+    background-color: #FFF;
+    color: #333;
     position: absolute;
 
     transform: translateZ(0);
@@ -550,5 +584,37 @@ canvas {
     right: 0;
     top: 0;
     bottom: 0;
+    overflow-x: hidden;
     overflow-y: auto;
+}
+
+/* View */
+
+.view.menu-show .view-menu {
+    background-color: #FAFAFA;
+    width: 320px;
+}
+
+.view.menu-show .view-header, .view.menu-show .view-body {
+    left: 320px;
+}
+
+.view-menu {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+
+/* Header */
+
+.header {
+    font-size: 18px;
+}
+
+.month-year > div, .combobox > div, label {
+    color: #888;
+    font-size: 12px;
+    text-transform: uppercase;
 }
