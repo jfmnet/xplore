@@ -1,12 +1,12 @@
 body {
-    font: 14px normal, -apple-system, BlinkMacSystemFont, "Roboto", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font: 1rem normal, -apple-system, BlinkMacSystemFont, "Roboto", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     overflow: hidden;
     margin: 0;
     padding: 0;
 }
 
 i.mdi {
-    font-size: 20px;
+    font-size: 24px;
 }
 
 .hidden {
@@ -217,7 +217,6 @@ textarea {
 
 .view-header .text {
     font-weight: bold;
-    margin-left: 16px;
 }
 
 .view-header .buttons {
@@ -225,13 +224,14 @@ textarea {
     display: flex;
     position: absolute;
     top: 0;
-    right: 0;
+    right: 16px;
     height: 64px;
 }
 
 .view-header .button {
     background-color: transparent;
-    color: #333;
+    font-size: 1rem;
+    padding: 0 8px 0 24px;
 }
 
 .view-body {
@@ -286,6 +286,7 @@ textarea {
 .form-header .button {
     background-color: transparent;
     color: #C6CCDB;
+    padding-right: 16px;
 }
 
 .form-body {
@@ -604,6 +605,19 @@ canvas {
     left: 0;
     top: 0;
     bottom: 0;
+}
+
+.icon {
+    display: inline-flex;
+    vertical-align: middle;
+}
+
+.text {
+    display: inline-flex;
+}
+
+img.icon {
+    width: 64px;
 }
 
 

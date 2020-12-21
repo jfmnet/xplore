@@ -104,8 +104,9 @@ xplore.prototype.Refresh = function () {
         this.object.appendChild(xplore.DisplayIcon(this.icon));
 
     //Show text
-    this.object.append(this.text);
-
+    if (this.text)
+        this.object.append(this.text);
+    
     //Children
     this.RefreshChildren();
 
@@ -843,6 +844,27 @@ xplore.List = function (param) {
 xplore.List.prototype = Object.create(xplore.prototype);
 xplore.List.constructor = xplore.List;
 
+xplore.List.prototype.Refresh = function () {
+    this.object.innerHTML = "";
+
+    //Show icon
+    if (this.icon)
+        this.object.appendChild(xplore.DisplayIcon(this.icon));
+
+    //Show text
+    if (this.text) {
+        let text = document.createElement("div");
+        text.classList.add("text");
+        text.innerText = this.text;
+        this.object.append(text);
+    }
+
+    
+    //Children
+    this.RefreshChildren();
+
+    this.Events();
+};
 
 //List container
 
@@ -1762,7 +1784,7 @@ view.RefreshHeader = function () {
     this.header.innerHTML = "";
 
     let button = new xplore.Button({
-        text: xplore.DisplayIcon("menu"),
+        icon: "menu",
         onclick: function () {
             self.ShowMenu();
         }
@@ -1779,9 +1801,12 @@ view.RefreshHeader = function () {
     buttons.classList.add("buttons");
     this.header.appendChild(buttons);
 
+    let container = document.createElement("div");
+    buttons.appendChild(container);
+
     if (Array.isArray(this.tools))
         for (let tool of this.tools) {
-            tool.Show(buttons);
+            tool.Show(container);
         }
 };
 
@@ -1871,9 +1896,19 @@ xplore.FILEFORMAT = {
 //Functions
 
 xplore.DisplayIcon = function (icon) {
-    let element = document.createElement("i");
-    element.classList.add("mdi");
-    element.classList.add("mdi-" + icon);
+    let element;
+
+    if (icon.includes(".jpg") || icon.includes(".png")) {
+        element = document.createElement("img");
+        element.classList.add("icon");
+        element.src = icon;
+    
+    } else {
+        element = document.createElement("i");
+        element.classList.add("icon");
+        element.classList.add("mdi");
+        element.classList.add("mdi-" + icon);
+    }
 
     return element;
 };
