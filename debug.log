@@ -80,3 +80,36 @@
 [1221/181457.610:ERROR:crash_report_database_win.cc(496)] failed to stat report
 [1221/182957.626:ERROR:crash_report_database_win.cc(496)] failed to stat report
 [1221/184457.636:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/185957.652:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/191457.663:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/192957.672:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/194457.691:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/195957.706:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/201457.713:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/202957.724:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/204457.731:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/205957.747:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/211457.761:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/212957.772:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/214457.780:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/215957.788:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/221457.791:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/222957.796:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/224457.812:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/225957.822:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/231457.832:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/232957.837:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/234457.839:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1221/235957.848:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1222/001457.872:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1222/002957.902:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1222/004457.933:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1222/005957.954:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1222/011457.973:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1222/012958.000:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1222/014458.014:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1222/015958.036:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1222/021458.061:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1222/022958.081:ERROR:crash_report_database_win.cc(496)] failed to stat report
+[1222/110701.364:ERROR:directory_reader_win.cc(43)] FindFirstFile: The system cannot find the path specified. (0x3)
+[1222/183300.160:ERROR:directory_reader_win.cc(43)] FindFirstFile: The system cannot find the path specified. (0x3)

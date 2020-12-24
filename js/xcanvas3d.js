@@ -1,130 +1,73 @@
 xplore.Canvas3D = function (param) {
     xplore.call(this, param, undefined, "canvas");
 
-    this.canvas;
-    this.engine;
-    this.scene;
-};
-
-xplore.Canvas3D.prototype = Object.create(xplore.prototype);
-xplore.Canvas3D.constructor = xplore.Canvas3D;
-
-xplore.Canvas3D.prototype.Refresh = function () {
-    this.object.innerHTML = "";
-
-    this.canvas = document.createElement("canvas");
-    this.object.appendChild(this.canvas);
-
-    this.engine = new BABYLON.Engine(this.canvas, true, { preserveDrawingBuffer: true, stencil: true });
-    this.scene = new BABYLON.Scene(this.engine);
-
-    this.InitializeCamera(this.scene, this.canvas);
-    this.InitializeLight(this.scene);
+    this.camera;
+    this.aspect = window.innerWidth / window.innerHeight;
+    this.cameratype = 0;    //0 - Perspective; 1 - Orthographic
+    this.orthosize = 1000;
+    this.backcolor = 0x000000;
 
     let self = this;
 
-    this.engine.runRenderLoop(function () {
-        if (self.scene) {
-            self.scene.render();
-        }
-    });
+    window.addEventListener('resize', function () {
+        self.Resize();
+    }, false);
 };
 
-xplore.Canvas3D.prototype.InitializeCamera = function (scene, canvas) {
-    // This creates and positions a free camera (non-mesh)
-    let camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.5, 20, new BABYLON.Vector3.Zero(), scene);
+let canvas = xplore.Initialize(xplore.Canvas3D);
 
-    // This targets the camera to scene origin
-    camera.setTarget(BABYLON.Vector3.Zero());
-    camera.upVector.x = 0;
-    camera.upVector.y = 0;
-    camera.upVector.z = 1;
+canvas.Refresh = function () {
+    this.object.innerHTML = "";
 
-    // This attaches the camera to the canvas
-    camera.attachControl(canvas, true);
+    this.canvas = document.createElement("canvas");
 
-    // Set zoom speed
-    camera.wheelPrecision = 50;
+    this.InitializeCamera();
+    this.InitializeRenderer();
+    this.Resize();
 };
 
-xplore.Canvas3D.prototype.InitializeLight = function (scene) {
-    // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
-    let light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+canvas.InitializeCamera = function () {
+    switch (this.cameratype) {
+        case 0:
+            this.camera = new THREE.PerspectiveCamera(50, 0.5 * this.aspect, 1, 10000);
+            this.camera.position.z = 2500;
+            break;
 
-    // Default intensity is 1. Let's dim the light a small amount
-    light.intensity = 0.7;
+        case 1:
+            this.camera = new THREE.OrthographicCamera(0.5 * this.orthosize * this.aspect / - 2, 0.5 * this.orthosize * this.aspect / 2, this.orthosize / 2, this.orthosize / - 2, 150, 1000);
+            break;
+    }
+};
+
+canvas.InitializeRenderer = function () {
+    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+
+    this.renderer.setClearColor(this.backcolor);
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.object.appendChild(this.renderer.domElement);
+};
+
+canvas.InitializeLight = function (scene) {
 };
 
 
 //Resize
 
-xplore.Canvas3D.prototype.Resize = function () {
+canvas.Resize = function () {
+    this.canvas.innerWidth = this.object.offsetWidth;
+    this.canvas.innerHeight = this.object.offsetHeight;
+
+    this.aspect = window.innerWidth / window.innerHeight;
+    this.aspect = this.aspect;
+    this.camera.updateProjectionMatrix();
+
+    this.renderer.setSize(this.canvas.innerWidth, this.canvas.innerHeight);
 };
 
 
 //Model
 
-xplore.Canvas3D.prototype.Clear = function () {
+canvas.Clear = function () {
     this.scene.geometries = [];
-};
-
-
-//Draw
-
-xplore.Canvas3D.prototype.DrawLine = function () {
-    let points = [
-        new BABYLON.Vector3(0, 0, 0),
-        new BABYLON.Vector3(0, 1, 1),
-        new BABYLON.Vector3(0, 1, 0)
-    ];
-
-    let lines = BABYLON.MeshBuilder.CreateLines("lines", { points: points }, scene);
-};
-
-xplore.Canvas3D.prototype.DrawBox = function (material, width, height, depth) {
-    if (height === undefined) {
-        height = width;
-        depth = width;
-    }
-
-    let box = BABYLON.MeshBuilder.CreateBox("box", { height: height, width: width, depth: depth }, this.scene);
-    box.material = material;
-};
-
-xplore.Canvas3D.prototype.DrawMesh = function (positions, indices, normals, colors) {
-    let mesh = new BABYLON.Mesh("mesh", this.scene);
-    let vertex = new BABYLON.VertexData();
-
-    vertex.positions = positions;
-    vertex.indices = indices;
-    vertex.normals = normals;
-    //vertex.colors = colors;
-
-    vertex.applyToMesh(mesh, true);
-    let material = this.StandardMaterial(1, 1, 0);
-
-    mesh.material = material;
-    //mesh.material.backFaceCulling = false;
-    mesh.material.twoSidedLighting  = true;
-};
-
-xplore.Canvas3D.prototype.Sphere = function () {
-    let sphere = BABYLON.MeshBuilder.CreateSphere("sphere", { diameter: 2, diameterX: 3 }, scene);
-};
-
-xplore.Canvas3D.prototype.Plane = function () {
-    let plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: 5, height: 2 }, scene);
-};
-
-xplore.Canvas3D.prototype.Ground = function () {
-    let ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 6, height: 4, subdivisions: 4 }, scene);
-};
-
-//Materials
-
-xplore.Canvas3D.prototype.StandardMaterial = function (r, g, b) {
-    var material = new BABYLON.StandardMaterial("material", this.scene);
-    material.diffuseColor = new BABYLON.Color3(r, g, b);
-
-    return material;
 };

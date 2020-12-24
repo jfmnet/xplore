@@ -1,12 +1,18 @@
 xplore.main = function () {
+    DemoCanvas3D();
     //DemoCanvas();
-    DemoView();
+    //DemoView();
     //DemoTab();
     //DemoMenuToolbar();
 };
 
 function DemoCanvas() {
     let canvas = new xplore.Canvas2D();
+    canvas.Show();
+}
+
+function DemoCanvas3D() {
+    let canvas = new xplore.Canvas3D();
     canvas.Show();
 }
 
