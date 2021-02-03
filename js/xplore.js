@@ -72,6 +72,7 @@ xplore.Initialize = function (object) {
     return object.prototype;
 };
 
+xplore.constructor = xplore;
 let prototype = xplore.prototype;
 
 prototype.Show = function (parent) {

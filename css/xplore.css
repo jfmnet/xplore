@@ -83,6 +83,11 @@ i.mdi {
     width: 100%;
 }
 
+.input input {
+    padding: 8px;
+    width: calc(100% - 18px);
+}
+
 .input input[type="checkbox"] {
     border: none;
     transform: scale(1.5);
@@ -108,7 +113,7 @@ i.mdi {
 
 .input.inline label>input, .input.inline label>select {
     display: inline-flex;
-    margin-top: 0;
+    margin-top: 4px;
     padding: 4px 8px;
     width: calc(60% - 18px);
 }
@@ -136,9 +141,10 @@ i.mdi {
 
 textarea {
     border: 1px solid #CCC;
+    padding: 8px;
     resize: none;
     height: 120px;
-    width: 100%;
+    width: calc(100% - 18px);
 }
 
 

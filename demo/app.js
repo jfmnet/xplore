@@ -14,6 +14,21 @@ function DemoCanvas() {
 function DemoCanvas3D() {
     let canvas = new xplore.Canvas3D();
     canvas.Show();
+
+    canvas.model.Add(new xplore.Canvas3DGraphics.Axis({
+        size: 1
+    }));
+
+    canvas.model.Add(new xplore.Canvas3DGraphics.UniformGridXY({
+        x1: -10,
+        y1: -10,
+        z: 0,
+        x2: 10,
+        y2: 10,
+        interval: 1
+    }));
+
+    canvas.Render();
 }
 
 function AddElements(canvas, data) {
@@ -35,7 +50,7 @@ function AddElements(canvas, data) {
     }
 
     let normals = [];
-   
+
     for (let i = 0; i < data.normals.length; i++) {
         normals.push(data.normals[i].X);
         normals.push(data.normals[i].Y);
