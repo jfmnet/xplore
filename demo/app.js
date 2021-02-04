@@ -28,6 +28,14 @@ function DemoCanvas3D() {
         interval: 1
     }));
 
+    canvas.model.Add(new xplore.Canvas3DGraphics.Box({
+        x: 1,
+        y: 0,
+        z: 0,
+        width: 0.1,
+        align: new THREE.Vector3(1, 1, 1)
+    }));
+
     canvas.Render();
 }
 
