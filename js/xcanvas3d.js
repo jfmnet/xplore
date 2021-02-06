@@ -7,6 +7,14 @@ xplore.Canvas3D = function (param) {
     this.orthosize = 1000;
     this.backcolor = 0x000000;
 
+    this.closedspline = new THREE.CatmullRomCurve3();
+    this.extrudesettings = {
+        steps: 1,
+        bevelEnabled: false,
+        extrudePath: this.closedspline
+    };
+
+
     //Model
     this.model = new xplore.Canvas3DModel();
 
@@ -14,6 +22,7 @@ xplore.Canvas3D = function (param) {
 
     window.addEventListener('resize', function () {
         self.Resize();
+        self.Render();
     }, false);
 };
 
@@ -34,7 +43,14 @@ canvas.Refresh = function () {
     this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
     this.controls.addEventListener('change', function () { self.Update(); });
 
-    this.Resize();
+    setTimeout(function() {
+        self.Resize();
+        self.Render();
+        clearTimeout();
+    }, 10);
+
+    self.Resize();
+    self.Render();
 };
 
 canvas.InitializeCamera = function () {
@@ -110,4 +126,12 @@ canvas.Render = function () {
 
 canvas.Update = function () {
     this.renderer.render(this.scene, this.camera);
+};
+
+
+canvas.Extrude = function (points, shapepoints) {
+    this.closedspline.points = points;
+
+    let shape = new THREE.Shape(shapepoints);
+    return new THREE.ExtrudeBufferGeometry(shape, this.extrudesettings);
 };

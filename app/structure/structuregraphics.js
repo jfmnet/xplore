@@ -1,13 +1,19 @@
 var structuregraphics = function () {
 };
 
-structuregraphics.constructor = structuregraphics;
+xplore.Initialize(structuregraphics);
 
+structuregraphics.Initialize = function (object) {
+    object.prototype = Object.create(structuregraphics.prototype);
+    object.constructor = object;
+
+    return object.prototype;
+};
 
 //Nodes
 
 structuregraphics.Nodes = function () {
-    xplore.canvasgraphics.call(this);
+    xplore.Canvas2DGraphics.call(this);
 
     this.tolerance = 0.001;
     this.list = [];
@@ -34,10 +40,7 @@ structuregraphics.Nodes = function () {
     this.supportbaseproperties.font = "normal 13px arial";
 };
 
-structuregraphics.Nodes.prototype = Object.create(xplore.canvasgraphics.prototype);
-structuregraphics.Nodes.constructor = structuregraphics.Nodes;
-
-let nodes = structuregraphics.Nodes.prototype;
+let nodes = structuregraphics.Initialize(structuregraphics.Nodes);
 
 nodes.Add = function (object) {
     let add = true;
@@ -134,7 +137,7 @@ nodes.AssignNodalLoad = function (x, y) {
 //Node
 
 structuregraphics.Node = function (x, y) {
-    xplore.canvasgraphics.call(this);
+    xplore.Canvas2DGraphics.call(this);
 
     node.selected = false;
 
@@ -144,10 +147,7 @@ structuregraphics.Node = function (x, y) {
         this.points = [{ x: x || 0, y: y || 0 }];
 };
 
-structuregraphics.Node.prototype = Object.create(xplore.canvasgraphics.prototype);
-structuregraphics.Node.constructor = structuregraphics.Node;
-
-let node = structuregraphics.Node.prototype;
+let node = structuregraphics.Initialize(structuregraphics.Node);
 
 Object.defineProperty(node, 'action', {
     get: function () { return 1; }
@@ -210,7 +210,7 @@ node.SelectByRectangle = function (x1, y1, x2, y2) {
 
 //Members
 structuregraphics.Members = function () {
-    xplore.canvasgraphics.call(this);
+    xplore.Canvas2DGraphics.call(this);
 
     this.tolerance = 0.001;
     this.list = [];
@@ -231,10 +231,8 @@ structuregraphics.Members = function () {
     this.memberloadproperties.linecolor = "#f80";
 };
 
-structuregraphics.Members.prototype = Object.create(xplore.canvasgraphics.prototype);
-structuregraphics.Members.constructor = structuregraphics.Members;
+let members = structuregraphics.Initialize(structuregraphics.Members);
 
-let members = structuregraphics.Members.prototype;
 
 members.Add = function (object) {
     this.list.push(object);
@@ -398,13 +396,11 @@ members.UpdateMaxMemberLoad = function () {
 //Member
 
 structuregraphics.Member = function (x1, y1, x2, y2) {
-    xplore.canvasgraphics.Line.call(this, x1, y1, x2, y2);
+    xplore.Canvas2DGraphics.Line.call(this, x1, y1, x2, y2);
 };
 
-structuregraphics.Member.prototype = Object.create(xplore.canvasgraphics.Line.prototype);
-structuregraphics.Member.constructor = structuregraphics.Member;
+let member = structuregraphics.Initialize(structuregraphics.Member);
 
-let member = structuregraphics.Member.prototype;
 
 member.Render = function (canvas, parent) {
     if (this.load) {
@@ -458,7 +454,7 @@ member.SelectByRectangle = function (x1, y1, x2, y2) {
 //Support
 
 structuregraphics.Support = function (node, x, y, rx, ry) {
-    xplore.canvasgraphics.call(this);
+    xplore.Canvas2DGraphics.call(this);
 
     this.node = node;
     this.x = x || 0;
@@ -473,10 +469,8 @@ structuregraphics.Support = function (node, x, y, rx, ry) {
     this.Refresh();
 };
 
-structuregraphics.Support.prototype = Object.create(xplore.canvasgraphics.prototype);
-structuregraphics.Support.constructor = structuregraphics.Support;
+let support = structuregraphics.Initialize(structuregraphics.Support);
 
-let support = structuregraphics.Support.prototype;
 
 support.Refresh = function () {
     let width = 0.05;
@@ -560,7 +554,7 @@ support.Render = function (canvas, parent, x, y, width) {
 //Nodal Load
 
 structuregraphics.NodalLoad = function (node, x, y) {
-    xplore.canvasgraphics.call(this);
+    xplore.Canvas2DGraphics.call(this);
 
     this.node = node;
     this.x = x;
@@ -572,10 +566,8 @@ structuregraphics.NodalLoad = function (node, x, y) {
     this.Refresh();
 };
 
-structuregraphics.NodalLoad.prototype = Object.create(xplore.canvasgraphics.prototype);
-structuregraphics.NodalLoad.constructor = structuregraphics.NodalLoad;
+let nodalload = structuregraphics.Initialize(structuregraphics.NodalLoad);
 
-let nodalload = structuregraphics.NodalLoad.prototype;
 
 nodalload.Refresh = function () {
     let size = 0.5;
@@ -592,7 +584,7 @@ nodalload.Refresh = function () {
         line = { x1: this.node.x - size * sign, y1: this.node.y, x2: this.node.x, y2: this.node.y };
         this.lines.push(line);
 
-        arrow = new xplore.canvasgraphics.Arrow(line.x1, line.y1, line.x2, line.y2);
+        arrow = new xplore.Canvas2DGraphics.Arrow(line.x1, line.y1, line.x2, line.y2);
         this.arrows.push(arrow.points);
     }
 
@@ -602,7 +594,7 @@ nodalload.Refresh = function () {
         line = { x1: this.node.x, y1: this.node.y - size * sign, x2: this.node.x, y2: this.node.y };
         this.lines.push(line);
 
-        arrow = new xplore.canvasgraphics.Arrow(line.x1, line.y1, line.x2, line.y2);
+        arrow = new xplore.Canvas2DGraphics.Arrow(line.x1, line.y1, line.x2, line.y2);
         this.arrows.push(arrow.points);
     }
 };
@@ -624,7 +616,7 @@ nodalload.Render = function (canvas) {
 //Member Load
 
 structuregraphics.MemberLoad = function (member, w1, w2, l1, l2) {
-    xplore.canvasgraphics.call(this);
+    xplore.Canvas2DGraphics.call(this);
 
     this.member = member;
     this.w1 = w1;
@@ -635,10 +627,8 @@ structuregraphics.MemberLoad = function (member, w1, w2, l1, l2) {
     this.Refresh();
 };
 
-structuregraphics.MemberLoad.prototype = Object.create(xplore.canvasgraphics.prototype);
-structuregraphics.MemberLoad.constructor = structuregraphics.MemberLoad;
+let memberload = structuregraphics.Initialize(structuregraphics.MemberLoad);
 
-let memberload = structuregraphics.MemberLoad.prototype;
 
 memberload.Refresh = function (parent) {
     let ratio = 1;
@@ -665,7 +655,7 @@ memberload.Refresh = function (parent) {
     for (let i = 0; i < points.length; i++) {
         this.lines.push({ x1: points2[i].x, y1: points2[i].y, x2: points[i].x, y2: points[i].y });
 
-        arrow = new xplore.canvasgraphics.Arrow(points2[i].x, points2[i].y, points[i].x, points[i].y);
+        arrow = new xplore.Canvas2DGraphics.Arrow(points2[i].x, points2[i].y, points[i].x, points[i].y);
         this.arrows.push(arrow.points);
     }
 };

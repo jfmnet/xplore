@@ -31,8 +31,8 @@ canvasgraphics.AlignMove = function (mesh) {
         mesh.position.copy(new THREE.Vector3(this.x, this.y, this.z));
 };
 
-canvasgraphics.Render = function (object) {
-    let mesh = this.Generate();
+canvasgraphics.Render = function (canvas, object) {
+    let mesh = this.Generate(canvas);
     this.AlignMove(mesh);
     object.add(mesh);
 };
@@ -134,8 +134,6 @@ cylinder.AlignMove = function (mesh) {
 };
 
 
-
-
 //Grid
 
 xplore.Canvas3DGraphics.UniformGridXY = function (param) {
@@ -203,7 +201,7 @@ xplore.Canvas3DGraphics.Axis = function (param) {
 
 let axis = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.Axis);
 
-axis.Generate = function () {
+axis.Generate = function (canvas) {
     let radius = this.size / 20;
     let height = this.size / 5;
 
@@ -228,7 +226,7 @@ axis.Generate = function () {
         material: red
     });
 
-    x.Render(object);
+    x.Render(canvas, object);
 
     x = new xplore.Canvas3DGraphics.Box({
         x: mid + halfthick,
@@ -241,7 +239,7 @@ axis.Generate = function () {
         material: red
     });
 
-    x.Render(object);
+    x.Render(canvas, object);
 
     let y = new xplore.Canvas3DGraphics.Cylinder({
         x: 0,
@@ -255,7 +253,7 @@ axis.Generate = function () {
         material: green
     });
 
-    y.Render(object);
+    y.Render(canvas, object);
 
     y = new xplore.Canvas3DGraphics.Box({
         x: 0,
@@ -268,7 +266,7 @@ axis.Generate = function () {
         material: green
     });
 
-    y.Render(object);
+    y.Render(canvas, object);
 
     let z = new xplore.Canvas3DGraphics.Cylinder({
         x: 0,
@@ -282,7 +280,7 @@ axis.Generate = function () {
         material: blue
     });
 
-    z.Render(object);
+    z.Render(canvas, object);
 
     z = new xplore.Canvas3DGraphics.Box({
         x: 0,
@@ -295,9 +293,48 @@ axis.Generate = function () {
         material: blue
     });
 
-    z.Render(object);
+    z.Render(canvas, object);
 
     object.position = new THREE.Vector3(this.x, this.y, this.z);
 
     return object;
+};
+
+
+//Cylinder
+
+xplore.Canvas3DGraphics.ExtrudedSection = function (param) {
+    xplore.Canvas3DGraphics.call(this, param);
+
+    this.section = param.section || {};
+    this.start = param.start || {};
+    this.end = param.end || {};
+};
+
+let extrude = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.ExtrudedSection);
+
+extrude.Extrude = function (points, shapepoints) {
+    let spline = new THREE.CatmullRomCurve3();
+    let settings = {
+        steps: 1,
+        bevelEnabled: false,
+    };
+
+    spline.points = points;
+    settings.extrudePath = spline;
+
+    let shape = new THREE.Shape(shapepoints);
+    return new THREE.ExtrudeBufferGeometry(shape, settings);
+};
+
+extrude.Generate = function (canvas) {
+    let line = [
+        new THREE.Vector3(this.start.x, this.start.y, this.start.z),
+        new THREE.Vector3(this.end.x, this.end.y, this.end.z),
+    ];
+
+    let geometry = canvas.Extrude(line, this.section);
+    let mesh = new THREE.Mesh(geometry, this.material);
+
+    return mesh;
 };

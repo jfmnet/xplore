@@ -5,11 +5,7 @@ var mainview = function () {
     this.model;
 };
 
-mainview.prototype = Object.create(xplore.prototype);
-mainview.constructor = mainview;
-
-
-let view = mainview.prototype;
+let view = xplore.Initialize(mainview);
 
 view.Show = function () {
     //View
@@ -66,7 +62,7 @@ view.InitializeMenu = function () {
     edit.Add(new xplore.Menu({ icon: "content-save", text: "Delete Member Loads", onclick: function () { self.DeleteMemberLoads(); } }));
     edit.Add(new xplore.Menu({ icon: "content-save", text: "Supports", onclick: function () { self.DeleteSupports(); } }));
 
-    let view = this.menu.Add(new xplore.Menu({ text: "View" }));
+    //let view = this.menu.Add(new xplore.Menu({ text: "View" }));
 
     let define = this.menu.Add(new xplore.Menu({ text: "Define" }));
     define.Add(new xplore.Menu({ icon: "file-outline", text: "Frame Sections", onclick: function () { self.DefineFrameSections(); } }));

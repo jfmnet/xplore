@@ -18,7 +18,7 @@ canvasmodel.Render = function (canvas) {
     let object = new THREE.Object3D();
 
     for (let item of this.list) {
-        item.Render(object);
+        item.Render(canvas, object);
     }
 
     canvas.Add(object);

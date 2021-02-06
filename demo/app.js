@@ -28,12 +28,15 @@ function DemoCanvas3D() {
         interval: 1
     }));
 
-    canvas.model.Add(new xplore.Canvas3DGraphics.Box({
-        x: 1,
-        y: 0,
-        z: 0,
-        width: 0.1,
-        align: new THREE.Vector3(1, 1, 1)
+    canvas.model.Add(new xplore.Canvas3DGraphics.ExtrudedSection({
+        section: [
+            { x: -0.1, y: -0.1 },
+            { x: -0.1, y: 0.1 },
+            { x: 0.1, y: 0.1 },
+            { x: 0.1, y: -0.1 },
+        ],
+        start: { x: 0, y: 0, z: 0 },
+        end: { x: 1, y: 1, z: 1 },
     }));
 
     canvas.Render();

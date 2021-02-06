@@ -150,6 +150,12 @@ canvas.Refresh = function () {
         self.Render();
     };
 
+    setTimeout(function() {
+        self.Resize();
+        self.Render();
+        clearTimeout();
+    }, 10);
+
     this.Events();
 };
 

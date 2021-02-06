@@ -92,10 +92,13 @@ prototype.Show = function (parent) {
             this.object.classList.add(this.classname[i]);
     }
 
-    this.parent.appendChild(this.object);
+    let fragment = document.createDocumentFragment();
+    fragment.appendChild(this.object);
 
     this.Refresh();
     this.ApplyProperties();
+
+    this.parent.appendChild(fragment);
 };
 
 prototype.Dispose = function () {
@@ -1736,12 +1739,9 @@ xplore.View = function (param) {
     this.tools = param.tools;
 };
 
-xplore.View.prototype = Object.create(xplore.prototype);
-xplore.View.constructor = xplore.View;
+let xploreview = xplore.Initialize(xplore.View);
 
-let view = xplore.View.prototype;
-
-view.Refresh = function () {
+xploreview.Refresh = function () {
     let self = this;
 
     this.object.innerHTML = "";
@@ -1767,11 +1767,11 @@ view.Refresh = function () {
     this.Events();
 };
 
-view.RefreshMenu = function () {
+xploreview.RefreshMenu = function () {
     this.menuobject.Show(this.menu);
 };
 
-view.RefreshHeader = function () {
+xploreview.RefreshHeader = function () {
     let self = this;
 
     this.header.innerHTML = "";
@@ -1803,7 +1803,7 @@ view.RefreshHeader = function () {
         }
 };
 
-view.RefreshBody = function () {
+xploreview.RefreshBody = function () {
     this.body.innerHTML = "";
 
     //Children
@@ -1812,7 +1812,7 @@ view.RefreshBody = function () {
     }
 };
 
-view.ShowMenu = function () {
+xploreview.ShowMenu = function () {
     if (!this.menuvisible) {
         this.menuvisible = true;
         this.object.classList.add("menu-show");
@@ -1822,7 +1822,7 @@ view.ShowMenu = function () {
     }
 };
 
-view.SetMenu = function (object) {
+xploreview.SetMenu = function (object) {
     this.menuobject = object;
 };
 
@@ -1834,6 +1834,15 @@ xplore.Tree = function (param) {
 };
 
 xplore.Initialize(xplore.Tree);
+
+
+//Table
+
+xplore.Table = function (param) {
+    xplore.call(this, param, undefined, "table");
+};
+
+let table = xplore.Initialize(xplore.Table);
 
 
 //Modal Background
