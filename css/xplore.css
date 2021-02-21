@@ -638,3 +638,27 @@ img.icon {
     font-size: 12px;
     text-transform: uppercase;
 }
+
+
+/* Table */
+
+.table {
+    white-space: nowrap;
+}
+
+.table-header {
+    background-color: #EEE;
+    display: flex;
+}
+
+.table-header-cell {
+    display: inline-flex;
+    justify-content: center;
+    padding: 8px;
+}
+
+.table-header-resize {
+    background-color: #CCC;
+    cursor: ew-resize;
+    width: 4px;
+}

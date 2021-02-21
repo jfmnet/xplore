@@ -119,7 +119,7 @@ prototype.Refresh = function () {
     //Show text
     if (this.text)
         this.object.append(this.text);
-    
+
     //Children
     this.RefreshChildren();
 
@@ -862,7 +862,7 @@ list.Refresh = function () {
         this.object.append(text);
     }
 
-    
+
     //Children
     this.RefreshChildren();
 
@@ -1840,9 +1840,74 @@ xplore.Initialize(xplore.Tree);
 
 xplore.Table = function (param) {
     xplore.call(this, param, undefined, "table");
+
+    this.columns = param.columns;
+    this.data = param.data;
+    this.columnwidth = param.columnwidth || 100;
+
 };
 
 let table = xplore.Initialize(xplore.Table);
+
+table.Refresh = function () {
+    //Header
+    this.header = document.createElement("div");
+    this.header.classList.add("table-header");
+    this.object.appendChild(this.header);
+    this.RefreshHeader();
+
+    //Body
+    this.body = document.createElement("div");
+    this.body.classList.add("table-body");
+    this.object.appendChild(this.body);
+    this.RefreshBody();
+
+    //Footer
+    this.footer = document.createElement("div");
+    this.footer.classList.add("table-footer");
+    this.object.appendChild(this.footer);
+    this.RefreshFooter();
+
+    this.style = document.createElement("style");
+    document.body.appendChild(this.style);
+
+    this.Resize();
+};
+
+table.RefreshHeader = function () {
+    let div;
+
+    for (let header in this.columns) {
+        // Text
+        div = document.createElement("div");
+        div.classList.add("table-header-cell");
+        div.innerText = header;
+        this.header.appendChild(div);
+
+        // Resize handle
+        div = document.createElement("div");
+        div.classList.add("table-header-resize");
+        this.header.appendChild(div);
+
+        xplore.Draggable(div, { alongx: true });
+    }
+};
+
+table.RefreshBody = function () {
+};
+
+table.RefreshFooter = function () {
+};
+
+table.Resize = function () {
+    let style = ".table-header-cell { width: " + this.columnwidth + "px } ";
+    this.style.innerHTML = style;
+};
+
+table.Dispose = function () {
+    this.style.remove();
+    this.object.remove();
+};
 
 
 //Modal Background
@@ -1902,7 +1967,7 @@ xplore.DisplayIcon = function (icon) {
         element = document.createElement("img");
         element.classList.add("icon");
         element.src = icon;
-    
+
     } else {
         element = document.createElement("i");
         element.classList.add("icon");
@@ -1962,6 +2027,58 @@ xplore.Round = function (num, precision) {
     if (!precision) return num;
 
     return Math.round(num / precision) * precision;
+};
+
+xplore.IsEqual = function (num1, num2) {
+    return Math.abs(num1 - num2) < Number.EPSILON;
+};
+
+xplore.Draggable = function (object, param) {
+    let alongx = param.alongx;
+    let alongy = param.alongy;
+
+    object.onmousedown = function (e) {
+        let left = object.offsetLeft;
+        let top = object.offsetTop;
+
+        object.resizing = true;
+        object.currentx = e.clientX;
+        object.currenty = e.clientY;
+        object.style.height = object.parentElement.offsetHeight + "px";
+        object.style.position = "absolute";
+
+        object.style.left = left + "px";
+        object.style.top = top + "px";
+
+        document.body.onmousemove = function (e) {
+            if (object.resizing) {
+                left += e.clientX - object.currentx;
+                top += e.clientY - object.currenty;
+
+                if (alongx) 
+                    object.style.left = left + "px";
+                else if (alongy)
+                    object.style.top = top + "px";
+                else {
+                    object.style.left = left + "px";
+                    object.style.top = top + "px";
+                }
+
+                object.currentx = e.clientX;
+                object.currenty = e.clientY;
+            }
+        }
+
+        document.body.onmouseup = function (e) {
+            object.resizing = false;
+            delete document.body.onmousemove;
+        };
+    };
+
+    object.onmouseup = function (e) {
+        object.resizing = false;
+        delete document.body.onmousemove;
+    };
 };
 
 xplore.KeyDown = function (keycode, action) {

@@ -1,10 +1,25 @@
 xplore.main = function () {
-    DemoCanvas3D();
+    //DemoCanvas3D();
     //DemoCanvas();
     //DemoView();
     //DemoTab();
     //DemoMenuToolbar();
+
+    DemoTable();
 };
+
+function DemoTable() {
+    let table = new xplore.Table({
+        columns: [ "A", "B", "C" ],
+        data: [
+            [ "0", "0", "0" ],
+            [ "1", "1", "1" ],
+            [ "2", "2", "2" ],
+        ]
+    });
+
+    table.Show();
+}
 
 function DemoCanvas() {
     let canvas = new xplore.Canvas2D();
@@ -12,6 +27,8 @@ function DemoCanvas() {
 }
 
 function DemoCanvas3D() {
+    alert(window.prototype);
+
     let canvas = new xplore.Canvas3D();
     canvas.Show();
 
