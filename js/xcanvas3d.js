@@ -83,11 +83,11 @@ canvas.InitializeLight = function () {
     this.scene.add(new THREE.AmbientLight(0x444444));
 
     let light1 = new THREE.DirectionalLight(0xffffff, 0.5);
-    light1.position.set(1, 1, 1);
+    light1.position.set(75, 100, 100);
     this.scene.add(light1);
 
-    let light2 = new THREE.DirectionalLight(0xffffff, 1.5);
-    light2.position.set(0, - 1, 0);
+    let light2 = new THREE.DirectionalLight(0xffffff, 0.5);
+    light2.position.set(-100, -75, 50);
     this.scene.add(light2);
 };
 
@@ -134,4 +134,40 @@ canvas.Extrude = function (points, shapepoints) {
 
     let shape = new THREE.Shape(shapepoints);
     return new THREE.ExtrudeBufferGeometry(shape, this.extrudesettings);
+};
+
+//Zoom
+
+canvas.ZoomAll = function (noresize) {
+    if (!noresize)
+        this.Resize();
+
+    let obj = this.scene;
+    let bounds = new THREE.Box3().setFromObject(obj);
+
+    let x = bounds.max.x - bounds.min.x;
+    let y = bounds.max.y - bounds.min.y;
+    let z = bounds.max.z - bounds.min.z;
+
+    let bx = (bounds.max.x + bounds.min.x) / 2;
+    let by = (bounds.max.y + bounds.min.y) / 2;
+    let bz = (bounds.max.z + bounds.min.z) / 2;
+
+    let center = new THREE.Vector3(bx, by, bz);
+    obj.center = center;
+
+    let boundingSphere = bounds.getBoundingSphere(obj);
+    let radius = boundingSphere.radius * 1.10;
+
+    if (canvas.height > canvas.width)
+        radius *= canvas.height / canvas.width;
+
+    let len = radius / (Math.sin(this.camera.fov * Math.PI / 180));
+    this.camera.position.set(center.x - len, center.y - len, center.z + len);
+
+    this.camera.lookAt(center);
+    this.controls.target.set(center.x, center.y, center.z);
+
+    this.camera.updateProjectionMatrix();
+    this.controls.update();
 };

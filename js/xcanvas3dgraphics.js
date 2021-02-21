@@ -18,10 +18,10 @@ xplore.Canvas3DGraphics.Initialize = function (object) {
 
 xplore.Canvas3DGraphics.constructor = xplore.Canvas3DGraphics;
 
-let canvasgraphics = xplore.Canvas3DGraphics.prototype;
-canvasgraphics.axis = new THREE.Vector3(0, 1, 0);
+let xcanvasgraphics = xplore.Canvas3DGraphics.prototype;
+xcanvasgraphics.axis = new THREE.Vector3(0, 1, 0);
 
-canvasgraphics.AlignMove = function (mesh) {
+xcanvasgraphics.AlignMove = function (mesh) {
     if (this.align.x !== 0 || this.align.y !== 0 || this.align.z !== 0) {
         mesh.up = new THREE.Vector3(0, 0, 1);
         mesh.lookAt(this.align);
@@ -31,7 +31,7 @@ canvasgraphics.AlignMove = function (mesh) {
         mesh.position.copy(new THREE.Vector3(this.x, this.y, this.z));
 };
 
-canvasgraphics.Render = function (canvas, object) {
+xcanvasgraphics.Render = function (canvas, object) {
     let mesh = this.Generate(canvas);
     this.AlignMove(mesh);
     object.add(mesh);
@@ -58,9 +58,9 @@ xplore.Canvas3DGraphics.LineSegments = function (param) {
     this.material = new THREE.LineBasicMaterial({ color: color, opacity: opacity });
 };
 
-let linesegments = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.LineSegments);
+let xlinesegments = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.LineSegments);
 
-linesegments.Generate = function () {
+xlinesegments.Generate = function () {
     let geometry = new THREE.BufferGeometry();
     let vertices = [];
 
@@ -83,9 +83,9 @@ xplore.Canvas3DGraphics.Box = function (param) {
     this.depth = param.depth || this.width;
 };
 
-let box = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.Box);
+let xbox = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.Box);
 
-box.Generate = function () {
+xbox.Generate = function () {
     let geometry = new THREE.BoxBufferGeometry(this.width, this.height, this.depth);
     return new THREE.Mesh(geometry, this.material);
 };
@@ -99,9 +99,9 @@ xplore.Canvas3DGraphics.Sphere = function (param) {
     this.radius = param.radius || 1;
 };
 
-let sphere = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.Sphere);
+let xsphere = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.Sphere);
 
-sphere.Generate = function () {
+xsphere.Generate = function () {
     let geometry = new THREE.IcosahedronBufferGeometry(this.radius, 8);
     return new THREE.Mesh(geometry, this.material);
 };
@@ -118,14 +118,14 @@ xplore.Canvas3DGraphics.Cylinder = function (param) {
     this.segments = param.segments || 8;
 };
 
-let cylinder = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.Cylinder);
+let xcylinder = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.Cylinder);
 
-cylinder.Generate = function () {
+xcylinder.Generate = function () {
     let geometry = new THREE.CylinderBufferGeometry(this.topradius, this.bottomradius, this.height, this.segments);
     return new THREE.Mesh(geometry, this.material);
 };
 
-cylinder.AlignMove = function (mesh) {
+xcylinder.AlignMove = function (mesh) {
     if (this.align.x !== 0 || this.align.y !== 0 || this.align.z !== 0)
         mesh.quaternion.setFromUnitVectors(this.axis, this.align);
 
@@ -150,9 +150,9 @@ xplore.Canvas3DGraphics.UniformGridXY = function (param) {
     this.interval = param.interval || 1;
 };
 
-let grid = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.UniformGridXY);
+let xgrid = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.UniformGridXY);
 
-grid.Generate = function () {
+xgrid.Generate = function () {
     let points = [];
     let color = 0x222222;
 
@@ -199,9 +199,9 @@ xplore.Canvas3DGraphics.Axis = function (param) {
     this.size = param.size || 0;
 };
 
-let axis = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.Axis);
+let xaxis = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.Axis);
 
-axis.Generate = function (canvas) {
+xaxis.Generate = function (canvas) {
     let radius = this.size / 20;
     let height = this.size / 5;
 
@@ -311,9 +311,9 @@ xplore.Canvas3DGraphics.ExtrudedSection = function (param) {
     this.end = param.end || {};
 };
 
-let extrude = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.ExtrudedSection);
+let xextrude = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.ExtrudedSection);
 
-extrude.Extrude = function (points, shapepoints) {
+xextrude.Extrude = function (points, shapepoints) {
     let spline = new THREE.CatmullRomCurve3();
     let settings = {
         steps: 1,
@@ -327,7 +327,7 @@ extrude.Extrude = function (points, shapepoints) {
     return new THREE.ExtrudeBufferGeometry(shape, settings);
 };
 
-extrude.Generate = function (canvas) {
+xextrude.Generate = function (canvas) {
     let line = [
         new THREE.Vector3(this.start.x, this.start.y, this.start.z),
         new THREE.Vector3(this.end.x, this.end.y, this.end.z),
@@ -337,4 +337,46 @@ extrude.Generate = function (canvas) {
     let mesh = new THREE.Mesh(geometry, this.material);
 
     return mesh;
+};
+
+//Mesh
+
+xplore.Canvas3DGraphics.Mesh = function (param) {
+    xplore.Canvas3DGraphics.call(this, param);
+
+    this.triangles = param.triangles || {};
+};
+
+let xmesh = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.Mesh);
+
+xmesh.Generate = function (canvas) {
+    const geometry = new THREE.BufferGeometry();
+
+    // create a simple square shape. We duplicate the top left and bottom right
+    // vertices because each vertex needs to appear once per triangle.
+    const vertices = new Float32Array(this.triangles.length * 9);
+
+    let j;
+
+    for (let i = 0; i < this.triangles.length; i++) {
+        j = i * 9;
+
+        vertices[j + 0] = this.triangles[i].Point1.X;
+        vertices[j + 1] = this.triangles[i].Point1.Y;
+        vertices[j + 2] = this.triangles[i].Point1.Z;
+
+        vertices[j + 3] = this.triangles[i].Point2.X;
+        vertices[j + 4] = this.triangles[i].Point2.Y;
+        vertices[j + 5] = this.triangles[i].Point2.Z;
+
+        vertices[j + 6] = this.triangles[i].Point3.X;
+        vertices[j + 7] = this.triangles[i].Point3.Y;
+        vertices[j + 8] = this.triangles[i].Point3.Z;
+    }
+    
+    // itemSize = 3 because there are 3 values (components) per vertex
+    geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
+
+    const material = new THREE.MeshBasicMaterial( { color: 0x8888ff, side: THREE.DoubleSide } );
+    return new THREE.Mesh( geometry, material );
 };
