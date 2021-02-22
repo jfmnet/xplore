@@ -1,6 +1,5 @@
 body {
     font: 1rem normal, -apple-system, BlinkMacSystemFont, "Roboto", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    overflow: hidden;
     margin: 0;
     padding: 0;
 }
@@ -643,22 +642,72 @@ img.icon {
 /* Table */
 
 .table {
+    background-color: #CCC;
+    overflow-x: auto;
+    overflow-y: hidden;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
     white-space: nowrap;
+    width: 100%;
 }
 
 .table-header {
     background-color: #EEE;
     display: flex;
+    min-width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 35px;
+    white-space: nowrap;
 }
 
-.table-header-cell {
+.table-header .table-cell {
+    align-items: center;
+    background-color: #DDD;
     display: inline-flex;
     justify-content: center;
-    padding: 8px;
 }
 
-.table-header-resize {
-    background-color: #CCC;
+.table-header .table-column-resize {
+    background-color: #DDD;
     cursor: ew-resize;
+}
+
+.table-header div:last-child {
+    background-color: transparent;
+}
+
+.table-body {
+    min-width: 100%;
+    position: absolute;
+    bottom: 0;
+    top: 35px;
+    left: 0;
+    overflow: auto;
+}
+
+.table-body-row {
+    border-bottom: 0.5px solid #CCC;
+    display: flex;
+    white-space: nowrap;
+}
+
+.table-body-row div:last-child {
+    background-color: transparent;
+}
+
+.table-cell {
+    background-color: #FFF;
+    display: inline-block;
+    padding: 4px;
+}
+
+.table-column-resize {
+    border-left: 1px solid #CCC;
+    background-color: #FFF;
     width: 4px;
 }

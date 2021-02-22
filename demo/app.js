@@ -9,13 +9,22 @@ xplore.main = function () {
 };
 
 function DemoTable() {
+    let data = [];
+    let row;
+
+    for (let i = 0; i < 100; i++) {
+        row = [];
+
+        for (let j = 0; j < 15; j++) {
+            row.push(j + i);
+        }
+
+        data.push(row);
+    }
+
     let table = new xplore.Table({
-        columns: [ "A", "B", "C" ],
-        data: [
-            [ "0", "0", "0" ],
-            [ "1", "1", "1" ],
-            [ "2", "2", "2" ],
-        ]
+        columns: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O"],
+        data: data
     });
 
     table.Show();

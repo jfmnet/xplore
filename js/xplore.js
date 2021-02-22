@@ -1844,10 +1844,13 @@ xplore.Table = function (param) {
     this.columns = param.columns;
     this.data = param.data;
     this.columnwidth = param.columnwidth || 100;
-
+    this.pagesize = param.pagesize || 25;
+    this.page = 1;
 };
 
 let table = xplore.Initialize(xplore.Table);
+
+table.id = 0;
 
 table.Refresh = function () {
     //Header
@@ -1876,31 +1879,92 @@ table.Refresh = function () {
 
 table.RefreshHeader = function () {
     let div;
+    let counter = 0;
+    let self = this;
 
-    for (let header in this.columns) {
+    for (let header of this.columns) {
         // Text
         div = document.createElement("div");
-        div.classList.add("table-header-cell");
+        div.classList.add("table-cell");
+        div.classList.add("table-column-" + counter++);
         div.innerText = header;
         this.header.appendChild(div);
 
         // Resize handle
         div = document.createElement("div");
-        div.classList.add("table-header-resize");
+        div.classList.add("table-column-resize");
+        div.id = table.id++;
         this.header.appendChild(div);
 
-        xplore.Draggable(div, { alongx: true });
+        xplore.Draggable(div, {
+            alongx: true, ondrag: function (object) {
+                self.columnwidth[object.id] += object.changex;
+                object.style.position = null;
+                self.Resize();
+            }
+        });
     }
 };
 
 table.RefreshBody = function () {
+    let div;
+    let counter = 0;
+    let row;
+    let start = (this.page - 1) * this.pagesize;
+    let end = this.page * this.pagesize;
+
+    if (end > this.data.length)
+        end = this.data.length;
+
+    for (let i = start; i < end; i++) {
+        // Row
+        row = document.createElement("div");
+        row.classList.add("table-body-row");
+        this.body.appendChild(row);
+
+        counter = 0;
+
+        for (let cell of this.data[i]) {
+            // Text
+            div = document.createElement("div");
+            div.classList.add("table-cell");
+            div.classList.add("table-column-" + counter++);
+            div.innerText = cell;
+            row.appendChild(div);
+
+            // Resize handle
+            div = document.createElement("div");
+            div.classList.add("table-column-resize");
+            row.appendChild(div);
+        }
+    }
 };
 
 table.RefreshFooter = function () {
 };
 
 table.Resize = function () {
-    let style = ".table-header-cell { width: " + this.columnwidth + "px } ";
+    if (Array.isArray(this.columnwidth)) {
+        if (this.columns.length > this.columnwidth.length) {
+            for (let i = this.columnwidth.length - 1; i < this.columns.length; i++) {
+                this.columnwidth.push(100);
+            }
+        }
+    } else {
+        let width = this.columnwidth;
+        this.columnwidth = [];
+
+        for (let i = 0; i < this.columns.length; i++) {
+            this.columnwidth.push(100);
+        }
+    }
+
+    let style = "";
+
+    for (let i = 0; i < this.columnwidth.length; i++) {
+        style += ".table-column-" + i + " { width: " + this.columnwidth[i] + "px } ";
+    }
+
     this.style.innerHTML = style;
 };
 
@@ -2036,16 +2100,32 @@ xplore.IsEqual = function (num1, num2) {
 xplore.Draggable = function (object, param) {
     let alongx = param.alongx;
     let alongy = param.alongy;
+    let position;
+    let height;
+    let zindex;
+    let left;
+    let top;
+    let oleft;
+    let otop;
 
     object.onmousedown = function (e) {
-        let left = object.offsetLeft;
-        let top = object.offsetTop;
+        left = object.offsetLeft;
+        top = object.offsetTop;
+
+        oleft = left;
+        otop = top;
+
+        // Store this styles so that we can restore after dragging
+        position = object.style.position;
+        height = object.style.height;
+        zindex = object.style["z-index"];
 
         object.resizing = true;
         object.currentx = e.clientX;
         object.currenty = e.clientY;
         object.style.height = object.parentElement.offsetHeight + "px";
         object.style.position = "absolute";
+        object.style["z-index"] = "1000";
 
         object.style.left = left + "px";
         object.style.top = top + "px";
@@ -2055,7 +2135,7 @@ xplore.Draggable = function (object, param) {
                 left += e.clientX - object.currentx;
                 top += e.clientY - object.currenty;
 
-                if (alongx) 
+                if (alongx)
                     object.style.left = left + "px";
                 else if (alongy)
                     object.style.top = top + "px";
@@ -2066,19 +2146,53 @@ xplore.Draggable = function (object, param) {
 
                 object.currentx = e.clientX;
                 object.currenty = e.clientY;
+
+                if (param.ondrag) {
+                    object.changex = left - oleft;
+                    object.changey = top - otop;
+
+                    oleft = left;
+                    otop = top;
+
+                    param.ondrag(object);
+                }
             }
         }
 
         document.body.onmouseup = function (e) {
-            object.resizing = false;
-            delete document.body.onmousemove;
+            let active = object.resizing;
+
+            Dispose();
+
+            if (active && param.dragend)
+                param.dragend(object);
         };
     };
 
     object.onmouseup = function (e) {
-        object.resizing = false;
-        delete document.body.onmousemove;
+        let active = object.resizing;
+
+        Dispose();
+
+        if (active && param.dragend)
+            param.dragend(object);
     };
+
+    function Dispose() {
+        object.left = left;
+        object.top = top;
+        object.changex = left - oleft;
+        object.changey = top - otop;
+
+        delete object.resizing;
+        delete document.body.onmousemove;
+
+        delete object.currentx;
+        delete object.currenty;
+        object.style.height = height;
+        object.style.position = position;
+        object.style["z-index"] = zindex;
+    }
 };
 
 xplore.KeyDown = function (keycode, action) {
