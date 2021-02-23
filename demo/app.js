@@ -12,7 +12,7 @@ function DemoTable() {
     let data = [];
     let row;
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 1000; i++) {
         row = [];
 
         for (let j = 0; j < 15; j++) {

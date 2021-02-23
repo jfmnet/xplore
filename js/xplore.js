@@ -1844,7 +1844,7 @@ xplore.Table = function (param) {
     this.columns = param.columns;
     this.data = param.data;
     this.columnwidth = param.columnwidth || 100;
-    this.pagesize = param.pagesize || 50;
+    this.pagesize = param.pagesize || 1000;
     this.page = 1;
 };
 
@@ -1874,6 +1874,13 @@ table.Refresh = function () {
     this.footer.classList.add("table-footer");
     this.table.appendChild(this.footer);
     this.RefreshFooter();
+
+    //Table style
+    this.style = document.createElement("style");
+    document.body.appendChild(this.style);
+
+    //Resize columns
+    this.Resize();
 };
 
 table.RefreshHeader = function () {
@@ -1881,16 +1888,23 @@ table.RefreshHeader = function () {
     let tr = document.createElement("tr");
     this.header.appendChild(tr);
 
+    // Empty
+    td = document.createElement("th");
+    tr.appendChild(td);
+
+    let counter = 0;
+
     for (let header of this.columns) {
         // Text
         td = document.createElement("th");
+        td.classList.add("table-column-" + counter++);
         td.innerText = header;
         tr.appendChild(td);
     }
 };
 
 table.RefreshBody = function () {
-    let div;
+    let td;
     let counter = 0;
     let row;
     let start = (this.page - 1) * this.pagesize;
@@ -1906,17 +1920,22 @@ table.RefreshBody = function () {
 
         counter = 0;
 
+        // Row header
+        td = document.createElement("td");
+        td.innerText = i + 1;
+        row.appendChild(td);
+
         for (let cell of this.data[i]) {
             // Text
-            div = document.createElement("td");
-            div.innerText = cell;
-            row.appendChild(div);
+            td = document.createElement("td");
+            td.classList.add("table-column-" + counter++);
+            td.innerText = cell;
+            row.appendChild(td);
         }
     }
 };
 
 table.RefreshFooter = function () {
-
 };
 
 table.Resize = function () {
@@ -1938,7 +1957,7 @@ table.Resize = function () {
     let style = "";
 
     for (let i = 0; i < this.columnwidth.length; i++) {
-        style += ".table-column-" + i + " { width: " + this.columnwidth[i] + "px } ";
+        style += ".table-column-" + i + " { min-width: " + this.columnwidth[i] + "px } ";
     }
 
     this.style.innerHTML = style;
