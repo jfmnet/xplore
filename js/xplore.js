@@ -1844,7 +1844,7 @@ xplore.Table = function (param) {
     this.columns = param.columns;
     this.data = param.data;
     this.columnwidth = param.columnwidth || 100;
-    this.pagesize = param.pagesize || 25;
+    this.pagesize = param.pagesize || 50;
     this.page = 1;
 };
 
@@ -1853,56 +1853,39 @@ let table = xplore.Initialize(xplore.Table);
 table.id = 0;
 
 table.Refresh = function () {
+    // Table
+    this.table = document.createElement("table");
+    this.object.appendChild(this.table);
+
     //Header
-    this.header = document.createElement("div");
+    this.header = document.createElement("thead");
     this.header.classList.add("table-header");
-    this.object.appendChild(this.header);
+    this.table.appendChild(this.header);
     this.RefreshHeader();
 
     //Body
-    this.body = document.createElement("div");
+    this.body = document.createElement("tbody");
     this.body.classList.add("table-body");
-    this.object.appendChild(this.body);
+    this.table.appendChild(this.body);
     this.RefreshBody();
 
     //Footer
-    this.footer = document.createElement("div");
+    this.footer = document.createElement("tfoot");
     this.footer.classList.add("table-footer");
-    this.object.appendChild(this.footer);
+    this.table.appendChild(this.footer);
     this.RefreshFooter();
-
-    this.style = document.createElement("style");
-    document.body.appendChild(this.style);
-
-    this.Resize();
 };
 
 table.RefreshHeader = function () {
-    let div;
-    let counter = 0;
-    let self = this;
+    let td;
+    let tr = document.createElement("tr");
+    this.header.appendChild(tr);
 
     for (let header of this.columns) {
         // Text
-        div = document.createElement("div");
-        div.classList.add("table-cell");
-        div.classList.add("table-column-" + counter++);
-        div.innerText = header;
-        this.header.appendChild(div);
-
-        // Resize handle
-        div = document.createElement("div");
-        div.classList.add("table-column-resize");
-        div.id = table.id++;
-        this.header.appendChild(div);
-
-        xplore.Draggable(div, {
-            alongx: true, ondrag: function (object) {
-                self.columnwidth[object.id] += object.changex;
-                object.style.position = null;
-                self.Resize();
-            }
-        });
+        td = document.createElement("th");
+        td.innerText = header;
+        tr.appendChild(td);
     }
 };
 
@@ -1918,29 +1901,22 @@ table.RefreshBody = function () {
 
     for (let i = start; i < end; i++) {
         // Row
-        row = document.createElement("div");
-        row.classList.add("table-body-row");
+        row = document.createElement("tr");
         this.body.appendChild(row);
 
         counter = 0;
 
         for (let cell of this.data[i]) {
             // Text
-            div = document.createElement("div");
-            div.classList.add("table-cell");
-            div.classList.add("table-column-" + counter++);
+            div = document.createElement("td");
             div.innerText = cell;
-            row.appendChild(div);
-
-            // Resize handle
-            div = document.createElement("div");
-            div.classList.add("table-column-resize");
             row.appendChild(div);
         }
     }
 };
 
 table.RefreshFooter = function () {
+
 };
 
 table.Resize = function () {
@@ -1966,6 +1942,9 @@ table.Resize = function () {
     }
 
     this.style.innerHTML = style;
+};
+
+table.Events = function () {
 };
 
 table.Dispose = function () {

@@ -16,7 +16,8 @@ i.mdi {
     background-color: #0D47A1 !important;
 }
 
-.noselect, .button {
+.noselect,
+.button {
     -webkit-touch-callout: none;
     /* iOS Safari */
     -webkit-user-select: none;
@@ -73,7 +74,8 @@ i.mdi {
     position: relative;
 }
 
-.input input, .input select {
+.input input,
+.input select {
     border: 1px solid #CCC;
     background-color: #FFF;
     color: #333;
@@ -97,7 +99,8 @@ i.mdi {
     width: initial;
 }
 
-.input label input, .input label select {
+.input label input,
+.input label select {
     margin-top: 4px;
 }
 
@@ -110,7 +113,8 @@ i.mdi {
     width: 40%;
 }
 
-.input.inline label>input, .input.inline label>select {
+.input.inline label>input,
+.input.inline label>select {
     display: inline-flex;
     margin-top: 4px;
     padding: 4px 8px;
@@ -118,10 +122,10 @@ i.mdi {
 }
 
 .input.inline label>select {
-     width: 60%;
+    width: 60%;
 }
 
-.input.textarea > label > div {
+.input.textarea>label>div {
     margin-bottom: 4px;
 }
 
@@ -148,6 +152,7 @@ textarea {
 
 
 /* Containers */
+
 .dock {
     position: absolute;
     top: 0 !important;
@@ -158,7 +163,8 @@ textarea {
     width: unset !important;
 }
 
-.split-container, .dock-panel {
+.split-container,
+.dock-panel {
     background-color: #27282B;
     position: absolute;
     top: 0;
@@ -167,11 +173,13 @@ textarea {
     right: 0;
 }
 
-.split-container>div, .dock-panel>div {
+.split-container>div,
+.dock-panel>div {
     position: absolute;
 }
 
-.split-container>div:nth-child(2), .dock-panel>div:nth-child(2n) {
+.split-container>div:nth-child(2),
+.dock-panel>div:nth-child(2n) {
     background-color: #EEE;
     cursor: col-resize;
     text-align: center;
@@ -185,13 +193,11 @@ textarea {
 
 .view {
     background-color: #FFF;
-
     position: absolute;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-
     /* -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -200,7 +206,8 @@ textarea {
     user-select: none; */
 }
 
-.view-header, .view-body {
+.view-header,
+.view-body {
     position: absolute;
     left: 0;
     right: 0;
@@ -248,10 +255,8 @@ textarea {
     background-color: #FFF;
     color: #333;
     position: absolute;
-
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
-
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -260,7 +265,9 @@ textarea {
     user-select: none;
 }
 
-.form-header, .form-body, .form-footer {
+.form-header,
+.form-body,
+.form-footer {
     position: absolute;
     left: 0;
     right: 0;
@@ -279,7 +286,8 @@ textarea {
     margin-left: 16px;
 }
 
-.form-header .buttons, .form-footer .buttons {
+.form-header .buttons,
+.form-footer .buttons {
     align-items: center;
     display: flex;
     position: absolute;
@@ -327,11 +335,11 @@ textarea {
     width: 100% !important;
 }
 
-.split-container .form .form-header{
+.split-container .form .form-header {
     background-color: #27282B;
 }
 
-.split-container .form .form-header .text{
+.split-container .form .form-header .text {
     font-size: inherit;
     font-weight: normal;
 }
@@ -423,7 +431,7 @@ textarea {
     width: 28px;
 }
 
-.menu>div:nth-child(1)>div:nth-child(2)  {
+.menu>div:nth-child(1)>div:nth-child(2) {
     align-items: center;
     display: flex;
     position: absolute;
@@ -501,7 +509,10 @@ textarea {
     width: 120px;
 }
 
-.tab, .tab-header, .tab-body, .tab-body>div {
+.tab,
+.tab-header,
+.tab-body,
+.tab-body>div {
     position: absolute;
     left: 0;
     right: 0;
@@ -560,6 +571,7 @@ textarea {
 
 
 /* Canvas */
+
 canvas {
     height: 100%;
     width: 100%;
@@ -584,7 +596,8 @@ canvas {
     padding: 8px 16px;
 }
 
-.list-container, .scroll-container {
+.list-container,
+.scroll-container {
     position: absolute;
     left: 0;
     right: 0;
@@ -594,6 +607,7 @@ canvas {
     overflow-y: auto;
 }
 
+
 /* View */
 
 .view.menu-show .view-menu {
@@ -601,7 +615,8 @@ canvas {
     width: 320px;
 }
 
-.view.menu-show .view-header, .view.menu-show .view-body {
+.view.menu-show .view-header,
+.view.menu-show .view-body {
     left: 320px;
 }
 
@@ -632,7 +647,9 @@ img.icon {
     font-size: 18px;
 }
 
-.month-year > div, .combobox > div, label {
+.month-year>div,
+.combobox>div,
+label {
     color: #888;
     font-size: 12px;
     text-transform: uppercase;
@@ -642,72 +659,43 @@ img.icon {
 /* Table */
 
 .table {
-    background-color: #CCC;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: scroll;
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 0;
     top: 0;
-    white-space: nowrap;
-    width: 100%;
-}
-
-.table-header {
-    background-color: #EEE;
-    display: flex;
-    min-width: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 35px;
-    white-space: nowrap;
-}
-
-.table-header .table-cell {
-    align-items: center;
-    background-color: #DDD;
-    display: inline-flex;
-    justify-content: center;
-}
-
-.table-header .table-column-resize {
-    background-color: #DDD;
-    cursor: ew-resize;
-}
-
-.table-header div:last-child {
-    background-color: transparent;
-}
-
-.table-body {
-    min-width: 100%;
-    position: absolute;
     bottom: 0;
-    top: 35px;
-    left: 0;
-    overflow: auto;
 }
 
-.table-body-row {
-    border-bottom: 0.5px solid #CCC;
-    display: flex;
+table {
+    position: relative;
+    border: 1px solid #ddd;
+    border-collapse: collapse;
+}
+
+td,
+th {
     white-space: nowrap;
+    border: 1px solid #ddd;
+    padding: 20px;
+    text-align: center;
 }
 
-.table-body-row div:last-child {
-    background-color: transparent;
+th {
+    background-color: #eee;
+    position: sticky;
+    top: -1px;
+    z-index: 2;
 }
 
-.table-cell {
-    background-color: #FFF;
-    display: inline-block;
-    padding: 4px;
+th:first-of-type {
+    left: 0;
+    z-index: 3;
 }
 
-.table-column-resize {
-    border-left: 1px solid #CCC;
-    background-color: #FFF;
-    width: 4px;
+tbody tr td:first-of-type {
+    background-color: #eee;
+    position: sticky;
+    left: -1px;
+    text-align: left;
 }
