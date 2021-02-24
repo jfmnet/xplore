@@ -1846,6 +1846,7 @@ xplore.Table = function (param) {
     this.columnwidth = param.columnwidth || 100;
     this.pagesize = param.pagesize || 1000;
     this.page = 1;
+    this.fixedcolumns = param.fixedcolumns || 0;
 };
 
 let table = xplore.Initialize(xplore.Table);
@@ -1881,6 +1882,9 @@ table.Refresh = function () {
 
     //Resize columns
     this.Resize();
+
+    //Bind Events
+    this.Events();
 };
 
 table.RefreshHeader = function () {
@@ -1897,6 +1901,10 @@ table.RefreshHeader = function () {
     for (let header of this.columns) {
         // Text
         td = document.createElement("th");
+
+        if (counter < this.fixedcolumns)
+            td.classList.add("table-fixed-column");
+
         td.classList.add("table-column-" + counter++);
         td.innerText = header;
         tr.appendChild(td);
@@ -1928,6 +1936,10 @@ table.RefreshBody = function () {
         for (let cell of this.data[i]) {
             // Text
             td = document.createElement("td");
+
+            if (counter < this.fixedcolumns)
+                td.classList.add("table-fixed-column");
+
             td.classList.add("table-column-" + counter++);
             td.innerText = cell;
             row.appendChild(td);
@@ -1957,13 +1969,89 @@ table.Resize = function () {
     let style = "";
 
     for (let i = 0; i < this.columnwidth.length; i++) {
-        style += ".table-column-" + i + " { min-width: " + this.columnwidth[i] + "px } ";
+        style += ".table-column-" + i + " { min-width: " + this.columnwidth[i] + "px; max-width: " + this.columnwidth[i] + "px } ";
+    }
+
+    let left = 48;
+
+    for (let i = 0; i < this.fixedcolumns; i++) {
+        style += ".table-column-" + i + " { position: sticky; left: " + left + "px; }";
+        left += this.columnwidth[i];
     }
 
     this.style.innerHTML = style;
 };
 
 table.Events = function () {
+    let input;
+    let cell;
+    let timeout;
+    let counter = 0;
+
+    this.object.onmousedown = function (e) {
+        //Get the column and row index of the clicked cell
+        let cellindex = e.path[0].cellIndex;
+        let rowindex = e.path[1].rowIndex;
+
+        //Check if cell is clicked
+        if (cellindex !== undefined) {
+            //Remove input after losing focus
+            if (input)
+                cell.innerHTML = input.value;
+
+            if (cell)
+                cell.classList.remove("table-cell-selected");
+            
+            cell = e.path[0];
+            cell.classList.add("table-cell-selected");
+
+            counter++;
+
+            //Check for double click
+            if (counter == 2) {
+                //Clear timer
+                clearTimeout(timeout);
+
+                //Reset counter for the next double-click
+                counter = 0;
+
+                if (cellindex) {
+                    let text = cell.innerText;
+
+                    //Replace text with input
+                    input = document.createElement("input");
+                    input.type = "text";
+                    input.value = text;
+
+                    //Check when ENTER key is pressed
+                    input.onkeydown = function (key) {
+                        if (key.key === "Enter") {
+                            //Remove input and put back the value
+                            cell.innerHTML = input.value;
+                        }
+                    };
+
+                    cell.innerHTML = "";
+                    cell.append(input);
+
+                    input.focus();
+                }
+
+            } else {
+                //Clear timer if already defined
+                if (timeout)
+                    clearTimeout(timeout);
+
+                //Set a timer for the double-click
+                timeout = setTimeout(function () {
+                    //It is not double-click.
+                    //Reset counter and timer
+                    counter--;
+                    timeout = undefined;
+                }, 250);
+            }
+        }
+    };
 };
 
 table.Dispose = function () {
