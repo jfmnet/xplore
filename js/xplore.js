@@ -279,8 +279,25 @@ xplore.Button = function (param) {
     xplore.call(this, param, undefined, "button");
 };
 
-xplore.Initialize(xplore.Button);
+let button = xplore.Initialize(xplore.Button);
 
+button.Refresh = function () {
+    this.object.innerHTML = "";
+
+    //Show icon
+    if (this.icon)
+        this.object.appendChild(xplore.DisplayIcon(this.icon));
+
+    //Show text
+    if (this.text) {
+        let span = document.createElement("div");
+        span.append(this.text);
+        this.object.append(span);
+    }
+
+    //Bind events
+    this.Events();
+};
 
 //Textbox
 
@@ -1397,6 +1414,27 @@ xplore.Tab = function (param) {
     param = param || {};
     this.style = param.style || xplore.TABSTYLE.NORMAL;
     this.tabs = param.tabs || [];
+
+    switch (param.position) {
+        case xplore.POSITION.TOP:
+            this.classname.push("top");
+            break;
+
+        case xplore.POSITION.BOTTOM:
+            this.classname.push("bottom");
+            break;
+
+        case xplore.POSITION.LEFT:
+            this.classname.push("left");
+            break;
+
+        case xplore.POSITION.RIGHT:
+            this.classname.push("right");
+            break;
+
+        default:
+            break;
+    }
 };
 
 let tab = xplore.Initialize(xplore.Tab);
@@ -2011,8 +2049,10 @@ table.Events = function () {
             ClearSelected();
 
             //Remove input after losing focus
-            if (input)
+            if (input) {
                 cell.innerHTML = input.value;
+                input = undefined;
+            }
 
             if (cell)
                 cell.classList.remove(selectedclass);

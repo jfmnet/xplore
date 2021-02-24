@@ -2,10 +2,9 @@ xplore.main = function () {
     //DemoCanvas3D();
     //DemoCanvas();
     //DemoView();
-    //DemoTab();
+    DemoTab();
     //DemoMenuToolbar();
-
-    DemoTable();
+    //DemoTable();
 };
 
 function DemoTable() {
@@ -121,7 +120,8 @@ function DemoTab() {
             { icon: "file", text: "Tab 2" },
             { icon: "account", text: "Tab 3" },
         ],
-        style: xplore.TABSTYLE.FULL
+        style: xplore.TABSTYLE.FULL,
+        position: xplore.POSITION.LEFT
     }));
 
     form.Show();
@@ -130,13 +130,36 @@ function DemoTab() {
         text: "Button 1"
     });
 
-    tab.Set(button, 0);
+    let canvas2D = new xplore.Canvas2D();
+
+    tab.Set(canvas2D, 0);
 
     button = new xplore.Button({
         text: "Button 2"
     });
 
-    tab.Set(button, 1);
+
+    let data = [];
+    let row;
+
+    for (let i = 0; i < 50; i++) {
+        row = [];
+
+        for (let j = 0; j < 15; j++) {
+            row.push(j + i);
+        }
+
+        data.push(row);
+    }
+
+    let table = new xplore.Table({
+        columns: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O"],
+        data: data,
+        // fixedcolumns: 0,
+        // columnwidth: [ 150, 50, 150 ]
+    });
+
+    tab.Set(table, 1);
 
     button = new xplore.Button({
         text: "Button 3"

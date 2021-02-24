@@ -121,17 +121,17 @@ xplore.Canvas2D = function (param) {
 xplore.Canvas2D.prototype = Object.create(xplore.prototype);
 xplore.Canvas2D.constructor = xplore.Canvas2D;
 
-let canvas = xplore.Canvas2D.prototype;
+let xcanvas = xplore.Canvas2D.prototype;
 
-canvas.Draw = function (drawobject) {
+xcanvas.Draw = function (drawobject) {
     this.model.Draw(drawobject);
 };
 
-canvas.Add = function (object) {
+xcanvas.Add = function (object) {
     this.model.Add(object);
 };
 
-canvas.Refresh = function () {
+xcanvas.Refresh = function () {
     this.object.innerHTML = "";
 
     this.canvas = document.createElement("canvas");
@@ -159,7 +159,7 @@ canvas.Refresh = function () {
     this.Events();
 };
 
-canvas.Resize = function () {
+xcanvas.Resize = function () {
     let rect = this.object.getBoundingClientRect();
     this.top = rect.top;
     this.left = rect.left;
@@ -179,7 +179,7 @@ canvas.Resize = function () {
     this.UpdateCanvasScaleRatio();
 };
 
-canvas.UpdateCenter = function () {
+xcanvas.UpdateCenter = function () {
     if (this.settings.showruler && this.settings.rulerposition === 0)
         this.center = {
             x: this.rulersize + Math.round((this.width - this.rulersize) / 2),
@@ -192,7 +192,7 @@ canvas.UpdateCenter = function () {
         };
 };
 
-canvas.UpdateCanvasScaleRatio = function () {
+xcanvas.UpdateCanvasScaleRatio = function () {
     let devicePixelRatio = window.devicePixelRatio || 1,
         backingStoreRatio = this.context.webkitBackingStorePixelRatio ||
             this.context.mozBackingStorePixelRatio ||
@@ -216,7 +216,7 @@ canvas.UpdateCanvasScaleRatio = function () {
     }
 };
 
-canvas.StoreBuffer = function () {
+xcanvas.StoreBuffer = function () {
     let self = this;
 
     this.buffer = this.RenderToCanvas(function (context) {
@@ -227,7 +227,7 @@ canvas.StoreBuffer = function () {
     this.context = this.canvas.getContext('2d');
 };
 
-canvas.RestoreBuffer = function () {
+xcanvas.RestoreBuffer = function () {
     if (!this.buffer)
         this.StoreBuffer();
 
@@ -235,7 +235,7 @@ canvas.RestoreBuffer = function () {
     this.context.drawImage(this.buffer, 0, 0);
 };
 
-canvas.RenderToCanvas = function (renderFunction) {
+xcanvas.RenderToCanvas = function (renderFunction) {
     let canvas = document.createElement('canvas');
     canvas.width = this.canvas.width;
     canvas.height = this.canvas.height;
@@ -250,7 +250,7 @@ canvas.RenderToCanvas = function (renderFunction) {
 
 //Render
 
-canvas.Render = function () {
+xcanvas.Render = function () {
     //Clear
     this.PrimitiveRectangle(0, 0, this.width, this.height, this.settings.background);
 
@@ -263,7 +263,7 @@ canvas.Render = function () {
         this.DrawRuler();
 };
 
-canvas.DrawGrid = function () {
+xcanvas.DrawGrid = function () {
     let root = Math.pow(10, Math.round(Math.log(this.gridsize * this.gridvalue.x) / Math.LN10)) / 100;
     let gridinterval = this.gridvalue.x / root;
 
@@ -336,14 +336,14 @@ canvas.DrawGrid = function () {
     this.PrimitiveLine(0, y1, this.width, y1, this.settings.axis, 2);
 };
 
-canvas.DrawRuler = function () {
+xcanvas.DrawRuler = function () {
     if (this.settings.rulerposition === 0)
         this.DrawRulerOuter();
     else
         this.DrawRulerInner();
 };
 
-canvas.DrawRulerOuter = function () {
+xcanvas.DrawRulerOuter = function () {
     let font = "normal 10px sans-serif";
     let fontcolor = this.settings.rulertext;
 
@@ -486,7 +486,7 @@ canvas.DrawRulerOuter = function () {
     this.PrimitiveLine(x, y, this.width, y, this.settings.rulerline, 2);
 };
 
-canvas.DrawRulerInner = function () {
+xcanvas.DrawRulerInner = function () {
     let font = "normal 10px sans-serif";
     let fontcolor = this.settings.rulertext;
 
@@ -687,7 +687,7 @@ canvas.DrawRulerInner = function () {
 
 
 //Draw
-canvas.SetProperties = function (properties) {
+xcanvas.SetProperties = function (properties) {
     if (properties.linecolor)
         this.context.strokeStyle = properties.linecolor;
 
@@ -698,7 +698,7 @@ canvas.SetProperties = function (properties) {
         this.context.fillStyle = properties.fillcolor;
 };
 
-canvas.PrimitiveLine = function (x1, y1, x2, y2, color, linewidth, dashline) {
+xcanvas.PrimitiveLine = function (x1, y1, x2, y2, color, linewidth, dashline) {
     this.context.beginPath();
 
     if (dashline) {
@@ -729,13 +729,13 @@ canvas.PrimitiveLine = function (x1, y1, x2, y2, color, linewidth, dashline) {
         this.context.restore();
 };
 
-canvas.PrimitiveCircle = function () {
+xcanvas.PrimitiveCircle = function () {
 };
 
-canvas.PrimitiveArc = function () {
+xcanvas.PrimitiveArc = function () {
 };
 
-canvas.PrimitiveRectangle = function (x, y, w, h, fillcolor, linecolor) {
+xcanvas.PrimitiveRectangle = function (x, y, w, h, fillcolor, linecolor) {
     let aw = w;
     let ah = h;
     let ax = x;
@@ -753,7 +753,7 @@ canvas.PrimitiveRectangle = function (x, y, w, h, fillcolor, linecolor) {
     }
 };
 
-canvas.PrimitiveText = function (text, x, y, font, color, a, ha, va) {
+xcanvas.PrimitiveText = function (text, x, y, font, color, a, ha, va) {
     if (a === null) {
         let ax = x;
         let ay = y;
@@ -792,7 +792,7 @@ canvas.PrimitiveText = function (text, x, y, font, color, a, ha, va) {
     }
 };
 
-canvas.SelectRectangle = function (x, y, w, h, linecolor) {
+xcanvas.SelectRectangle = function (x, y, w, h, linecolor) {
     var aw = w;
     var ah = h;
     var ax = x;
@@ -808,7 +808,7 @@ canvas.SelectRectangle = function (x, y, w, h, linecolor) {
     this.context.restore();
 };
 
-canvas.UpdateProperties = function (properties) {
+xcanvas.UpdateProperties = function (properties) {
     this.context.fillStyle = properties.fillcolor;
     this.context.strokeStyle = properties.linecolor;
 
@@ -821,7 +821,7 @@ canvas.UpdateProperties = function (properties) {
         this.context.lineWidth = 1;
 };
 
-canvas.DrawLine = function (x1, y1, x2, y2, properties) {
+xcanvas.DrawLine = function (x1, y1, x2, y2, properties) {
     x1 = this.ToCoordX(x1);
     y1 = this.ToCoordY(y1);
 
@@ -841,7 +841,7 @@ canvas.DrawLine = function (x1, y1, x2, y2, properties) {
     this.context.stroke();
 };
 
-canvas.DrawLine_2 = function (x1, y1, x2, y2) {
+xcanvas.DrawLine_2 = function (x1, y1, x2, y2) {
     x1 = this.ToCoordX(x1);
     y1 = this.ToCoordY(y1);
 
@@ -854,7 +854,7 @@ canvas.DrawLine_2 = function (x1, y1, x2, y2) {
     this.context.stroke();
 };
 
-canvas.DrawCircle = function (x, y, r, properties) {
+xcanvas.DrawCircle = function (x, y, r, properties) {
     r = this.gridsize * r / this.gridvalue.x;
     x = this.ToCoordX(x);
     y = this.ToCoordY(y);
@@ -874,7 +874,7 @@ canvas.DrawCircle = function (x, y, r, properties) {
         context.stroke();
 };
 
-canvas.DrawCircle_2 = function (x, y, r, showfill, showline) {
+xcanvas.DrawCircle_2 = function (x, y, r, showfill, showline) {
     r = this.gridsize * r / this.gridvalue.x;
     x = this.ToCoordX(x);
     y = this.ToCoordY(y);
@@ -892,7 +892,7 @@ canvas.DrawCircle_2 = function (x, y, r, showfill, showline) {
         context.stroke();
 };
 
-canvas.DrawRectangle = function (x, y, w, h, properties) {
+xcanvas.DrawRectangle = function (x, y, w, h, properties) {
     let ratio = this.gridsize / this.gridvalue.x;
     w = ratio * w;
     h = ratio * h;
@@ -908,7 +908,7 @@ canvas.DrawRectangle = function (x, y, w, h, properties) {
         this.context.strokeRect(x, y, w, h);
 };
 
-canvas.DrawRectangle_2 = function (x, y, w, h, showfill, showline) {
+xcanvas.DrawRectangle_2 = function (x, y, w, h, showfill, showline) {
     let ratio = this.gridsize / this.gridvalue.x;
     w = ratio * w;
     h = ratio * h;
@@ -925,10 +925,10 @@ canvas.DrawRectangle_2 = function (x, y, w, h, showfill, showline) {
         context.strokeRect(x, y, w, h);
 };
 
-canvas.DrawPolyline = function () {
+xcanvas.DrawPolyline = function () {
 };
 
-canvas.DrawPolygon = function (points, properties) {
+xcanvas.DrawPolygon = function (points, properties) {
     if (points.length !== 0) {
         let context = this.context;
 
@@ -958,7 +958,7 @@ canvas.DrawPolygon = function (points, properties) {
     }
 };
 
-canvas.DrawPolygon_2 = function (points, showfill, showline) {
+xcanvas.DrawPolygon_2 = function (points, showfill, showline) {
     if (points.length !== 0) {
         let context = this.context;
 
@@ -986,7 +986,7 @@ canvas.DrawPolygon_2 = function (points, showfill, showline) {
     }
 };
 
-canvas.DrawText = function (text, x, y, font, color, a, ha, va) {
+xcanvas.DrawText = function (text, x, y, font, color, a, ha, va) {
     x = this.ToCoordX(x);
     y = this.ToCoordY(y);
 
@@ -1017,7 +1017,7 @@ canvas.DrawText = function (text, x, y, font, color, a, ha, va) {
     }
 };
 
-canvas.DrawText_2 = function (text, x, y, a, ha, va) {
+xcanvas.DrawText_2 = function (text, x, y, a, ha, va) {
     x = this.ToCoordX(x);
     y = this.ToCoordY(y);
 
@@ -1046,34 +1046,34 @@ canvas.DrawText_2 = function (text, x, y, a, ha, va) {
 
 //Conversions
 
-canvas.ToCoordX = function (pointX) {
+xcanvas.ToCoordX = function (pointX) {
     return Math.round(this.center.x + (pointX / this.gridvalue.x - this.middle.x) * this.gridsize);
 };
 
-canvas.ToCoordY = function (pointY) {
+xcanvas.ToCoordY = function (pointY) {
     return Math.round(this.center.y - (pointY / this.gridvalue.y - this.middle.y) * this.gridsize);
 };
 
-canvas.ToPointX = function (coordX) {
+xcanvas.ToPointX = function (coordX) {
     return (this.middle.x - (this.center.x - coordX) / this.gridsize) * this.gridvalue.x;
 };
 
-canvas.ToPointY = function (coordY) {
+xcanvas.ToPointY = function (coordY) {
     return (this.middle.y + (this.center.y - coordY) / this.gridsize) * this.gridvalue.y;
 };
 
-canvas.ToPointWidth = function (pointWidth) {
+xcanvas.ToPointWidth = function (pointWidth) {
     return (pointWidth / this.gridsize) * this.gridvalue.y;
 };
 
-canvas.ToCoordWidth = function (coordWidth) {
+xcanvas.ToCoordWidth = function (coordWidth) {
     return (coordWidth * this.gridsize) / this.gridvalue.x;
 };
 
 
 //Zoom
 
-canvas.ZoomAll = function (inbounds, infactor) {
+xcanvas.ZoomAll = function (inbounds, infactor) {
     var bounds;
     var factor = 1.5;
 
@@ -1147,7 +1147,7 @@ canvas.ZoomAll = function (inbounds, infactor) {
     }
 };
 
-canvas.Zoom = function (x, y, d) {
+xcanvas.Zoom = function (x, y, d) {
     var prev = { x: this.ToPointX(x), y: this.ToPointY(y) };
     this.ZoomRealtime(d);
 
@@ -1158,7 +1158,7 @@ canvas.Zoom = function (x, y, d) {
     this.Render();
 };
 
-canvas.ZoomIn = function () {
+xcanvas.ZoomIn = function () {
     gridsize *= 1.15;
 
     if (gridvalue.x <= 1 && gridsize > 200)
@@ -1168,7 +1168,7 @@ canvas.ZoomIn = function () {
     self.Render();
 };
 
-canvas.ZoomOut = function () {
+xcanvas.ZoomOut = function () {
     gridsize /= 1.15;
 
     if (gridvalue.x <= 1 && gridsize > 200)
@@ -1178,7 +1178,7 @@ canvas.ZoomOut = function () {
     self.Render();
 };
 
-canvas.ZoomRealtime = function (d) {
+xcanvas.ZoomRealtime = function (d) {
     var mult = this.gridsize * d;
     var size = this.gridsize + (mult / 100);
 
@@ -1197,20 +1197,20 @@ canvas.ZoomRealtime = function (d) {
     }
 };
 
-canvas.ZoomFactor = function (factor) {
+xcanvas.ZoomFactor = function (factor) {
     gridsize *= factor;
     this.zoomvalue = gridsize / (defaultgridsize * gridvalue.x);
     this.Render();
 };
 
-canvas.MoveByPoint = function (current, previous) {
+xcanvas.MoveByPoint = function (current, previous) {
     if (!((current.x === previous.x) && (current.y === previous.y))) {
         this.middle.x -= (current.x - previous.x) / this.gridvalue.x;
         this.middle.y -= (current.y - previous.y) / this.gridvalue.y;
     }
 };
 
-canvas.Pan = function (x, y) {
+xcanvas.Pan = function (x, y) {
     this.middle.x -= x / this.gridsize;
     this.middle.y -= y / this.gridsize;
 };
@@ -1219,7 +1219,7 @@ canvas.Pan = function (x, y) {
 
 //Events
 
-canvas.Events = function () {
+xcanvas.Events = function () {
     let self = this;
     let button = 0;
     let ontouch = 0;
@@ -1453,7 +1453,7 @@ canvas.Events = function () {
     }
 };
 
-canvas.MouseDown = function (x, y, button) {
+xcanvas.MouseDown = function (x, y, button) {
     this.canvas.focus();
 
     this.mouse.down.x = this.ToPointX(x);
@@ -1471,7 +1471,7 @@ canvas.MouseDown = function (x, y, button) {
     this.model.MouseDown(this, this.mouse, button);
 };
 
-canvas.MouseMove = function (x, y, button) {
+xcanvas.MouseMove = function (x, y, button) {
     this.mouse.current.x = this.ToPointX(x);
     this.mouse.current.y = this.ToPointY(y);
 
@@ -1487,14 +1487,14 @@ canvas.MouseMove = function (x, y, button) {
     this.mouse.rawprevious.y = y;
 };
 
-canvas.MouseUp = function (x, y, button) {
+xcanvas.MouseUp = function (x, y, button) {
     this.mouse.current.x = this.ToPointX(x);
     this.mouse.current.y = this.ToPointY(y);
 
     this.model.MouseUp(this, this.mouse, button);
 };
 
-canvas.MouseWheel = function (x, y, delta) {
+xcanvas.MouseWheel = function (x, y, delta) {
     if (this.settings.allowzoom) {
         //Set current mouse position
         this.mouse.current.x = x;
