@@ -699,6 +699,23 @@ td input {
     width: calc(100% - 8px);
 }
 
-td.table-cell-selected {
-    outline: 1px solid #000;
+td.table-cell-selected, .table-selected-bottom, .table-selected-top, .table-selected-left, .table-selected-right {
+    background-color: #FFE;
+}
+
+.table-selected-top {
+    border-top: 2px dotted #000;
+    z-index: 1;
+}
+
+.table-selected-bottom {
+    border-bottom: 2px dotted #000;
+}
+
+.table-selected-left {
+    border-left: 2px dotted #000;
+}
+
+.table-selected-right {
+    border-right: 2px dotted #000;
 }

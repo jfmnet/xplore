@@ -1985,25 +1985,41 @@ table.Resize = function () {
 table.Events = function () {
     let input;
     let cell;
+    let cells = [];
+    let movecell;
     let timeout;
     let counter = 0;
+    let cellindexdown;
+    let rowindexdown;
+    let cellindexmove;
+    let rowindexmove;
+    let down;
+    let selectedclass = "table-cell-selected";
+    let bottomclass = "table-selected-bottom";
+    let topclass = "table-selected-top";
+    let leftclass = "table-selected-left";
+    let rightclass = "table-selected-right";
 
     this.object.onmousedown = function (e) {
         //Get the column and row index of the clicked cell
-        let cellindex = e.path[0].cellIndex;
-        let rowindex = e.path[1].rowIndex;
+        cellindexdown = e.path[0].cellIndex;
+        rowindexdown = e.path[1].rowIndex;
 
         //Check if cell is clicked
-        if (cellindex !== undefined) {
+        if (cellindexdown !== undefined) {
+            //Clear selected cells
+            ClearSelected();
+
             //Remove input after losing focus
             if (input)
                 cell.innerHTML = input.value;
 
             if (cell)
-                cell.classList.remove("table-cell-selected");
-            
+                cell.classList.remove(selectedclass);
+
             cell = e.path[0];
-            cell.classList.add("table-cell-selected");
+            cell.classList.add(selectedclass);
+            cells.push(cell);
 
             counter++;
 
@@ -2015,27 +2031,25 @@ table.Events = function () {
                 //Reset counter for the next double-click
                 counter = 0;
 
-                if (cellindex) {
-                    let text = cell.innerText;
+                let text = cell.innerText;
 
-                    //Replace text with input
-                    input = document.createElement("input");
-                    input.type = "text";
-                    input.value = text;
+                //Replace text with input
+                input = document.createElement("input");
+                input.type = "text";
+                input.value = text;
 
-                    //Check when ENTER key is pressed
-                    input.onkeydown = function (key) {
-                        if (key.key === "Enter") {
-                            //Remove input and put back the value
-                            cell.innerHTML = input.value;
-                        }
-                    };
+                //Check when ENTER key is pressed
+                input.onkeydown = function (key) {
+                    if (key.key === "Enter") {
+                        //Remove input and put back the value
+                        cell.innerHTML = input.value;
+                    }
+                };
 
-                    cell.innerHTML = "";
-                    cell.append(input);
+                cell.innerHTML = "";
+                cell.append(input);
 
-                    input.focus();
-                }
+                input.focus();
 
             } else {
                 //Clear timer if already defined
@@ -2051,6 +2065,74 @@ table.Events = function () {
                 }, 250);
             }
         }
+    };
+
+    this.object.onmousemove = function (e) {
+        if (e.buttons !== 0) {
+            if (cellindexmove !== e.path[0].cellIndex || rowindexmove !== e.path[1].rowIndex) {
+                cellindexmove = e.path[0].cellIndex;
+                rowindexmove = e.path[1].rowIndex;
+
+                //Check if cell is clicked
+                if (cellindexmove !== undefined) {
+                    ClearSelected();
+
+                    let startcolindex = Math.min(cellindexdown, cellindexmove);
+                    let endcolindex = Math.max(cellindexdown, cellindexmove);
+
+                    let startrowindex = Math.min(rowindexdown, rowindexmove);
+                    let endrowindex = Math.max(rowindexdown, rowindexmove);
+
+                    let children;
+
+                    for (let i = startrowindex - 1; i < endrowindex; i++) {
+                        children = e.path[2].children[i];
+
+                        for (let j = startcolindex; j <= endcolindex; j++) {
+                            movecell = children.children[j];
+                            cells.push(movecell);
+
+                            if (i === startrowindex - 1)
+                                movecell.classList.add(topclass);
+
+                            else if (i === endrowindex - 1)
+                                movecell.classList.add(bottomclass);
+
+                            else
+                                movecell.classList.add(selectedclass);
+
+
+                            if (j === startcolindex)
+                                movecell.classList.add(leftclass);
+
+                            else if (j === endcolindex)
+                                movecell.classList.add(rightclass);
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    function ClearSelected() {
+        for (let selectedcell of cells) {
+            if (selectedcell.classList.contains(selectedclass))
+                selectedcell.classList.remove(selectedclass);
+
+            if (selectedcell.classList.contains(topclass))
+                selectedcell.classList.remove(topclass);
+
+            if (selectedcell.classList.contains(bottomclass))
+                selectedcell.classList.remove(bottomclass);
+
+            if (selectedcell.classList.contains(leftclass))
+                selectedcell.classList.remove(leftclass);
+
+            if (selectedcell.classList.contains(rightclass))
+                selectedcell.classList.remove(rightclass);
+        }
+
+        cells = [];
     };
 };
 

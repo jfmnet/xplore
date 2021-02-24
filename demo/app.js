@@ -12,7 +12,7 @@ function DemoTable() {
     let data = [];
     let row;
 
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < 50; i++) {
         row = [];
 
         for (let j = 0; j < 15; j++) {
@@ -25,8 +25,8 @@ function DemoTable() {
     let table = new xplore.Table({
         columns: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O"],
         data: data,
-        fixedcolumns: 0,
-        columnwidth: [ 150, 50, 150 ]
+        // fixedcolumns: 0,
+        // columnwidth: [ 150, 50, 150 ]
     });
 
     table.Show();
