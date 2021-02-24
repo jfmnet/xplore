@@ -116,9 +116,9 @@ function DemoTab() {
 
     let tab = form.Add(new xplore.Tab({
         tabs: [
-            { icon: "folder", text: "Tab 1" },
-            { icon: "file", text: "Tab 2" },
-            { icon: "account", text: "Tab 3" },
+            { icon: "folder", text: "Rectangle" },
+            { icon: "file", text: "Circle" },
+            { icon: "account", text: "Tee" },
         ],
         style: xplore.TABSTYLE.FULL,
         position: xplore.POSITION.LEFT
