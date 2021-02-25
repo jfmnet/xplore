@@ -126,19 +126,11 @@ function DemoTab() {
 
     form.Show();
 
-    let button = new xplore.Button({
-        text: "Button 1"
-    });
-
+    //Add canvas
     let canvas2D = new xplore.Canvas2D();
-
     tab.Set(canvas2D, 0);
 
-    button = new xplore.Button({
-        text: "Button 2"
-    });
-
-
+    //Add table
     let data = [];
     let row;
 
@@ -161,7 +153,8 @@ function DemoTab() {
 
     tab.Set(table, 1);
 
-    button = new xplore.Button({
+    //Add button
+    let button = new xplore.Button({
         text: "Button 3"
     });
 
