@@ -2,9 +2,9 @@ xplore.main = function () {
     //DemoCanvas3D();
     //DemoCanvas();
     //DemoView();
-    DemoTab();
+    //DemoTab();
     //DemoMenuToolbar();
-    //DemoTable();
+    DemoTable();
 };
 
 function DemoTable() {
@@ -22,7 +22,11 @@ function DemoTable() {
     }
 
     let table = new xplore.Table({
-        columns: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O"],
+        columns: [
+            [{ text: "Five Spans", colspan: 5 }, { text: "F", rowspan: 2 }, "G", "H", "I", "J", "K", "L", "M", "N", "O"],
+            ["A", "B", "C", "D", "E", "G", "H", "I", "J", "K", "L", "M", "N", "O"],
+        ],
+        multiheader: true,
         data: data,
         // fixedcolumns: 0,
         // columnwidth: [ 150, 50, 150 ]

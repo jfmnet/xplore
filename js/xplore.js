@@ -1886,6 +1886,7 @@ xplore.Table = function (param) {
     this.pagesize = param.pagesize || 1000;
     this.page = 1;
     this.fixedcolumns = param.fixedcolumns || 0;
+    this.multiheader = param.multiheader || false;
 };
 
 let table = xplore.Initialize(xplore.Table);
@@ -1927,26 +1928,50 @@ table.Refresh = function () {
 };
 
 table.RefreshHeader = function () {
+    let columns;
+
+    if (this.multiheader)
+        columns = this.columns;
+    else
+        columns = [this.columns];
+
     let td;
-    let tr = document.createElement("tr");
-    this.header.appendChild(tr);
+    let tr;
+    let rowcounter = 0;
 
-    // Empty
-    td = document.createElement("th");
-    tr.appendChild(td);
+    for (let row of columns) {
+        tr = document.createElement("tr");
+        tr.classList.add("row-" + rowcounter++);
 
-    let counter = 0;
+        this.header.appendChild(tr);
 
-    for (let header of this.columns) {
-        // Text
+        // Empty
         td = document.createElement("th");
-
-        if (counter < this.fixedcolumns)
-            td.classList.add("table-fixed-column");
-
-        td.classList.add("table-column-" + counter++);
-        td.innerText = header;
         tr.appendChild(td);
+
+        let counter = 0;
+
+        for (let header of row) {
+            // Text
+            td = document.createElement("th");
+
+            if (header.colspan)
+                td.colSpan = header.colspan;
+
+            if (header.rowspan)
+                td.rowSpan = header.rowspan;
+
+            if (counter < this.fixedcolumns)
+                td.classList.add("table-fixed-column");
+
+            td.classList.add("table-column-" + counter++);
+
+            if (header.text)
+                td.innerText = header.text;
+            else
+                td.innerText = header;
+            tr.appendChild(td);
+        }
     }
 };
 
@@ -1990,9 +2015,16 @@ table.RefreshFooter = function () {
 };
 
 table.Resize = function () {
+    let columns;
+
+    if (this.multiheader)
+        columns = this.columns;
+    else
+        columns = [this.columns];
+
     if (Array.isArray(this.columnwidth)) {
-        if (this.columns.length > this.columnwidth.length) {
-            for (let i = this.columnwidth.length - 1; i < this.columns.length; i++) {
+        if (columns[0].length > this.columnwidth.length) {
+            for (let i = this.columnwidth.length - 1; i < columns[0].length; i++) {
                 this.columnwidth.push(100);
             }
         }
@@ -2000,7 +2032,7 @@ table.Resize = function () {
         let width = this.columnwidth;
         this.columnwidth = [];
 
-        for (let i = 0; i < this.columns.length; i++) {
+        for (let i = 0; i < columns[0].length; i++) {
             this.columnwidth.push(100);
         }
     }
@@ -2017,6 +2049,17 @@ table.Resize = function () {
         style += ".table-column-" + i + " { position: sticky; left: " + left + "px; }";
         left += this.columnwidth[i];
     }
+
+    //Multi-header
+
+    // if (this.multiheader) {
+    //     let rows = this.object.querySelectorAll("thead tr");
+    //     let rowheight = 30;
+        
+    //     for (let row in this.columns) {
+    //         style += "tr.row-" + row + " th { top: " + (row * rowheight - 1) + "px; height: " + rowheight + "px; }";
+    //     }
+    // }
 
     this.style.innerHTML = style;
 };

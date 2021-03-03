@@ -726,14 +726,21 @@ th {
     text-align: center;
 }
 
-th {
+tr.row-0 th {
     background-color: #eee;
     position: sticky;
     top: -1px;
     z-index: 2;
 }
 
-th:first-of-type {
+tr.row-1 th {
+    background-color: #eee;
+    position: sticky;
+    top: 26px;
+    z-index: 2;
+}
+
+tr th:first-of-type {
     left: -1px;
     z-index: 3;
 }
@@ -771,7 +778,7 @@ td.table-cell-selected,
     background-color: #FFE;
 }
 
-.table-selected-top {
+/* .table-selected-top {
     border-top: 2px dotted #000;
     z-index: 1;
 }
@@ -786,4 +793,4 @@ td.table-cell-selected,
 
 .table-selected-right {
     border-right: 2px dotted #000;
-}
+} */
