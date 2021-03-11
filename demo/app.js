@@ -1,11 +1,15 @@
 xplore.main = function () {
-    //DemoCanvas3D();
-    //DemoCanvas();
-    //DemoView();
-    //DemoTab();
-    //DemoMenuToolbar();
-    DemoTable();
+    let view = new mainview();
+    view.Show();
 };
+
+//DemoCanvas3D();
+//DemoCanvas();
+//DemoView();
+//DemoTab();
+//DemoMenuToolbar();
+//DemoTable();
+
 
 function DemoTable() {
     let data = [];

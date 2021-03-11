@@ -2,6 +2,9 @@ body {
     font: 1rem normal, -apple-system, BlinkMacSystemFont, "Roboto", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     margin: 0;
     padding: 0;
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
 }
 
 i.mdi {
@@ -13,7 +16,7 @@ i.mdi {
 }
 
 .highlight {
-    background-color: #0D47A1 !important;
+    background-color: #FAFAFA !important;
 }
 
 .noselect,
@@ -164,7 +167,6 @@ textarea {
 
 .split-container,
 .dock-panel {
-    background-color: #27282B;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -755,12 +757,16 @@ tbody tr td:first-of-type {
     padding: 0;
 }
 
+tbody tr td.table-cell-selected:first-of-type {
+    background-color: #ccc;
+}
+
 .table-fixed-column {
     background-color: #CCC;
     z-index: 3;
 }
 
-th.table-fixed-column {
+tr th.table-fixed-column {
     z-index: 4;
 }
 
@@ -775,22 +781,5 @@ td.table-cell-selected,
 .table-selected-top,
 .table-selected-left,
 .table-selected-right {
-    background-color: #FFE;
+    background-color: #FFC;
 }
-
-/* .table-selected-top {
-    border-top: 2px dotted #000;
-    z-index: 1;
-}
-
-.table-selected-bottom {
-    border-bottom: 2px dotted #000;
-}
-
-.table-selected-left {
-    border-left: 2px dotted #000;
-}
-
-.table-selected-right {
-    border-right: 2px dotted #000;
-} */

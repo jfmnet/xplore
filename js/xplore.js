@@ -72,6 +72,17 @@ xplore.Initialize = function (object) {
     return object.prototype;
 };
 
+xplore.Inherit = function (parent) {
+    let child = function () {
+        parent.call(this);
+    };
+
+    child.prototype = Object.create(parent.prototype);
+    child.constructor = child;
+
+    return child;
+};
+
 xplore.constructor = xplore;
 let prototype = xplore.prototype;
 
@@ -91,6 +102,9 @@ prototype.Show = function (parent) {
         if (this.classname[i])
             this.object.classList.add(this.classname[i]);
     }
+
+    if (this.OnLoad)
+        this.OnLoad();
 
     let fragment = document.createDocumentFragment();
     fragment.appendChild(this.object);
@@ -1084,6 +1098,7 @@ splitcontainer.Events = function (child, index) {
 
 
 //Container
+
 xplore.Container = function (param) {
     xplore.call(this, param, undefined, "container");
 };
@@ -1781,8 +1796,6 @@ xplore.View = function (param) {
 let xploreview = xplore.Initialize(xplore.View);
 
 xploreview.Refresh = function () {
-    let self = this;
-
     this.object.innerHTML = "";
 
     //Menu
@@ -1807,7 +1820,6 @@ xploreview.Refresh = function () {
 };
 
 xploreview.RefreshMenu = function () {
-    this.menuobject.Show(this.menu);
 };
 
 xploreview.RefreshHeader = function () {
@@ -1941,7 +1953,7 @@ table.RefreshHeader = function () {
 
     for (let row of columns) {
         tr = document.createElement("tr");
-        tr.classList.add("row-" + rowcounter++);
+        tr.classList.add("row-" + rowcounter);
 
         this.header.appendChild(tr);
 
@@ -1952,6 +1964,11 @@ table.RefreshHeader = function () {
         let counter = 0;
 
         for (let header of row) {
+            if (header === "") {
+                counter++;
+                continue;
+            }
+
             // Text
             td = document.createElement("th");
 
@@ -1964,14 +1981,18 @@ table.RefreshHeader = function () {
             if (counter < this.fixedcolumns)
                 td.classList.add("table-fixed-column");
 
-            td.classList.add("table-column-" + counter++);
+            td.classList.add("table-column-" + counter);
 
             if (header.text)
                 td.innerText = header.text;
             else
                 td.innerText = header;
+
             tr.appendChild(td);
+            counter++;
         }
+
+        rowcounter++;
     }
 };
 
@@ -2050,17 +2071,6 @@ table.Resize = function () {
         left += this.columnwidth[i];
     }
 
-    //Multi-header
-
-    // if (this.multiheader) {
-    //     let rows = this.object.querySelectorAll("thead tr");
-    //     let rowheight = 30;
-        
-    //     for (let row in this.columns) {
-    //         style += "tr.row-" + row + " th { top: " + (row * rowheight - 1) + "px; height: " + rowheight + "px; }";
-    //     }
-    // }
-
     this.style.innerHTML = style;
 };
 
@@ -2077,15 +2087,12 @@ table.Events = function () {
     let rowindexmove;
     let down;
     let selectedclass = "table-cell-selected";
-    let bottomclass = "table-selected-bottom";
-    let topclass = "table-selected-top";
-    let leftclass = "table-selected-left";
-    let rightclass = "table-selected-right";
+    let headerrow = this.multiheader ? this.columns.length : 1;
 
     this.object.onmousedown = function (e) {
         //Get the column and row index of the clicked cell
         cellindexdown = e.path[0].cellIndex;
-        rowindexdown = e.path[1].rowIndex;
+        rowindexdown = e.path[1].rowIndex - (headerrow - 1);
 
         //Check if cell is clicked
         if (cellindexdown !== undefined) {
@@ -2155,7 +2162,7 @@ table.Events = function () {
         if (e.buttons !== 0) {
             if (cellindexmove !== e.path[0].cellIndex || rowindexmove !== e.path[1].rowIndex) {
                 cellindexmove = e.path[0].cellIndex;
-                rowindexmove = e.path[1].rowIndex;
+                rowindexmove = e.path[1].rowIndex - (headerrow - 1);
 
                 //Check if cell is clicked
                 if (cellindexmove !== undefined) {
@@ -2176,21 +2183,7 @@ table.Events = function () {
                             movecell = children.children[j];
                             cells.push(movecell);
 
-                            if (i === startrowindex - 1)
-                                movecell.classList.add(topclass);
-
-                            else if (i === endrowindex - 1)
-                                movecell.classList.add(bottomclass);
-
-                            else
-                                movecell.classList.add(selectedclass);
-
-
-                            if (j === startcolindex)
-                                movecell.classList.add(leftclass);
-
-                            else if (j === endcolindex)
-                                movecell.classList.add(rightclass);
+                            movecell.classList.add(selectedclass);
                         }
                     }
                 }
@@ -2202,18 +2195,6 @@ table.Events = function () {
         for (let selectedcell of cells) {
             if (selectedcell.classList.contains(selectedclass))
                 selectedcell.classList.remove(selectedclass);
-
-            if (selectedcell.classList.contains(topclass))
-                selectedcell.classList.remove(topclass);
-
-            if (selectedcell.classList.contains(bottomclass))
-                selectedcell.classList.remove(bottomclass);
-
-            if (selectedcell.classList.contains(leftclass))
-                selectedcell.classList.remove(leftclass);
-
-            if (selectedcell.classList.contains(rightclass))
-                selectedcell.classList.remove(rightclass);
         }
 
         cells = [];
@@ -2266,11 +2247,18 @@ xplore.POSITION = {
 xplore.ORIENTATION = {
     HORIZONTAL: 0,
     VERTICAL: 1
-}
+};
 
 xplore.FILEFORMAT = {
     NONE: 1,
     TEXT: 2
+};
+
+xplore.COLUMNTYPE = {
+    TEXT: 1,
+    CHECKBOX: 2,
+    COMBOBOX: 3,
+    CUSTOM: 4
 }
 
 
