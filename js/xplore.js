@@ -2066,9 +2066,18 @@ table.Resize = function () {
     else
         columns = [this.columns];
 
+
+    // Get the number of columns
+    let length = 0;
+
+    for (let i = 0; i < columns.length; i++) {
+        if (length < columns[i].length)
+            length = columns[i].length;
+    }
+
     if (Array.isArray(this.columnwidth)) {
-        if (columns[0].length > this.columnwidth.length) {
-            for (let i = this.columnwidth.length - 1; i < columns[0].length; i++) {
+        if (length > this.columnwidth.length) {
+            for (let i = this.columnwidth.length - 1; i < length; i++) {
                 this.columnwidth.push(100);
             }
         }
@@ -2076,7 +2085,7 @@ table.Resize = function () {
         let width = this.columnwidth;
         this.columnwidth = [];
 
-        for (let i = 0; i < columns[0].length; i++) {
+        for (let i = 0; i < length; i++) {
             this.columnwidth.push(100);
         }
     }
@@ -2091,7 +2100,7 @@ table.Resize = function () {
 
     for (let i = 0; i < this.fixedcolumns; i++) {
         style += ".table-column-" + i + " { position: sticky; left: " + left + "px; }";
-        left += this.columnwidth[i];
+        left += this.columnwidth[i] + 1;
     }
 
     this.style.innerHTML = style;
@@ -2135,52 +2144,69 @@ table.Events = function () {
                 cell.classList.remove(selectedclass);
 
             cell = e.path[0];
-            cell.classList.add(selectedclass);
-            cells.push(cell);
 
-            counter++;
+            if (cellindexdown === 0) {
+                cell.classList.add(selectedrowclass);
+                let endcolindex = self.data[0].length;
 
-            //Check for double click
-            if (counter == 2) {
-                //Clear timer
-                clearTimeout(timeout);
+                let children = e.path[2].children[rowindexdown - 1];
+                let movecell;
 
-                //Reset counter for the next double-click
-                counter = 0;
+                for (let j = 0; j <= endcolindex; j++) {
+                    movecell = children.children[j];
+                    cells.push(movecell);
+                    movecell.classList.add(selectedrowclass);
+                }
+            }
+            else {
+                cell.classList.add(selectedclass);
 
-                let text = cell.innerText;
+                counter++;
 
-                //Replace text with input
-                input = document.createElement("input");
-                input.type = "text";
-                input.value = text;
-
-                //Check when ENTER key is pressed
-                input.onkeydown = function (key) {
-                    if (key.key === "Enter") {
-                        //Remove input and put back the value
-                        cell.innerHTML = input.value;
-                    }
-                };
-
-                cell.innerHTML = "";
-                cell.append(input);
-
-                input.focus();
-
-            } else {
-                //Clear timer if already defined
-                if (timeout)
+                //Check for double click
+                if (counter == 2) {
+                    //Clear timer
                     clearTimeout(timeout);
 
-                //Set a timer for the double-click
-                timeout = setTimeout(function () {
-                    //It is not double-click.
-                    //Reset counter and timer
-                    counter--;
-                    timeout = undefined;
-                }, 250);
+                    //Reset counter for the next double-click
+                    counter = 0;
+
+                    let text = cell.innerText;
+
+                    //Replace text with input
+                    input = document.createElement("input");
+                    input.type = "text";
+                    input.value = text;
+
+                    //Check when ENTER key is pressed
+                    input.onkeydown = function (key) {
+                        if (key.key === "Enter") {
+                            //Remove input and put back the value
+                            cell.innerHTML = input.value;
+                        }
+                    };
+
+                    cell.innerHTML = "";
+                    cell.append(input);
+
+                    input.focus();
+
+                } else {
+                    //Clear timer if already defined
+                    if (timeout)
+                        clearTimeout(timeout);
+
+                    //Set a timer for the double-click
+                    timeout = setTimeout(function () {
+                        //It is not double-click.
+                        //Reset counter and timer
+                        counter--;
+                        timeout = undefined;
+                    }, 250);
+                }
             }
+
+            cells.push(cell);
         }
     };
 

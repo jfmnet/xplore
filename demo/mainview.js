@@ -32,7 +32,7 @@ view.ShowTable = function () {
     for (let i = 0; i < 50; i++) {
         row = [];
 
-        for (let j = 0; j < 15; j++) {
+        for (let j = 0; j < 11; j++) {
             row.push(j + i);
         }
 
@@ -41,8 +41,8 @@ view.ShowTable = function () {
 
     let table = new xplore.Table({
         columns: [
-            [{ text: "Five Spans" }, { text: "F", rowspan: 2 }, "G", "H", "I", "J", "K", "L", "M", "N", "O"],
-            ["A", "", "B", "C", "D", "E", "G", "H", "I", "J", "K", "L", "M", "N", "O"],
+            [{ text: "A", rowspan: 2 }, { text: "F", rowspan: 2 }, { text: "F", colspan: 9 }],
+            ["", "", "B", "C", "D", "E", "G", "H", "I", "J", "K"],
         ],
         data: data,
         fixedcolumns: 2,

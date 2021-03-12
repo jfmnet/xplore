@@ -724,22 +724,29 @@ tr.row-1 th {
 }
 
 tr th:first-of-type {
+    border: none;
+    background-color: #EEE;
     left: -1px;
-    z-index: 3;
+    z-index: 10;
 }
 
 tbody tr td:first-of-type {
     background-color: #eee;
+    border: none;
+    box-shadow: 0 0 0 1px #AAA;
     color: #888;
     position: sticky;
     left: 0;
-    min-width: 48px;
-    max-width: 48px;
+    min-width: 47px;
+    max-width: 47px;
     padding: 0;
+    z-index: 5;
 }
 
 .table-fixed-column {
     background-color: #CCC;
+    border: none;
+    box-shadow: 0 0 0 1px #AAA;
     z-index: 3;
 }
 

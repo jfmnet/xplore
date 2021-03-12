@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "edge",
+            "type": "chrome",
             "request": "launch",
             "name": "Demo",
-            "url": "http://localhost:5501",
+            "url": "http://localhost:5501/index.html",
             "webRoot": "${workspaceFolder}"
         }
     ]
