@@ -44,10 +44,13 @@ view.ShowTable = function () {
             [{ text: "Five Spans" }, { text: "F", rowspan: 2 }, "G", "H", "I", "J", "K", "L", "M", "N", "O"],
             ["A", "", "B", "C", "D", "E", "G", "H", "I", "J", "K", "L", "M", "N", "O"],
         ],
-        multiheader: true,
         data: data,
         fixedcolumns: 2,
-        columnwidth: [150, 50, 150]
+        columnwidth: [75, 75],
+        multiheader: true,
+        sort: true,
+        showfilter: true,
+        showsearch: true,
     });
 
     this.splitter.Set(table, 1);

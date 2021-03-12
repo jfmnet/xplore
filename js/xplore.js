@@ -1052,6 +1052,7 @@ splitcontainer.Set = function (child, index) {
                 }
             }
         } else if (child.Show) {
+            panel.innerHTML = "";
             child.Show(panel);
 
         } else {
@@ -1899,6 +1900,9 @@ xplore.Table = function (param) {
     this.page = 1;
     this.fixedcolumns = param.fixedcolumns || 0;
     this.multiheader = param.multiheader || false;
+    this.sort = param.sort || false;
+    this.showfilter = param.showfilter || false;
+    this.showsearch = param.showsearch || false;
 };
 
 let table = xplore.Initialize(xplore.Table);
@@ -1950,6 +1954,7 @@ table.RefreshHeader = function () {
     let td;
     let tr;
     let rowcounter = 0;
+    let tool;
 
     for (let row of columns) {
         tr = document.createElement("tr");
@@ -1983,10 +1988,28 @@ table.RefreshHeader = function () {
 
             td.classList.add("table-column-" + counter);
 
+            if (this.sort)
+                td.classList.add("table-sort");
+
             if (header.text)
                 td.innerText = header.text;
             else
                 td.innerText = header;
+
+            if (this.showfilter || this.sort) {
+                tool = document.createElement("th");
+                tool.classList.add("header-tool");
+
+                if (this.sort)
+                    tool.appendChild(xplore.DisplayIcon("sort-alphabetical-ascending"));
+
+                if (this.showfilter)
+                    tool.appendChild(xplore.DisplayIcon("filter-outline"));
+
+                td.appendChild(tool);
+            }
+
+            //sort-alphabetical-descending
 
             tr.appendChild(td);
             counter++;
@@ -2075,6 +2098,7 @@ table.Resize = function () {
 };
 
 table.Events = function () {
+    let self = this;
     let input;
     let cell;
     let cells = [];
@@ -2087,6 +2111,8 @@ table.Events = function () {
     let rowindexmove;
     let down;
     let selectedclass = "table-cell-selected";
+    let selectedrowclass = "table-row-selected";
+
     let headerrow = this.multiheader ? this.columns.length : 1;
 
     this.object.onmousedown = function (e) {
@@ -2170,6 +2196,12 @@ table.Events = function () {
 
                     let startcolindex = Math.min(cellindexdown, cellindexmove);
                     let endcolindex = Math.max(cellindexdown, cellindexmove);
+                    let rowselected = false
+
+                    if (startcolindex === 0) {
+                        endcolindex = self.data[0].length;
+                        rowselected = true;
+                    }
 
                     let startrowindex = Math.min(rowindexdown, rowindexmove);
                     let endrowindex = Math.max(rowindexdown, rowindexmove);
@@ -2179,11 +2211,16 @@ table.Events = function () {
                     for (let i = startrowindex - 1; i < endrowindex; i++) {
                         children = e.path[2].children[i];
 
-                        for (let j = startcolindex; j <= endcolindex; j++) {
-                            movecell = children.children[j];
-                            cells.push(movecell);
+                        if (children) {
+                            for (let j = startcolindex; j <= endcolindex; j++) {
+                                movecell = children.children[j];
+                                cells.push(movecell);
 
-                            movecell.classList.add(selectedclass);
+                                if (rowselected)
+                                    movecell.classList.add(selectedrowclass);
+                                else
+                                    movecell.classList.add(selectedclass);
+                            }
                         }
                     }
                 }
@@ -2195,6 +2232,9 @@ table.Events = function () {
         for (let selectedcell of cells) {
             if (selectedcell.classList.contains(selectedclass))
                 selectedcell.classList.remove(selectedclass);
+
+            if (selectedcell.classList.contains(selectedrowclass))
+                selectedcell.classList.remove(selectedrowclass);
         }
 
         cells = [];
