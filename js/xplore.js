@@ -1963,10 +1963,14 @@ table.RefreshHeader = function () {
         this.header.appendChild(tr);
 
         // Empty
-        td = document.createElement("th");
-        tr.appendChild(td);
+        if (rowcounter === 0) {
+            td = document.createElement("th");
+            td.rowSpan = columns.length;
+            tr.appendChild(td);
+        }
 
         let counter = 0;
+        let cellcounter = 0;
 
         for (let header of row) {
             if (header === "") {
@@ -1976,6 +1980,12 @@ table.RefreshHeader = function () {
 
             // Text
             td = document.createElement("th");
+
+            //Add class to the first non-empty header cell. Do it only once.
+            if (cellcounter === 0) {
+                td.classList.add("cell-first");
+                cellcounter++;
+            }
 
             if (header.colspan)
                 td.colSpan = header.colspan;
@@ -2016,6 +2026,41 @@ table.RefreshHeader = function () {
         }
 
         rowcounter++;
+    }
+
+    if (this.showsearch) {
+        let row = columns[columns.length - 1];
+
+        tr = document.createElement("tr");
+        tr.classList.add("row-" + rowcounter);
+
+        this.header.appendChild(tr);
+
+        td = document.createElement("th");
+        td.rowSpan = columns.length;
+        tr.appendChild(td);
+
+        let counter = 0;
+        let input;
+
+        for (let header of row) {
+            td = document.createElement("th");
+            td.classList.add("th-search-cell");
+
+            if (counter < this.fixedcolumns)
+                td.classList.add("table-fixed-column");
+
+            td.classList.add("table-column-" + counter);
+
+            if (this.sort)
+                td.classList.add("table-sort");
+
+            input = document.createElement("input");
+            td.appendChild(input);
+            tr.appendChild(td);
+
+            counter++;
+        }
     }
 };
 
@@ -2123,6 +2168,9 @@ table.Events = function () {
     let selectedrowclass = "table-row-selected";
 
     let headerrow = this.multiheader ? this.columns.length : 1;
+
+    if (this.showsearch)
+        headerrow++;
 
     this.object.onmousedown = function (e) {
         //Get the column and row index of the clicked cell

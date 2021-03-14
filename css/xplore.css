@@ -709,17 +709,28 @@ td, th {
     position: relative;
 }
 
+th {
+    box-shadow: 0 0 0 1px #AAA;
+}
+
 tr.row-0 th {
     background-color: #eee;
     position: sticky;
-    top: -1px;
+    top: 0;
     z-index: 2;
 }
 
 tr.row-1 th {
     background-color: #eee;
     position: sticky;
-    top: 26px;
+    top: 27px;
+    z-index: 2;
+}
+
+tr.row-2 th {
+    background-color: #eee;
+    position: sticky;
+    top: 55px;
     z-index: 2;
 }
 
@@ -728,6 +739,22 @@ tr th:first-of-type {
     background-color: #EEE;
     left: -1px;
     z-index: 10;
+}
+
+tr th.cell-first:first-of-type {
+    left: inherit;
+    z-index: 2;
+}
+
+th.th-search-cell {
+    background-color: white !important;
+    padding: 0;
+}
+
+.th-search-cell input {
+    border: none;
+    outline: none;
+    width: 100%;
 }
 
 tbody tr td:first-of-type {
@@ -784,6 +811,7 @@ th .header-tool {
     display: none;
     background-color: transparent !important;
     border: none !important;
+    box-shadow: none;
     text-align: right;
     position: absolute !important;
     left: inherit !important;

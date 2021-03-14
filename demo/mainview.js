@@ -10,7 +10,7 @@ view.OnLoad = function () {
     //Add splitter
     this.splitter = this.Add(new xplore.SplitContainer({
         splittersize: 4,
-        size: [320]
+        size: [240]
     }));
 
     //Add list container
@@ -41,8 +41,8 @@ view.ShowTable = function () {
 
     let table = new xplore.Table({
         columns: [
-            [{ text: "A", rowspan: 2 }, { text: "F", rowspan: 2 }, { text: "F", colspan: 9 }],
-            ["", "", "B", "C", "D", "E", "G", "H", "I", "J", "K"],
+            [{ text: "A", rowspan: 2 }, { text: "B", rowspan: 2 }, { text: "Header A", colspan: 4 }, { text: "Header B", colspan: 5 }],
+            ["", "", "C", "D", "E", "G", "H", "I", "J", "K", "L"],
         ],
         data: data,
         fixedcolumns: 2,
