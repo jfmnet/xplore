@@ -33,7 +33,7 @@ view.ShowTable = function () {
         row = [];
 
         for (let j = 0; j < 11; j++) {
-            row.push(j + i);
+            row.push(Math.round(Math.random() * 1000));
         }
 
         data.push(row);

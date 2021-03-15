@@ -703,14 +703,17 @@ table {
 
 td, th {
     white-space: nowrap;
-    border: 1px solid #ddd;
+    box-shadow: 0 0 0 0.5px #CCC;
     padding: 4px 0;
     text-align: center;
     position: relative;
 }
 
 th {
-    box-shadow: 0 0 0 1px #AAA;
+    border: none;
+    box-shadow: 0 0 0 1px #CCC;
+    height: 27px;
+    padding: 0;
 }
 
 tr.row-0 th {
@@ -730,14 +733,14 @@ tr.row-1 th {
 tr.row-2 th {
     background-color: #eee;
     position: sticky;
-    top: 55px;
+    top: 54px;
     z-index: 2;
 }
 
 tr th:first-of-type {
     border: none;
     background-color: #EEE;
-    left: -1px;
+    left: 0;
     z-index: 10;
 }
 
@@ -748,19 +751,21 @@ tr th.cell-first:first-of-type {
 
 th.th-search-cell {
     background-color: white !important;
+    box-shadow: 0 0 0 0.5px #ccc;
     padding: 0;
 }
 
 .th-search-cell input {
     border: none;
     outline: none;
-    width: 100%;
+    /* visibility: hidden; */
+    width: calc(100% - 8px);
 }
 
 tbody tr td:first-of-type {
     background-color: #eee;
     border: none;
-    box-shadow: 0 0 0 1px #AAA;
+    box-shadow: 0 0 0 1px #CCC;
     color: #888;
     position: sticky;
     left: 0;
@@ -771,9 +776,9 @@ tbody tr td:first-of-type {
 }
 
 .table-fixed-column {
-    background-color: #CCC;
+    background-color: #EEE;
     border: none;
-    box-shadow: 0 0 0 1px #AAA;
+    box-shadow: 0 0 0 1px #CCC;
     z-index: 3;
 }
 
@@ -782,6 +787,7 @@ tr th.table-fixed-column {
 }
 
 td input {
+    background-color: #FFC;
     border: none;
     outline: none;
     width: calc(100% - 8px);

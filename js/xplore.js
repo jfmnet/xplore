@@ -1955,6 +1955,11 @@ table.RefreshHeader = function () {
     let tr;
     let rowcounter = 0;
     let tool;
+    let element;
+    let counter = 0;
+    let cellcounter = 0;
+
+    this.header.innerHTML = "";
 
     for (let row of columns) {
         tr = document.createElement("tr");
@@ -1969,11 +1974,21 @@ table.RefreshHeader = function () {
             tr.appendChild(td);
         }
 
-        let counter = 0;
-        let cellcounter = 0;
+        counter = 0;
+        cellcounter = 0;
+
+        if (this.sort) {
+            for (let i = 0; i < row.length; i++) {
+                if (row[i].text === undefined) {
+                    row[i] = {
+                        text: row[i]
+                    }
+                }
+            }
+        }
 
         for (let header of row) {
-            if (header === "") {
+            if (header === "" || header.text === "") {
                 counter++;
                 continue;
             }
@@ -2010,8 +2025,13 @@ table.RefreshHeader = function () {
                 tool = document.createElement("th");
                 tool.classList.add("header-tool");
 
-                if (this.sort)
-                    tool.appendChild(xplore.DisplayIcon("sort-alphabetical-ascending"));
+                if (this.sort) {
+                    element = xplore.DisplayIcon("sort-alphabetical-ascending");
+                    element.classList.add("header-sort");
+
+                    element.header = header;
+                    tool.appendChild(element);
+                }
 
                 if (this.showfilter)
                     tool.appendChild(xplore.DisplayIcon("filter-outline"));
@@ -2073,6 +2093,44 @@ table.RefreshBody = function () {
 
     if (end > this.data.length)
         end = this.data.length;
+
+    this.body.innerHTML = "";
+
+    if (this.sort) {
+        let columns;
+
+        if (this.multiheader)
+            columns = this.columns;
+        else
+            columns = [this.columns];
+
+        let row = columns[columns.length - 1];
+        let text;
+        let dir;
+
+        counter = 0;
+
+        for (let header of row) {
+            if (header.sort !== undefined) {
+                text = header.text;
+                dir = header.sort ? 1 : -1;
+
+                this.data.sort(function (a, b) {
+                    if (a[counter] > b[counter])
+                        return 1 * dir;
+                    else if (a[counter] < b[counter])
+                        return -1 * dir;
+                    else
+                        return 0;
+                });
+
+                break;
+            }
+
+            counter++;
+        }
+
+    }
 
     for (let i = start; i < end; i++) {
         // Row
@@ -2173,6 +2231,8 @@ table.Events = function () {
         headerrow++;
 
     this.object.onmousedown = function (e) {
+        e.stopPropagation();
+
         //Get the column and row index of the clicked cell
         cellindexdown = e.path[0].cellIndex;
         rowindexdown = e.path[1].rowIndex - (headerrow - 1);
@@ -2237,7 +2297,19 @@ table.Events = function () {
                     cell.innerHTML = "";
                     cell.append(input);
 
-                    input.focus();
+                    if (input.createTextRange) {
+                        let range = input.createTextRange();
+                        range.move('character', text.length);
+                        range.select();
+                    }
+                    else {
+                        if (input.selectionStart) {
+                            input.focus();
+                            input.setSelectionRange(text.length, text.length);
+                        }
+                        else
+                            input.focus();
+                    }
 
                 } else {
                     //Clear timer if already defined
@@ -2313,6 +2385,25 @@ table.Events = function () {
 
         cells = [];
     };
+
+    //Sort
+
+    let headersorts = this.object.querySelectorAll(".header-sort");
+
+    for (let sort of headersorts) {
+        sort.onclick = function (object) {
+            let header = object.currentTarget.header;
+            let sort = header.sort;
+
+            //Clear current sort
+            for (let current of headersorts) {
+                delete current.header.sort;
+            }
+
+            header.sort = !sort;
+            self.RefreshBody();
+        };
+    }
 };
 
 table.Dispose = function () {
