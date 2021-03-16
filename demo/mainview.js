@@ -40,17 +40,16 @@ view.ShowTable = function () {
     }
 
     let table = new xplore.Table({
-        columns: [
-            [{ text: "A", rowspan: 2 }, { text: "B", rowspan: 2 }, { text: "Header A", colspan: 4 }, { text: "Header B", colspan: 5 }],
-            ["", "", "C", "D", "E", "G", "H", "I", "J", "K", "L"],
-        ],
+        columns:
+            //[{ text: "A", rowspan: 2 }, { text: "B", rowspan: 2 }, { text: "Header A", colspan: 4 }, { text: "Header B", colspan: 5 }],
+            ["A", "B", "C", "D", "E", "G", "H", "I", "J", "K", "L"],
         data: data,
-        fixedcolumns: 2,
+        fixedcolumns: 0,
         columnwidth: [75, 75],
-        multiheader: true,
+        multiheader: false,
         sort: true,
         showfilter: true,
-        showsearch: true,
+        //showsearch: true,
     });
 
     this.splitter.Set(table, 1);

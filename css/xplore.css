@@ -246,6 +246,8 @@ textarea {
 
 .form {
     background-color: #FFF;
+    border: 1px solid #CCC;
+    box-shadow: 4px 4px 4px #CCC;
     color: #333;
     position: absolute;
     transform: translateZ(0);
@@ -382,6 +384,10 @@ textarea {
     top: 0;
     right: 0;
     bottom: 0;
+}
+
+.background.transparent {
+    background-color: transparent;
 }
 
 .menu-container {
@@ -703,7 +709,8 @@ table {
 
 td, th {
     white-space: nowrap;
-    box-shadow: 0 0 0 0.5px #CCC;
+    /* box-shadow: 0 0 0 0.5px #CCC; */
+    border: 1px solid #CCC;
     padding: 4px 0;
     text-align: center;
     position: relative;
@@ -733,7 +740,7 @@ tr.row-1 th {
 tr.row-2 th {
     background-color: #eee;
     position: sticky;
-    top: 54px;
+    top: 55px;
     z-index: 2;
 }
 

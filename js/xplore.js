@@ -1547,6 +1547,9 @@ xplore.Form = function (param) {
     if (param.modal !== undefined)
         this.modal = param.modal;
 
+    if (param.transparent !== undefined)
+        this.transparent = param.transparent;
+
     if (param.showok !== undefined)
         this.showok = param.showok;
 
@@ -1581,6 +1584,7 @@ form.Refresh = function () {
 
     if (this.modal) {
         this.background = new xplore.Background({
+            transparent: this.transparent,
             onclick: function () {
                 self.Dispose();
             }
@@ -1713,6 +1717,15 @@ form.Resize = function () {
     this.object.style.top = top + "px";
 
     this.object.style.zIndex = ++xplore.ZINDEX;
+};
+
+form.Position = function (left, top) {
+    if (left + this.width > window.innerWidth) {
+        left = window.innerWidth - this.width;
+    }
+
+    this.object.style.left = left + "px";
+    this.object.style.top = top + "px";
 };
 
 form.Dispose = function () {
@@ -1903,6 +1916,7 @@ xplore.Table = function (param) {
     this.sort = param.sort || false;
     this.showfilter = param.showfilter || false;
     this.showsearch = param.showsearch || false;
+    this.filters = param.showsearch || {};
 };
 
 let table = xplore.Initialize(xplore.Table);
@@ -2028,13 +2042,16 @@ table.RefreshHeader = function () {
                 if (this.sort) {
                     element = xplore.DisplayIcon("sort-alphabetical-ascending");
                     element.classList.add("header-sort");
-
                     element.header = header;
                     tool.appendChild(element);
                 }
 
-                if (this.showfilter)
-                    tool.appendChild(xplore.DisplayIcon("filter-outline"));
+                if (this.showfilter) {
+                    element = xplore.DisplayIcon("filter-outline");
+                    element.classList.add("header-filter");
+                    element.header = { name: header, index: counter };
+                    tool.appendChild(element);
+                }
 
                 td.appendChild(tool);
             }
@@ -2404,6 +2421,71 @@ table.Events = function () {
             self.RefreshBody();
         };
     }
+
+    //Filter
+
+    let headerfilter = this.object.querySelectorAll(".header-filter");
+
+    for (let filter of headerfilter) {
+        filter.onclick = function (object) {
+            let header = object.currentTarget.header;
+            let filter = header.filter;
+            let rect = object.currentTarget.parentElement.parentElement.getBoundingClientRect();
+
+            let form = new xplore.Form({
+                text: "Filter",
+                transparent: true,
+                onok: function () {
+                    let filter = [];
+
+                    for (let item of scroll.children) {
+                        if (item.value) {
+                            filter.push(item.text);
+                        }
+                    }
+
+                    header.filter = filter;
+                    self.RefreshBody();
+                }
+            });
+
+            let unique = {};
+            let values = [];
+
+            for (let row of self.data) {
+                if (unique[row[header.index]] === undefined) {
+                    unique[row[header.index]] = row[header.index]; 
+                    values.push(row[header.index]);
+                }
+            }
+
+            values.sort(function (a, b) {
+                if (a > b)
+                    return 1;
+                else if (a < b)
+                    return -1;
+                else
+                    return 0;
+            });
+
+            let scroll = form.Add(new xplore.ScrollContainer());
+
+            for (let value of values) {
+                scroll.Add(new xplore.Checkbox({
+                    text: value
+                }));
+            }
+
+            form.Show();
+            form.Position(rect.left, rect.height + rect.top);
+
+            // //Clear current sort
+            // for (let current of headersorts) {
+            //     delete current.header.filter;
+            // }
+
+        };
+    }
 };
 
 table.Dispose = function () {
@@ -2419,6 +2501,9 @@ xplore.Background = function (param) {
 
     param = param || {}
     this.onclick = param.onclick;
+
+    if (param.transparent)
+        this.classname.push("transparent");
 };
 
 let background = xplore.Initialize(xplore.Background);
