@@ -833,6 +833,10 @@ th .header-tool {
     padding: 2px 4px !important;
 }
 
+th .header-tool.show-sort, th .header-tool.show-filter {
+    display: block;
+}
+
 th:hover .header-tool {
     display: block;
 }

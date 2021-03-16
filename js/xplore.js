@@ -2039,6 +2039,19 @@ table.RefreshHeader = function () {
                 tool = document.createElement("th");
                 tool.classList.add("header-tool");
 
+                if (header.sort !== undefined) {
+                    tool.classList.add("show-sort");
+                }
+
+                if (this.filters) {
+                    for (let index in this.filters) {
+                        if (counter === index) {
+                            tool.classList.add("show-filter");
+                            break;
+                        }
+                    }
+                }
+
                 if (this.sort) {
                     element = xplore.DisplayIcon("sort-alphabetical-ascending");
                     element.classList.add("header-sort");
@@ -2113,6 +2126,7 @@ table.RefreshBody = function () {
 
     this.body.innerHTML = "";
 
+    //Sort
     if (this.sort) {
         let columns;
 
@@ -2146,8 +2160,51 @@ table.RefreshBody = function () {
 
             counter++;
         }
-
     }
+
+    let data = this.data;
+
+    // Filter
+
+    if (this.filters) {
+        let filtered = [];
+        let handle = true;
+        let add;
+
+        for (let row of data) {
+            add = true;
+
+            for (let index in this.filters) {
+                handle = false;
+
+                for (let filter of this.filters[index]) {
+                    if (row[index] === filter) {
+                        handle = true;
+                        break;
+                    }
+                }
+
+                if (!handle) {
+                    add = false;
+                    break;
+                }
+            }
+
+            if (add)
+                filtered.push(row);
+        }
+
+        if (filtered.length) {
+            data = filtered;
+
+            start = (this.page - 1) * this.pagesize;
+            end = this.page * this.pagesize;
+
+            if (end > data.length)
+                end = data.length;
+        }
+    }
+
 
     for (let i = start; i < end; i++) {
         // Row
@@ -2161,7 +2218,7 @@ table.RefreshBody = function () {
         td.innerText = i + 1;
         row.appendChild(td);
 
-        for (let cell of this.data[i]) {
+        for (let cell of data[i]) {
             // Text
             td = document.createElement("td");
 
@@ -2444,7 +2501,8 @@ table.Events = function () {
                         }
                     }
 
-                    header.filter = filter;
+                    self.filters[header.index] = filter;
+                    self.page = 1;
                     self.RefreshBody();
                 }
             });
@@ -2454,7 +2512,7 @@ table.Events = function () {
 
             for (let row of self.data) {
                 if (unique[row[header.index]] === undefined) {
-                    unique[row[header.index]] = row[header.index]; 
+                    unique[row[header.index]] = row[header.index];
                     values.push(row[header.index]);
                 }
             }
