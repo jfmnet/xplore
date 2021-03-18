@@ -1,4 +1,6 @@
 xplore.Canvas3DGraphics = function (param) {
+    param = param || {};
+
     this.x = param.x || 0;
     this.y = param.y || 0;
     this.z = param.z || 0;
@@ -139,12 +141,14 @@ xcylinder.AlignMove = function (mesh) {
 xplore.Canvas3DGraphics.UniformGridXY = function (param) {
     xplore.Canvas3DGraphics.call(this, param);
 
-    this.x1 = param.x1 || 0;
-    this.y1 = param.y1 || 0;
+    param = param || {};
+
+    this.x1 = param.x1 || -5;
+    this.y1 = param.y1 || -5;
     this.z1 = param.z1 || 0;
 
-    this.x2 = param.x2 || 0;
-    this.y2 = param.y2 || 0;
+    this.x2 = param.x2 || 5;
+    this.y2 = param.y2 || 5;
     this.z2 = param.z2 || 0;
 
     this.interval = param.interval || 1;
@@ -196,7 +200,9 @@ xgrid.Generate = function () {
 xplore.Canvas3DGraphics.Axis = function (param) {
     xplore.Canvas3DGraphics.call(this, param);
 
-    this.size = param.size || 0;
+    param = param || {};
+
+    this.size = param.size || 1;
 };
 
 let xaxis = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.Axis);

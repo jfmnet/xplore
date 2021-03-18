@@ -25,6 +25,13 @@ view.Initialize = function () {
     }));
 
     list.Add(new xplore.List({
+        text: "Canvas3D",
+        onclick: function () {
+            self.ShowCanvas3D();
+        }
+    }));
+
+    list.Add(new xplore.List({
         text: "Table",
         onclick: function () {
             self.ShowTable();
@@ -33,7 +40,7 @@ view.Initialize = function () {
 };
 
 view.Load = function () {
-    this.ShowCanvas2D();
+    this.ShowCanvas3D();
 };
 
 view.ShowTable = function () {
@@ -76,6 +83,16 @@ view.ShowCanvas2D = function () {
     ]));
 
     this.splitter.Set(canvas, 1);
-    
+
+    canvas.ZoomAll();
+};
+
+view.ShowCanvas3D = function () {
+    let canvas = new xplore.Canvas3D();
+    canvas.model.Add(new xplore.Canvas3DGraphics.Axis());
+    canvas.model.Add(new xplore.Canvas3DGraphics.UniformGridXY());
+    this.splitter.Set(canvas, 1);
+
+    canvas.Render();
     canvas.ZoomAll();
 };
