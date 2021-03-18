@@ -8,7 +8,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Demo",
-            "url": "http://localhost:5501/index.html",
+            "url": "http://localhost:5502/index.html",
             "webRoot": "${workspaceFolder}"
         }
     ]

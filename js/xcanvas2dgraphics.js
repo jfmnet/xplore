@@ -3,8 +3,8 @@ xplore.DrawProperties = function () {
     this.showline = true;
     this.scale = true;
 
-    this.fillcolor = "#CCC";
-    this.linecolor = "#FFF";
+    this.fillcolor = "rgba(0, 75, 150, 0.3)";
+    this.linecolor = "rgba(0, 100, 200, 0.5)";
     this.thickness = 1;
 };
 
@@ -80,9 +80,9 @@ canvasgraphics.Rotate = function (angle, cx, cy) {
 
 canvasgraphics.Property = function (x, y) {
     if (this.selected)
-        return this.properties;
-    else
         return this.selectedproperties;
+    else
+        return this.properties;
 };
 
 
@@ -118,7 +118,7 @@ xplore.Canvas2DGraphics.Arrow = function (x1, y1, x2, y2, headratio) {
     this.Rotate(angle, x2, y2);
 };
 
-xplore.Canvas2DGraphics.Arrow.prototype = Object.create(xplore.Canvas2DGraphics);
+xplore.Canvas2DGraphics.Arrow.prototype = Object.create(xplore.Canvas2DGraphics.prototype);
 xplore.Canvas2DGraphics.Arrow.constructor = xplore.Canvas2DGraphics.Arrow;
 
 let arrow = xplore.Canvas2DGraphics.Arrow.prototype;
@@ -140,7 +140,7 @@ xplore.Canvas2DGraphics.Line = function (x1, y1, x2, y2) {
         this.points = [{ x: x1 || 0, y: y1 || 0 }, { x: x2 || 0, y: y2 || 0 }];
 };
 
-xplore.Canvas2DGraphics.Line.prototype = Object.create(xplore.Canvas2DGraphics);
+xplore.Canvas2DGraphics.Line.prototype = Object.create(xplore.Canvas2DGraphics.prototype);
 xplore.Canvas2DGraphics.Line.constructor = xplore.Canvas2DGraphics.Line;
 
 let line = xplore.Canvas2DGraphics.Line.prototype;
@@ -186,7 +186,7 @@ xplore.Canvas2DGraphics.Rectangle = function (x, y, w, h) {
         this.points = [{ x: x || 0, y: y || 0 }, { x: w || 0, y: h || 0 }];
 };
 
-xplore.Canvas2DGraphics.Rectangle.prototype = Object.create(xplore.Canvas2DGraphics);
+xplore.Canvas2DGraphics.Rectangle.prototype = Object.create(xplore.Canvas2DGraphics.prototype);
 xplore.Canvas2DGraphics.Rectangle.constructor = xplore.Canvas2DGraphics.Rectangle;
 
 let rectangle = xplore.Canvas2DGraphics.Rectangle.prototype;
@@ -224,15 +224,19 @@ rectangle.Update = function (mouse) {
 
 xplore.Canvas2DGraphics.Polygon = function (points) {
     xplore.Canvas2DGraphics.call(this);
-
     this.points = points;
 };
 
-xplore.Canvas2DGraphics.Polygon.prototype = Object.create(xplore.Canvas2DGraphics);
+xplore.Canvas2DGraphics.Polygon.prototype = Object.create(xplore.Canvas2DGraphics.prototype);
 xplore.Canvas2DGraphics.Polygon.constructor = xplore.Canvas2DGraphics.Polygon;
 
 let polygon = xplore.Canvas2DGraphics.Polygon.prototype;
 
 polygon.Render = function (canvas) {
-    canvas.DrawPolygon(this.x, this.y, this.w, this.h, this.Property());
+    canvas.DrawPolygon(this.points, this.Property());
+};
+
+polygon.Bounds = function (bounds) {
+    for (let point of this.points)
+        bounds.Update(point.x, point.y);
 };

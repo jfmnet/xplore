@@ -40,6 +40,16 @@ canvasmodel.Add = function (object) {
 canvasmodel.Clear = function () {
 };
 
+canvasmodel.Bounds = function () {
+    let bounds = new xplore.canvasentity.Bounds2F();
+
+    for (let i = 0; i < this.list.length; i++) {
+        this.list[i].Bounds(bounds);
+    }
+
+    return bounds;
+};
+
 
 //Events
 

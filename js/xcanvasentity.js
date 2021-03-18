@@ -346,3 +346,41 @@ line2f.Offset = function (offset) {
         }
     }
 };
+
+xplore.canvasentity.Bounds2F = function () {
+    this.x1 = Number.POSITIVE_INFINITY;
+    this.y1 = Number.POSITIVE_INFINITY;
+
+    this.x2 = Number.NEGATIVE_INFINITY;
+    this.y2 = Number.NEGATIVE_INFINITY;
+};
+
+xplore.canvasentity.Bounds2F.constructor = xplore.canvasentity.Bounds2F;
+
+let bounds2f = xplore.canvasentity.Bounds2F.prototype;
+
+Object.defineProperty(bounds2f, 'width', {
+    get: function () {
+        return Math.abs(this.x1 - this.x2);
+    }
+});
+
+Object.defineProperty(bounds2f, 'height', {
+    get: function () {
+        return Math.abs(this.y1 - this.y2);
+    }
+});
+
+bounds2f.Update = function (x, y) {
+    if (this.x1 > x)
+        this.x1 = x;
+
+    if (this.y1 > y)
+        this.y1 = y;
+
+    if (this.x2 < x)
+        this.x2 = x;
+
+    if (this.y2 < y)
+        this.y2 = y;
+};

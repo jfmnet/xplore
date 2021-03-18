@@ -150,7 +150,7 @@ xcanvas.Refresh = function () {
         self.Render();
     };
 
-    setTimeout(function() {
+    setTimeout(function () {
         self.Resize();
         self.Render();
         clearTimeout();
@@ -813,7 +813,7 @@ xcanvas.UpdateProperties = function (properties) {
     this.context.strokeStyle = properties.linecolor;
 
     if (properties.scale)
-        this.context.lineWidth = properties.thickness * gridsize / (defaultgridsize * gridvalue.x);
+        this.context.lineWidth = properties.thickness * this.gridsize / (this.defaultgridsize * this.gridvalue.x);
     else
         this.context.lineWidth = properties.thickness;
 
@@ -950,10 +950,10 @@ xcanvas.DrawPolygon = function (points, properties) {
 
         context.closePath();
 
-        if (property.showfill) mainview
-        context.fill();
+        if (properties.showfill)
+            context.fill();
 
-        if (property.showline)
+        if (properties.showline)
             context.stroke();
     }
 };
@@ -1085,64 +1085,58 @@ xcanvas.ZoomAll = function (inbounds, infactor) {
         bounds = inbounds;
     else
         //Compute bounds
-        bounds = self.model.Bounds();
+        bounds = this.model.Bounds();
+
+    this.Resize();
 
     //Check if width and height is already available
-    if (width && height && bounds.x1 < 1000000000) {
+    if (this.width && this.height && bounds.x1 < 1000000000) {
         var x1 = bounds.x1;
         var y1 = bounds.y1;
 
         var x2 = bounds.x2;
         var y2 = bounds.y2;
 
-        var mid = new graphicsentity.Point2F((x1 + x2) / 2, (y1 + y2) / 2);
-        var difference = new graphicsentity.Point2F(Math.abs(x1 - x2) / gridvalue.x, Math.abs(y1 - y2) / gridvalue.y);
+        var mid = new xplore.canvasentity.Point2F((x1 + x2) / 2, (y1 + y2) / 2);
+        var difference = new xplore.canvasentity.Point2F(Math.abs(x1 - x2) / this.gridvalue.x, Math.abs(y1 - y2) / this.gridvalue.y);
 
-        if (((difference.x / difference.y) >= (width / height))) {
+        if (((difference.x / difference.y) >= (this.width / this.height))) {
             if (difference.x === 0)
                 return;
 
-            gridsize = width / (factor * difference.x);
+            this.gridsize = this.width / (factor * difference.x);
         } else {
             if (difference.y === 0)
                 return;
 
-            gridsize = height / (factor * difference.y);
+            this.gridsize = this.height / (factor * difference.y);
         }
 
-        if (gridsize > 1000) {
-            gridsize /= 10;
-            gridvalue.x /= 10;
-            gridvalue.y /= 10;
-        } else if (gridsize >= 10) {
+        if (this.gridsize > 1000) {
+            this.gridsize /= 10;
+            this.gridvalue.x /= 10;
+            this.gridvalue.y /= 10;
+        } else if (this.gridsize >= 10) {
 
-        } else if (gridsize >= 1) {
-            gridsize *= 5;
-            gridvalue.x *= 5;
-            gridvalue.y *= 5;
+        } else if (this.gridsize >= 1) {
+            this.gridsize *= 5;
+            this.gridvalue.x *= 5;
+            this.gridvalue.y *= 5;
         } else {
-            gridsize *= 10;
-            gridvalue.x *= 10;
-            gridvalue.y *= 10;
+            this.gridsize *= 10;
+            this.gridvalue.x *= 10;
+            this.gridvalue.y *= 10;
         }
 
-        middle.x = mid.x / gridvalue.x;
-        middle.y = mid.y / gridvalue.y;
+        this.middle.x = mid.x / this.gridvalue.x;
+        this.middle.y = mid.y / this.gridvalue.y;
 
-        this.zoomvalue = gridsize / (defaultgridsize * gridvalue.x);
+        this.zoomvalue = this.gridsize / (this.defaultgridsize * this.gridvalue.x);
         this.Render();
 
     } else {
-        gridvalue = { x: 5, y: 5 };
-        gridsize = 20;
-
-        if (units) {
-            if (units.length.value.value === 1) {
-                gridsize = 10;
-                gridvalue = { x: 20, y: 20 };
-            }
-        }
-
+        this.gridvalue = { x: 5, y: 5 };
+        this.gridsize = 20;
         this.Render();
     }
 };

@@ -103,8 +103,8 @@ prototype.Show = function (parent) {
             this.object.classList.add(this.classname[i]);
     }
 
-    if (this.OnLoad)
-        this.OnLoad();
+    if (this.Initialize)
+        this.Initialize();
 
     let fragment = document.createDocumentFragment();
     fragment.appendChild(this.object);
@@ -113,6 +113,9 @@ prototype.Show = function (parent) {
     this.ApplyProperties();
 
     this.parent.appendChild(fragment);
+
+    if (this.Load)
+        this.Load();
 };
 
 prototype.Dispose = function () {
@@ -286,6 +289,11 @@ prototype.Trigger = function (name) {
     }
 };
 
+prototype.Bind = function (object) {
+    for (let name in object) {
+        this.Add(object[name]);
+    }
+};
 
 //Button
 
@@ -396,6 +404,86 @@ textbox.Events = function () {
 };
 
 
+//Numeric Textbox
+
+xplore.NumericTextbox = function (param) {
+    xplore.call(this, param, undefined, ["input", "textbox numeric"]);
+
+    param = param || {};
+
+    if (param.value === undefined)
+        this.value = "";
+    else
+        this.value = param.value;
+
+    this.onchange = param.onchange;
+    this.bind = param.bind;
+
+    if (param.inline)
+        this.classname.push("inline");
+
+    if (this.bind)
+        this.value = this.bind.object[this.bind.name];
+};
+
+let numtextbox = xplore.Initialize(xplore.NumericTextbox);
+
+numtextbox.Refresh = function () {
+    this.object.innerHTML = "";
+
+    if (this.text) {
+        let label = document.createElement("label");
+        this.object.appendChild(label);
+
+        let text = document.createElement("div");
+        text.innerText = this.text;
+        label.appendChild(text);
+
+        let input = document.createElement("input");
+        input.type = "number";
+
+        if (this.value !== undefined)
+            input.value = this.value;
+
+        label.appendChild(input);
+
+    } else {
+        let input = document.createElement("input");
+        input.type = "number";
+
+        if (this.value !== undefined)
+            input.value = this.value;
+
+        this.object.appendChild(input);
+
+    }
+
+    this.ApplyProperties();
+    this.Events();
+};
+
+numtextbox.Events = function () {
+    let input = this.object.querySelector("input");
+    let self = this;
+
+    input.addEventListener('input', function () {
+        let value = parseFloat(this.value);
+
+        self.value = value;
+
+        if (self.bind) {
+            self.bind.object[self.bind.name] = value;
+
+            if (self.bind.refresh)
+                self.bind.object.Refresh();
+        }
+
+        if (self.onchange)
+            self.onchange(self);
+
+        self.Trigger("onchange");
+    });
+};
 //Textarea
 
 xplore.TextArea = function (param) {
@@ -1900,6 +1988,43 @@ xplore.Tree = function (param) {
 
 xplore.Initialize(xplore.Tree);
 
+//Treenode
+
+xplore.TreeNode = function (param) {
+    xplore.call(this, param, undefined, "treenode");
+
+    this.data = param.data;
+
+    if (!this.icon) {
+        this.icon = "chevron-right";
+    }
+};
+
+let xtreenode = xplore.Initialize(xplore.TreeNode);
+
+xtreenode.Events = function () {
+    let self = this;
+
+    this.object.onclick = function (e) {
+        e.stopPropagation();
+
+        if (this.children.length === 1) {
+            self.onclick(self);
+            
+        } else {
+            if (this.classList.contains("expand")) {
+                this.classList.remove("expand");
+                this.children[0].classList.remove("mdi-chevron-down");
+                this.children[0].classList.add("mdi-chevron-right");
+            }
+            else {
+                this.classList.add("expand");
+                this.children[0].classList.remove("mdi-chevron-right");
+                this.children[0].classList.add("mdi-chevron-down");
+            }
+        }
+    };
+};
 
 //Table
 
@@ -2607,7 +2732,7 @@ xplore.COLUMNTYPE = {
     CHECKBOX: 2,
     COMBOBOX: 3,
     CUSTOM: 4
-}
+};
 
 
 //Functions

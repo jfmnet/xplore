@@ -1,7 +1,7 @@
 var mainview = xplore.Inherit(xplore.View);
 let view = mainview.prototype;
 
-view.OnLoad = function () {
+view.Initialize = function () {
     let self = this;
 
     //Set tile
@@ -18,11 +18,22 @@ view.OnLoad = function () {
 
     //Add items to the list container
     list.Add(new xplore.List({
+        text: "Canvas2D",
+        onclick: function () {
+            self.ShowCanvas2D();
+        }
+    }));
+
+    list.Add(new xplore.List({
         text: "Table",
         onclick: function () {
             self.ShowTable();
         }
     }));
+};
+
+view.Load = function () {
+    this.ShowCanvas2D();
 };
 
 view.ShowTable = function () {
@@ -53,4 +64,18 @@ view.ShowTable = function () {
     });
 
     this.splitter.Set(table, 1);
+};
+
+view.ShowCanvas2D = function () {
+    let canvas = new xplore.Canvas2D();
+    canvas.Add(new xplore.Canvas2DGraphics.Polygon([
+        { x: 0, y: 0 },
+        { x: 0, y: 5 },
+        { x: 5, y: 5 },
+        { x: 5, y: 0 },
+    ]));
+
+    this.splitter.Set(canvas, 1);
+    
+    canvas.ZoomAll();
 };
