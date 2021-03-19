@@ -1,3 +1,16 @@
+:root {
+    --C50: #ECEFF1;
+    --C100: #CFD8DC;
+    --C200: #B0BEC5;
+    --C300: #90A4AE;
+    --C400: #78909C;
+    --C500: #607D8B;
+    --C600: #546E7A;
+    --C700: #455A64;
+    --C800: #37474F;
+    --C900: #263238;
+}
+
 body {
     font: 1rem normal, -apple-system, BlinkMacSystemFont, "Roboto", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     margin: 0;
@@ -208,16 +221,18 @@ textarea {
 
 .view-header {
     align-items: center;
-    background-color: #6200ee;
-    color: #FFF;
+    background-color: var(--C50);
+    box-shadow: 0 0 4px var(--C500);
+    color: var(--C900);
     display: flex;
     font-size: 24px;
-    height: 64px;
+    height: 52px;
     top: 0;
+    z-index: 10;
 }
 
 .view-header i {
-    color: #FFF;
+    color: var(--C900);
 }
 
 .view-header .text {
@@ -230,17 +245,17 @@ textarea {
     position: absolute;
     top: 0;
     right: 16px;
-    height: 64px;
+    height: 52px;
 }
 
 .view-header .button {
     background-color: transparent;
     font-size: 1rem;
-    padding: 0 8px 0 24px;
+    padding: 0 16px 0 24px;
 }
 
 .view-body {
-    top: 64px;
+    top: 52px;
     bottom: 0;
 }
 
@@ -724,21 +739,21 @@ th {
 }
 
 tr.row-0 th {
-    background-color: #eee;
+    background-color: var(--C100);
     position: sticky;
     top: 0;
     z-index: 2;
 }
 
 tr.row-1 th {
-    background-color: #eee;
+    background-color: var(--C100);
     position: sticky;
     top: 27px;
     z-index: 2;
 }
 
 tr.row-2 th {
-    background-color: #eee;
+    background-color: var(--C100);
     position: sticky;
     top: 55px;
     z-index: 2;
@@ -746,9 +761,9 @@ tr.row-2 th {
 
 tr th:first-of-type {
     border: none;
-    background-color: #EEE;
+    background-color: var(--C100);
     left: 0;
-    z-index: 10;
+    z-index: 5;
 }
 
 tr th.cell-first:first-of-type {
@@ -765,15 +780,14 @@ th.th-search-cell {
 .th-search-cell input {
     border: none;
     outline: none;
-    /* visibility: hidden; */
     width: calc(100% - 8px);
 }
 
 tbody tr td:first-of-type {
-    background-color: #eee;
+    background-color: var(--C100);
     border: none;
     box-shadow: 0 0 0 1px #CCC;
-    color: #888;
+    color: var(--C900);
     position: sticky;
     left: 0;
     min-width: 47px;

@@ -5,7 +5,10 @@ view.Initialize = function () {
     let self = this;
 
     //Set tile
-    this.text = "xplore Demo";
+    this.text = "xplore";
+    this.tools = [
+        new xplore.Button({ icon: "account" })
+    ];
 
     //Add splitter
     this.splitter = this.Add(new xplore.SplitContainer({
