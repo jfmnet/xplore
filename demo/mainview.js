@@ -21,6 +21,27 @@ view.Initialize = function () {
 
     //Add items to the list container
     list.Add(new xplore.List({
+        text: "Button",
+        onclick: function () {
+            self.ShowButton();
+        }
+    }));
+
+    list.Add(new xplore.List({
+        text: "Combobox",
+        onclick: function () {
+            self.ShowCombobox();
+        }
+    }));
+
+    list.Add(new xplore.List({
+        text: "Form",
+        onclick: function () {
+            self.ShowForm();
+        }
+    }));
+
+    list.Add(new xplore.List({
         text: "Canvas2D",
         onclick: function () {
             self.ShowCanvas2D();
@@ -45,6 +66,31 @@ view.Initialize = function () {
 view.Load = function () {
     this.ShowCanvas3D();
 };
+
+view.ShowButton = function () {
+    let container = new xplore.Container();
+    container.Add(new xplore.Button({ text: "OK" }));
+    container.Add(new xplore.Button({ icon: "account" }));
+    container.Add(new xplore.Button({ icon: "account", text: "Profile" }));
+
+    this.splitter.Set(container, 1);
+};
+
+view.ShowForm = function () {
+    let container = new xplore.Container();
+    container.Add(new xplore.Button({ 
+        text: "Default Form",
+        onclick: function () {
+            let form = new xplore.Form({
+                text: "Default"
+            });
+            
+            form.Show();
+        } 
+    }));
+
+    this.splitter.Set(container, 1);
+};  
 
 view.ShowTable = function () {
     let data = [];
