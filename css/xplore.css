@@ -248,6 +248,10 @@ textarea {
     height: 52px;
 }
 
+.view-header .buttons .button {
+    padding: 0 16px;
+}
+
 .view-header .button {
     background-color: transparent;
     font-size: 1rem;
@@ -621,6 +625,7 @@ textarea {
     top: 34px;
 }
 
+
 /* Canvas */
 
 canvas {
@@ -638,6 +643,20 @@ canvas {
     height: unset !important;
     width: unset !important;
 }
+
+.canvas .toolbar {
+    background-color: var(--C900);
+    border-radius: 25px;
+    padding: 0 8px;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.canvas .toolbar .button {
+    background-color: transparent;
+}
+
 
 /* List */
 

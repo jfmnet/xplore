@@ -101,6 +101,8 @@ xplore.Mouse = function (c) {
 xplore.Canvas2D = function (param) {
     xplore.call(this, param, undefined, "canvas");
 
+    param = param || {};
+
     this.gridvalue = { x: 1, y: 1 };
     this.middle = { x: 0, y: 0 };
     this.gridsize = 100;
@@ -109,6 +111,7 @@ xplore.Canvas2D = function (param) {
     this.width = 100;
     this.height = 100;
     this.zoomvalue = 1;
+    this.showtoolbar = param.showtoolbar;
 
     this.settings = new xplore.Canvas2DSettings();
     this.mouse = new xplore.Mouse();
@@ -123,14 +126,6 @@ xplore.Canvas2D.constructor = xplore.Canvas2D;
 
 let xcanvas = xplore.Canvas2D.prototype;
 
-xcanvas.Draw = function (drawobject) {
-    this.model.Draw(drawobject);
-};
-
-xcanvas.Add = function (object) {
-    this.model.Add(object);
-};
-
 xcanvas.Refresh = function () {
     this.object.innerHTML = "";
 
@@ -142,6 +137,7 @@ xcanvas.Refresh = function () {
 
     this.Resize();
     this.Render();
+    this.ShowToolbar();
 
     let self = this;
 
@@ -245,6 +241,36 @@ xcanvas.RenderToCanvas = function (renderFunction) {
     renderFunction(context);
 
     return canvas;
+};
+
+xcanvas.ShowToolbar = function () {
+    if (this.showtoolbar) {
+        let toolbar = new xplore.Toolbar();
+
+        toolbar.Add(new xplore.Button({
+            icon: "magnify"
+        }));
+
+        toolbar.Add(new xplore.Button({
+            icon: "magnify"
+        }));
+
+        toolbar.Add(new xplore.Button({
+            icon: "magnify"
+        }));
+
+        toolbar.Show(this.object);
+    }
+};
+
+//Model
+
+xcanvas.Draw = function (drawobject) {
+    this.model.Draw(drawobject);
+};
+
+xcanvas.Add = function (object) {
+    this.model.Add(object);
 };
 
 
@@ -687,6 +713,7 @@ xcanvas.DrawRulerInner = function () {
 
 
 //Draw
+
 xcanvas.SetProperties = function (properties) {
     if (properties.linecolor)
         this.context.strokeStyle = properties.linecolor;
@@ -1208,7 +1235,6 @@ xcanvas.Pan = function (x, y) {
     this.middle.x -= x / this.gridsize;
     this.middle.y -= y / this.gridsize;
 };
-
 
 
 //Events

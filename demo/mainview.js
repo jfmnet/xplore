@@ -77,7 +77,10 @@ view.ShowTable = function () {
 };
 
 view.ShowCanvas2D = function () {
-    let canvas = new xplore.Canvas2D();
+    let canvas = new xplore.Canvas2D({
+        showtoolbar: true
+    });
+    
     canvas.Add(new xplore.Canvas2DGraphics.Polygon([
         { x: 0, y: 0 },
         { x: 0, y: 5 },
