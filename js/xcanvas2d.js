@@ -245,18 +245,28 @@ xcanvas.RenderToCanvas = function (renderFunction) {
 
 xcanvas.ShowToolbar = function () {
     if (this.showtoolbar) {
+        let self = this;
         let toolbar = new xplore.Toolbar();
 
         toolbar.Add(new xplore.Button({
-            icon: "magnify"
+            icon: "magnify-plus-outline",
+            onclick: function () {
+                self.ZoomIn();
+            }
         }));
 
         toolbar.Add(new xplore.Button({
-            icon: "magnify"
+            icon: "magnify-minus-outline",
+            onclick: function () {
+                self.ZoomOut();
+            }
         }));
 
         toolbar.Add(new xplore.Button({
-            icon: "magnify"
+            icon: "magnify-scan",
+            onclick: function () {
+                self.ZoomAll();
+            }
         }));
 
         toolbar.Show(this.object);
@@ -1180,23 +1190,23 @@ xcanvas.Zoom = function (x, y, d) {
 };
 
 xcanvas.ZoomIn = function () {
-    gridsize *= 1.15;
+    this.gridsize *= 1.15;
 
-    if (gridvalue.x <= 1 && gridsize > 200)
-        gridsize = 200;
+    if (this.gridvalue.x <= 1 && this.gridsize > 200)
+        this.gridsize = 200;
 
-    this.zoomvalue = gridsize / (defaultgridsize * gridvalue.x);
-    self.Render();
+    this.zoomvalue = this.gridsize / (this.defaultgridsize * this.gridvalue.x);
+    this.Render();
 };
 
 xcanvas.ZoomOut = function () {
-    gridsize /= 1.15;
+    this.gridsize /= 1.15;
 
-    if (gridvalue.x <= 1 && gridsize > 200)
-        gridsize = 200;
+    if (this.gridvalue.x <= 1 && this.gridsize > 200)
+        this.gridsize = 200;
 
-    this.zoomvalue = gridsize / (defaultgridsize * gridvalue.x);
-    self.Render();
+    this.zoomvalue = this.gridsize / (this.defaultgridsize * this.gridvalue.x);
+    this.Render();
 };
 
 xcanvas.ZoomRealtime = function (d) {
