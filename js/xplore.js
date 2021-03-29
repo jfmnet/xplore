@@ -338,7 +338,8 @@ xplore.Textbox = function (param) {
 
     this.onchange = param.onchange;
     this.bind = param.bind;
-
+    this.readonly = param.readonly | false;
+    
     if (param.inline)
         this.classname.push("inline");
 
@@ -359,13 +360,23 @@ textbox.Refresh = function () {
         text.innerText = this.text;
         label.appendChild(text);
 
-        let input = document.createElement("input");
-        input.type = this.type;
-
-        if (this.value !== undefined)
-            input.value = this.value;
-
-        label.appendChild(input);
+        if (this.readonly) {
+            let input = document.createElement("div");
+    
+            if (this.value !== undefined)
+                input.innerHTML = this.value;
+    
+            label.appendChild(input);
+    
+        } else {
+            let input = document.createElement("input");
+            input.type = this.type;
+    
+            if (this.value !== undefined)
+                input.value = this.value;
+    
+            label.appendChild(input);
+        }
 
     } else {
         let input = document.createElement("input");
@@ -383,6 +394,7 @@ textbox.Refresh = function () {
 };
 
 textbox.Events = function () {
+    if (!this.readonly) {
     let input = this.object.querySelector("input");
     let self = this;
 
@@ -401,6 +413,7 @@ textbox.Events = function () {
 
         self.Trigger("onchange");
     });
+    }
 };
 
 
@@ -418,7 +431,8 @@ xplore.NumericTextbox = function (param) {
 
     this.onchange = param.onchange;
     this.bind = param.bind;
-
+    this.readonly = param.readonly | false;
+    
     if (param.inline)
         this.classname.push("inline");
 
@@ -439,13 +453,23 @@ numtextbox.Refresh = function () {
         text.innerText = this.text;
         label.appendChild(text);
 
-        let input = document.createElement("input");
-        input.type = "number";
-
-        if (this.value !== undefined)
-            input.value = this.value;
-
-        label.appendChild(input);
+        if (this.readonly) {
+            let input = document.createElement("div");
+    
+            if (this.value !== undefined)
+                input.innerHTML = this.value;
+    
+            label.appendChild(input);
+    
+        } else {
+            let input = document.createElement("input");
+            input.type = "number";
+    
+            if (this.value !== undefined)
+                input.value = this.value;
+    
+            label.appendChild(input);
+        }
 
     } else {
         let input = document.createElement("input");
@@ -1979,14 +2003,62 @@ xploreview.SetMenu = function (object) {
     this.menuobject = object;
 };
 
+//PropertyGrid
 
+xplore.PropertyGrid = function (param) {
+    xplore.call(this, param, undefined, "propertygrid");
+};
+
+let xpropertygrid = xplore.Initialize(xplore.PropertyGrid);
+
+xpropertygrid.Refresh = function () {
+    this.object.innerHTML = "";
+
+    let header = document.createElement("div");
+    header.classList.add("propertygrid-header");
+    this.object.appendChild(header);
+
+    //Show icon
+    if (this.icon)
+        header.appendChild(xplore.DisplayIcon(this.icon));
+
+    //Show text
+    if (this.text)
+        header.append(this.text);
+
+    //Children
+    this.RefreshChildren();
+
+    this.Events();
+};
 //Tree
 
 xplore.Tree = function (param) {
     xplore.call(this, param, undefined, "tree");
 };
 
-xplore.Initialize(xplore.Tree);
+let xtree = xplore.Initialize(xplore.Tree);
+
+xtree.Refresh = function () {
+    this.object.innerHTML = "";
+
+    let header = document.createElement("div");
+    header.classList.add("tree-header");
+    this.object.appendChild(header);
+
+    //Show icon
+    if (this.icon)
+        header.appendChild(xplore.DisplayIcon(this.icon));
+
+    //Show text
+    if (this.text)
+        header.append(this.text);
+
+    //Children
+    this.RefreshChildren();
+
+    this.Events();
+};
 
 //Treenode
 
@@ -2786,7 +2858,7 @@ xplore.OpenFile = function (format, extension, res) {
 
         content.remove();
     });
-}
+};
 
 xplore.ReadFile = function (file) {
     var reader = new FileReader();
@@ -2797,7 +2869,35 @@ xplore.ReadFile = function (file) {
     };
 
     reader.readAsText(file);
-}
+};
+
+xplore.SaveFile = function (data, filename, type, res) {
+    var file = new Blob([data], { type: type });
+    if (window.navigator.msSaveOrOpenBlob) // IE10+
+        window.navigator.msSaveOrOpenBlob(file, filename);
+
+    else { // Others
+        var a = document.createElement("a");
+        var url = URL.createObjectURL(file);
+
+        if (type === "image/jpg" || type === "image/jpeg" || type === "image/png")
+            a.href = data;
+        else
+            a.href = url;
+
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+
+        setTimeout(function () {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            if (res)
+                res();
+        }, 0);
+    }
+};
 
 xplore.Round = function (num, precision) {
     num = parseFloat(num);

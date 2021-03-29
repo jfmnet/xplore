@@ -12,12 +12,25 @@
 }
 
 body {
-    font: 1rem normal, -apple-system, BlinkMacSystemFont, "Roboto", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font: 13px normal, -apple-system, BlinkMacSystemFont, "Roboto", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    color: var(--C50);
     margin: 0;
     padding: 0;
     height: 100%;
     min-height: 100%;
     overflow: hidden;
+}
+
+::-webkit-scrollbar {
+    background-color: var(--C800);
+    box-shadow: inset 0 0 6px var(--C900);
+    height: 16px;
+    width: 16px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--C700);
+    border-radius: 8px;
 }
 
 i.mdi {
@@ -85,7 +98,6 @@ i.mdi {
 }
 
 .input {
-    margin: 8px 16px;
     position: relative;
 }
 
@@ -113,12 +125,9 @@ i.mdi {
     width: initial;
 }
 
-.input label input, .input label select {
-    margin-top: 4px;
-}
-
 .input.inline {
-    padding-bottom: 8px;
+    border-bottom: 1px solid var(--C800);
+    padding: 4px 16px;
 }
 
 .input.inline label>div {
@@ -128,9 +137,8 @@ i.mdi {
 
 .input.inline label>input, .input.inline label>select {
     display: inline-flex;
-    margin-top: 4px;
-    padding: 4px 8px;
-    width: calc(60% - 18px);
+    padding: 4px;
+    width: calc(60% - 10px);
 }
 
 .input.inline label>select {
@@ -187,7 +195,6 @@ textarea {
 }
 
 .split-container>div:nth-child(2), .dock-panel>div:nth-child(2n) {
-    background-color: #EEE;
     cursor: col-resize;
     text-align: center;
     transform: translateZ(0);
@@ -410,7 +417,7 @@ textarea {
 }
 
 .menu-container {
-    background-color: #212125;
+    background-color: var(--C900);
     color: #C6CCDB;
 }
 
@@ -423,7 +430,7 @@ textarea {
     height: 32px;
     padding: 0 8px;
     position: relative;
-    z-index: 1;
+    z-index: 5;
 }
 
 .menu:hover {
@@ -482,7 +489,7 @@ textarea {
 }
 
 .toolbar-container {
-    background-color: #27282B;
+    background-color: var(--C800);
     color: #C6CCDB;
     display: flex;
 }
@@ -494,7 +501,8 @@ textarea {
 
 .toolbar .button {
     align-items: center;
-    background-color: #27282B;
+    background-color: var(--C800);
+    border-radius: 0;
     color: #C6CCDB;
     display: inline-flex;
     padding: 0 8px;
@@ -502,12 +510,11 @@ textarea {
 }
 
 .toolbar .button:hover {
-    background-color: #212125;
-    color: #C6CCDB;
+    background-color: var(--C700);
 }
 
 .toolbar .button:active {
-    background-color: #212125;
+    background-color: var(--C700);
     color: #C6CCDB;
 }
 
@@ -666,6 +673,7 @@ canvas {
 }
 
 .list-container, .scroll-container {
+    background-color: var(--C900);
     position: absolute;
     left: 0;
     right: 0;
@@ -713,9 +721,12 @@ img.icon {
 }
 
 .month-year>div, .combobox>div, label {
-    color: #888;
     font-size: 12px;
-    text-transform: uppercase;
+}
+
+.combobox>div {
+    display: inline-flex;
+    width: 40%;
 }
 
 /* Table */
@@ -872,4 +883,59 @@ th .header-tool.show-sort, th .header-tool.show-filter {
 
 th:hover .header-tool {
     display: block;
+}
+
+.tree {
+    background-color: var(--C900);
+    box-shadow: inset 0 0 4px #000;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+}
+
+.tree-header {
+    border-bottom: 1px solid var(--C800);
+    background-color: var(--C900);
+    font-weight: bold;
+    margin-bottom: 4px;
+    padding: 12px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.treenode {
+    cursor: pointer;
+    padding: 0 8px;
+}
+
+.treenode .treenode {
+    margin-left: 16px;
+    display: none;
+}
+
+.treenode.expand > .treenode {
+    display: block;
+}
+
+.propertygrid {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto;
+}
+
+.propertygrid-header {
+    border-bottom: 1px solid var(--C800);
+    background-color: var(--C900);
+    position: sticky;
+    font-weight: bold;
+    padding: 12px 16px;
+    top: 0;
+    z-index: 1;
 }

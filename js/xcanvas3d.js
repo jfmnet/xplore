@@ -98,7 +98,7 @@ canvas.Resize = function () {
     this.canvas.innerWidth = this.object.offsetWidth;
     this.canvas.innerHeight = this.object.offsetHeight;
 
-    this.aspect = window.innerWidth / window.innerHeight;
+    this.aspect = this.canvas.innerWidth / this.canvas.innerHeight;
     this.camera.aspect = this.aspect;
     this.camera.updateProjectionMatrix();
 
