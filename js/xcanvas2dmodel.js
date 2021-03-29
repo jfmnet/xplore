@@ -5,6 +5,7 @@ xplore.CANVASACTIONS = {
 };
 
 xplore.Canvas2DModel = function () {
+    this.keys = "";
     this.list = [];
     this.action = xplore.CANVASACTIONS.PAN;
 };
@@ -33,11 +34,19 @@ canvasmodel.Render = function (canvas) {
 
 //List
 
+canvasmodel.Select = function () {
+    this.action =  xplore.CANVASACTIONS.SELECT;
+    delete this.draw;
+};
+
+canvasmodel.ClearSelection = function () {
+};
 canvasmodel.Add = function (object) {
     this.list.push(object);
 };
 
 canvasmodel.Clear = function () {
+    this.list = [];
 };
 
 canvasmodel.Bounds = function () {
@@ -53,7 +62,12 @@ canvasmodel.Bounds = function () {
 
 //Events
 
-canvasmodel.KeyDown = function (event) {
+canvasmodel.KeyDown = function (canvas, event) {
+    this.keys += event.key;
+    this.HandleKeys(canvas);
+};
+
+canvasmodel.HandleKeys = function (canvas) {
 };
 
 canvasmodel.KeyUp = function (event) {
@@ -71,7 +85,9 @@ canvasmodel.MouseDown = function (canvas, mouse, button) {
                 let point = this.Snap(canvas, mouse.down);
 
                 if (this.downcount === 1) {
-                    this.draw = new this.drawobject(point);
+                    this.draw = new this.drawobject();
+                    this.draw.Add(point);
+                    this.draw.Add(point);
 
                     if (this.draw.action === 1) {
                         this.Add(this.draw);
@@ -80,7 +96,7 @@ canvasmodel.MouseDown = function (canvas, mouse, button) {
                         canvas.Render();
                     }
 
-                } else {
+                } else if (this.downcount >= this.draw.maxpoint) {
                     this.draw.Update(point);
                     this.Add(this.draw);
 
@@ -90,6 +106,8 @@ canvasmodel.MouseDown = function (canvas, mouse, button) {
 
                     //Store buffer for the next drawing
                     canvas.StoreBuffer();
+                } else {
+                    this.draw.Add(point);
                 }
 
                 this.UpdatePoints();
@@ -207,6 +225,18 @@ canvasmodel.HandleMouseMoveMiddleButton = function (canvas, mouse, button) {
 
 canvasmodel.HandleMouseMoveRightButton = function (canvas, mouse) {
     this.Pan(canvas, mouse);
+    switch (this.action) {
+        case xplore.CANVASACTIONS.DRAW:
+            let point = this.Snap(canvas, mouse.current);
+
+            if (this.draw) {
+                this.draw.Update(point);
+                canvas.SetProperties(this.draw.properties);
+                this.draw.Render(canvas);
+            }
+
+            break;
+    }
 };
 
 
@@ -244,8 +274,22 @@ canvasmodel.HandleMouseUpMiddleButton = function (canvas, mouse) {
 canvasmodel.HandleMouseUpRightButton = function (canvas, mouse) {
     switch (this.action) {
         case xplore.CANVASACTIONS.DRAW:
-            //Store buffer
-            canvas.StoreBuffer();
+            let x = Math.abs(mouse.rawcurrent.x - mouse.rawprevious.x);
+            let y = Math.abs(mouse.rawprevious.y - mouse.rawcurrent.y);
+
+            if (x < 5 && y < 5) {
+                if (this.draw && this.downcount >= this.draw.minpoint) {
+                    this.draw.EndDrawing();
+                    this.Add(this.draw);
+                }
+
+                this.downcount = 0;
+                canvas.Render();
+                delete this.draw;
+
+                //Store buffer for the next drawing
+                canvas.StoreBuffer();
+            }
             break;
     }
 };

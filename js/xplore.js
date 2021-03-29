@@ -202,6 +202,7 @@ prototype.Add = function (child) {
 prototype.Clear = function () {
     this.object.innerHTML = "";
     this.children = [];
+    this.Refresh();
 };
 
 prototype.ApplyProperties = function () {
@@ -293,6 +294,42 @@ prototype.Bind = function (object) {
     for (let name in object) {
         this.Add(object[name]);
     }
+};
+
+
+//Header
+
+xplore.Header = function (param) {
+    xplore.call(this, param, undefined, ["input", "propertyheader"]);
+
+    param = param || {};
+
+    this.type = param.type || "text";
+
+    this.onchange = param.onchange;
+    this.bind = param.bind;
+
+    if (param.inline)
+        this.classname.push("inline");
+
+};
+
+let propertyheader = xplore.Initialize(xplore.Header);
+
+propertyheader.Refresh = function () {
+    this.object.innerHTML = "";
+
+    if (this.text) {
+        let label = document.createElement("label");
+        this.object.appendChild(label);
+
+        let text = document.createElement("div");
+        text.innerText = this.text;
+        label.appendChild(text);
+
+    } 
+
+    this.ApplyProperties();
 };
 
 //Button
@@ -527,6 +564,8 @@ xplore.TextArea = function (param) {
 
     if (param.inline)
         this.classname.push("inline");
+    
+    this.readonly = param.readonly | false;
 
     if (this.bind)
         this.value = this.bind.object[this.bind.name];
@@ -597,6 +636,7 @@ xplore.Checkbox = function (param) {
     this.onchange = param.onchange;
     this.bind = param.bind;
     this.classname.push("inline");
+    this.readonly = param.readonly | false;
 
     if (this.bind)
         this.value = this.bind.object[this.bind.name];
@@ -665,6 +705,8 @@ xplore.Combobox = function (param) {
 
     if (param.inline)
         this.classname.push("inline");
+	
+    this.readonly = param.readonly | false;
 
     if (this.bind)
         this.value = this.bind.object[this.bind.name];
@@ -1019,7 +1061,7 @@ menu.Events = function () {
     this.object.onmouseenter = function () {
         self.onmenu = true;
 
-        if (xplore.activemenu && self.children.length) {
+        if (xplore.activemenu && self.parentmenu !== xplore.activemenu && self.children.length) {
             xplore.activemenu.Collapse();
 
             self.object.focus();
@@ -1209,11 +1251,11 @@ splitcontainer.Resize = function () {
                     this.gap.style = "top: " + this.size[0] + "px; height: " + this.splittersize + "px; left: 0; right: 0 ";
 
             } else if (this.size[1]) {
-                this.panel1.style = "left: 0; right: " + (this.size[1] + this.splittersize) + "px; top: 0; bottom: 0 ";
-                this.panel2.style = "right: 0; width: " + this.size[1] + "px; top: 0; bottom: 0 ";
+                this.panel1.style = "top: 0; bottom: " + this.size[1] + "px; left: 0; right: 0 ";
+                this.panel2.style = "bottom: 0; height: " + (this.size[1] + this.splittersize) + "px; left: 0; right: 0 ";
 
                 if (this.splittersize)
-                    this.gap.style = "right: " + this.size[1] + "px; width: " + this.splittersize + "px; top: 0; bottom: 0 ";
+                    this.gap.style = "bottom: " + this.size[1] + "px; height: " + this.splittersize + "px; left: 0; right: 0 ";
             }
 
         } else {
@@ -1788,9 +1830,9 @@ xplore.Form = function (param) {
     this.resizing;
 };
 
-let form = xplore.Initialize(xplore.Form);
+let xform = xplore.Initialize(xplore.Form);
 
-form.Refresh = function () {
+xform.Refresh = function () {
     let self = this;
 
     if (this.modal) {
@@ -1835,7 +1877,7 @@ form.Refresh = function () {
     this.Events();
 };
 
-form.RefreshHeader = function () {
+xform.RefreshHeader = function () {
     let self = this;
 
     this.header.innerHTML = "";
@@ -1865,7 +1907,7 @@ form.RefreshHeader = function () {
     }
 };
 
-form.RefreshBody = function () {
+xform.RefreshBody = function () {
     this.body.innerHTML = "";
 
     //Children
@@ -1874,7 +1916,7 @@ form.RefreshBody = function () {
     }
 };
 
-form.RefreshFooter = function () {
+xform.RefreshFooter = function () {
     let self = this;
 
     this.footer.innerHTML = "";
@@ -1909,7 +1951,7 @@ form.RefreshFooter = function () {
     button.Show(buttons);
 };
 
-form.Resize = function () {
+xform.Resize = function () {
     let w = window.innerWidth;
     let h = window.innerHeight;
 
@@ -1930,7 +1972,7 @@ form.Resize = function () {
     this.object.style.zIndex = ++xplore.ZINDEX;
 };
 
-form.Position = function (left, top) {
+xform.Position = function (left, top) {
     if (left + this.width > window.innerWidth) {
         left = window.innerWidth - this.width;
     }
@@ -1939,7 +1981,7 @@ form.Position = function (left, top) {
     this.object.style.top = top + "px";
 };
 
-form.Dispose = function () {
+xform.Dispose = function () {
     xplore.ZINDEX -= 2;
     this.object.remove();
 
@@ -1947,11 +1989,11 @@ form.Dispose = function () {
         this.background.Dispose();
 };
 
-form.Close = function () {
+xform.Close = function () {
     this.Dispose();
 };
 
-form.Events = function () {
+xform.Events = function () {
     let self = this;
 
     if (this.showheader) {
@@ -2002,7 +2044,7 @@ form.Events = function () {
     }
 };
 
-form.TerminateDrag = function () {
+xform.TerminateDrag = function () {
     self.resizing = false;
     document.body.onmousemove = undefined;
     self.Trigger("onmouseup");

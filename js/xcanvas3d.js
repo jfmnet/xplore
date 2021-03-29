@@ -1,11 +1,13 @@
 xplore.Canvas3D = function (param) {
     xplore.call(this, param, undefined, "canvas");
 
+    param = param || {};
     this.camera;
     this.aspect = window.innerWidth / window.innerHeight;
     this.cameratype = 0;    //0 - Perspective; 1 - Orthographic
     this.orthosize = 1000;
     this.backcolor = 0x000000;
+    this.showtoolbar = param.showtoolbar;
 
     this.closedspline = new THREE.CatmullRomCurve3();
     this.extrudesettings = {
@@ -26,9 +28,9 @@ xplore.Canvas3D = function (param) {
     }, false);
 };
 
-let canvas = xplore.Initialize(xplore.Canvas3D);
+let xcanvas3d = xplore.Initialize(xplore.Canvas3D);
 
-canvas.Refresh = function () {
+xcanvas3d.Refresh = function () {
     let self = this;
 
     this.object.innerHTML = "";
@@ -51,9 +53,10 @@ canvas.Refresh = function () {
 
     self.Resize();
     self.Render();
+    self.ShowToolbar();
 };
 
-canvas.InitializeCamera = function () {
+xcanvas3d.InitializeCamera = function () {
     switch (this.cameratype) {
         case 0:
             this.camera = new THREE.PerspectiveCamera(50, 0.5 * this.aspect, 1, 10000);
@@ -70,7 +73,7 @@ canvas.InitializeCamera = function () {
     }
 };
 
-canvas.InitializeRenderer = function () {
+xcanvas3d.InitializeRenderer = function () {
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
 
     this.renderer.setClearColor(this.backcolor);
@@ -79,7 +82,7 @@ canvas.InitializeRenderer = function () {
     this.object.appendChild(this.renderer.domElement);
 };
 
-canvas.InitializeLight = function () {
+xcanvas3d.InitializeLight = function () {
     this.scene.add(new THREE.AmbientLight(0x444444));
 
     let light1 = new THREE.DirectionalLight(0xffffff, 0.5);
@@ -91,13 +94,42 @@ canvas.InitializeLight = function () {
     this.scene.add(light2);
 };
 
+xcanvas3d.ShowToolbar = function () {
+    if (this.showtoolbar) {
+        let toolbar = new xplore.Toolbar();
+        let self = this;
 
+        // toolbar.Add(new xplore.Button({
+        //     icon: "magnify-plus-outline",
+        //     onclick: function () {
+        //         self.ZoomIn();
+        //     }
+        // }));
+
+        // toolbar.Add(new xplore.Button({
+        //     icon: "magnify-minus-outline",
+        //     onclick: function () {
+        //         self.ZoomOut();
+        //     }
+        // }));
+
+        toolbar.Add(new xplore.Button({
+            icon: "magnify-scan",
+            onclick: function () {
+                self.ZoomAll();
+            }
+        }));
+
+        toolbar.Show(this.object);
+    }
+};
 //Resize
 
-canvas.Resize = function () {
+xcanvas3d.Resize = function () {  
     this.canvas.innerWidth = this.object.offsetWidth;
     this.canvas.innerHeight = this.object.offsetHeight;
 
+   // Sumet: fix the aspect
     this.aspect = this.canvas.innerWidth / this.canvas.innerHeight;
     this.camera.aspect = this.aspect;
     this.camera.updateProjectionMatrix();
@@ -108,28 +140,32 @@ canvas.Resize = function () {
 
 //Model
 
-canvas.Add = function (object) {
+xcanvas3d.Add = function (object) {
     this.scene.add(object);
 };
 
-canvas.Clear = function () {
-    this.scene.geometries = [];
+xcanvas3d.Clear = function () {
+    for (let i = this.scene.children.length - 1; i >= 0; i--) {
+        if (this.scene.children[i].type === "Object3D" || this.scene.children[i].type === "Mesh") {
+            this.scene.children.splice(i, 1);
+        }        
+    }
 };
 
 
 //Render
 
-canvas.Render = function () {
+xcanvas3d.Render = function () {
     this.model.Render(this);
     this.Update();
 };
 
-canvas.Update = function () {
+xcanvas3d.Update = function () {
     this.renderer.render(this.scene, this.camera);
 };
 
 
-canvas.Extrude = function (points, shapepoints) {
+xcanvas3d.Extrude = function (points, shapepoints) {
     this.closedspline.points = points;
 
     let shape = new THREE.Shape(shapepoints);
@@ -138,7 +174,7 @@ canvas.Extrude = function (points, shapepoints) {
 
 //Zoom
 
-canvas.ZoomAll = function (noresize) {
+xcanvas3d.ZoomAll = function (noresize) {
     if (!noresize)
         this.Resize();
 
@@ -159,8 +195,8 @@ canvas.ZoomAll = function (noresize) {
     let boundingSphere = bounds.getBoundingSphere(obj);
     let radius = boundingSphere.radius * 1.10;
 
-    if (canvas.height > canvas.width)
-        radius *= canvas.height / canvas.width;
+    if (this.canvas.height > this.canvas.width)
+        radius *= this.canvas.height / this.canvas.width;
 
     let len = radius / (Math.sin(this.camera.fov * Math.PI / 180));
     this.camera.position.set(center.x - len, center.y - len, center.z + len);

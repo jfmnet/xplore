@@ -338,6 +338,7 @@ textarea {
     box-shadow: 4px 4px 4px #CCC;
     color: #333;
     position: absolute;
+    overflow: hidden;
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
     -webkit-touch-callout: none;
@@ -392,8 +393,10 @@ textarea {
 }
 
 .form-footer {
+    background-color: var(--C900);
     bottom: 0;
     height: 42px;
+    z-index: 1;
 }
 
 .form-footer .buttons .button {
@@ -955,7 +958,7 @@ th:hover .header-tool {
     right: 0;
     top: 0;
     bottom: 0;
-    overflow: auto;
+    overflow-y: scroll;
 }
 
 .tree-header {
@@ -994,6 +997,7 @@ th:hover .header-tool {
 
 .propertygrid-header {
     border-bottom: 1px solid var(--C800);
+    border-top: 1px solid var(--C800);
     background-color: var(--C900);
     position: sticky;
     font-weight: bold;

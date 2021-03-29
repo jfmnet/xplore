@@ -283,6 +283,9 @@ xcanvas.Add = function (object) {
     this.model.Add(object);
 };
 
+xcanvas.Clear = function () {
+    this.model.Clear();
+};
 
 //Render
 
@@ -1257,13 +1260,13 @@ xcanvas.Events = function () {
     let onfocus = true;
     let start = 0;
 
-    // document.body.onkeydown = function (event) {
-    //     self.model.KeyDown(event);
-    // };
+    document.body.onkeydown = function (event) {
+        self.model.KeyDown(self, event);
+    };
 
-    // document.body.onkeyup = function (event) {
-    //     self.model.KeyUp(event);
-    // };
+    document.body.onkeyup = function (event) {
+        self.model.KeyUp(self, event);
+    };
 
     this.canvas.addEventListener("mouseenter", function (event) {
         onenter = true;
