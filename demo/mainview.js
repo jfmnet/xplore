@@ -68,7 +68,7 @@ view.Load = function () {
 };
 
 view.ShowButton = function () {
-    let container = new xplore.Container();
+    let container = new xplore.Container({ class: "main-container" });
     container.Add(new xplore.Button({ text: "OK" }));
     container.Add(new xplore.Button({ icon: "account" }));
     container.Add(new xplore.Button({ icon: "account", text: "Profile" }));
@@ -76,21 +76,46 @@ view.ShowButton = function () {
     this.splitter.Set(container, 1);
 };
 
+view.ShowCombobox = function () {
+    let container = new xplore.Container({ class: "main-container" });
+    container.Add(new xplore.Combobox({
+        text: "Country",
+        options: [
+            "Philippines",
+            "Thailand",
+            "United States"
+        ],
+        value: "Philippines"
+    }));
+
+    container.Add(new xplore.Dropdown({
+        inline: true,
+        text: "Jonathan",
+        options: [
+            new xplore.List({ icon: "account", text: "Jonathan" }),
+            new xplore.List({ icon: "account", text: "Manuel" }),
+        ],
+        value: new xplore.List({ icon: "account", text: "Manuel" })
+    }));
+
+    this.splitter.Set(container, 1);
+};
+
 view.ShowForm = function () {
     let container = new xplore.Container();
-    container.Add(new xplore.Button({ 
+    container.Add(new xplore.Button({
         text: "Default Form",
         onclick: function () {
             let form = new xplore.Form({
                 text: "Default"
             });
-            
+
             form.Show();
-        } 
+        }
     }));
 
     this.splitter.Set(container, 1);
-};  
+};
 
 view.ShowTable = function () {
     let data = [];
@@ -126,7 +151,7 @@ view.ShowCanvas2D = function () {
     let canvas = new xplore.Canvas2D({
         showtoolbar: true
     });
-    
+
     canvas.Add(new xplore.Canvas2DGraphics.Polygon([
         { x: 0, y: 0 },
         { x: 0, y: 5 },

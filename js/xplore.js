@@ -659,8 +659,6 @@ xplore.Combobox = function (param) {
     param = param || {};
 
     this.value = param.value || "";
-    this.type = param.type || "text";
-
     this.onchange = param.onchange;
     this.bind = param.bind;
     this.options = param.options;
@@ -726,7 +724,108 @@ combobox.Events = function () {
 };
 
 
+//Dropdown
+
+xplore.Dropdown = function (param) {
+    xplore.call(this, param, undefined, "dropdown");
+
+    param = param || {};
+
+    this.value = param.value || "";
+    this.onchange = param.onchange;
+    this.bind = param.bind;
+    this.options = param.options;
+
+    if (param.inline)
+        this.classname.push("inline");
+
+    if (this.bind)
+        this.value = this.bind.object[this.bind.name];
+};
+
+let dropdown = xplore.Initialize(xplore.Dropdown);
+
+dropdown.Refresh = function () {
+    let self = this;
+
+    this.object.innerHTML = "";
+
+    let value = document.createElement("div");
+    this.value.Show(value);
+    this.object.appendChild(value);
+
+    if (this.options.length) {
+        //Children
+        let submenu = document.createElement("div");
+        this.object.appendChild(submenu);
+
+        for (let i = 0; i < this.options.length; i++) {
+            this.options[i].parentmenu = this;
+            this.options[i].onclick = function (option) {
+                self.value = option;
+                self.Refresh();
+            };
+            this.options[i].Show(submenu);
+        }
+    }
+
+    this.Events();
+};
+
+dropdown.Events = function () {
+    let self = this;
+
+    if (this.options.length !== 0) {
+        this.object.tabIndex = -1;
+    }
+
+    this.object.onclick = function (e) {
+        e.stopPropagation();
+
+        if (xplore.activemenu === self) {
+            self.object.classList.remove("display");
+            delete xplore.activemenu;
+
+        } else {
+            self.object.classList.add("display");
+            xplore.activemenu = self;
+        }
+    };
+
+    this.object.onmouseenter = function () {
+        self.onmenu = true;
+
+        if (xplore.activemenu && self.options.length) {
+            xplore.activemenu.Collapse();
+
+            self.object.focus();
+            self.object.classList.add("display");
+            xplore.activemenu = self;
+        }
+    };
+
+    this.object.onmouseleave = function () {
+        self.onmenu = false;
+    };
+
+    this.object.addEventListener('focusout', function (event) {
+        if (!self.onmenu) {
+            self.onmenu = false;
+            self.object.classList.remove("display");
+            delete xplore.activemenu;
+        }
+    });
+};
+
+dropdown.Collapse = function () {
+    this.onmenu = false;
+    this.object.classList.remove("display");
+    delete xplore.activemenu;
+};
+
+
 //Month-Year
+
 xplore.MonthYear = function (param) {
     xplore.call(this, param, undefined, ["input", "month-year"]);
 
@@ -2082,7 +2181,7 @@ xtreenode.Events = function () {
 
         if (this.children.length === 1) {
             self.onclick(self);
-            
+
         } else {
             if (this.classList.contains("expand")) {
                 this.classList.remove("expand");

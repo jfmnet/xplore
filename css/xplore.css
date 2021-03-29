@@ -130,7 +130,7 @@ i.mdi {
     padding: 4px 16px;
 }
 
-.input.inline label>div {
+.input.inline > div, .input.inline label>div {
     display: inline-flex;
     width: 40%;
 }
@@ -168,6 +168,68 @@ textarea {
     resize: none;
     height: 120px;
     width: calc(100% - 18px);
+}
+
+.dropdown {
+    align-items: center;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    display: inline-flex;
+    height: 32px;
+    position: relative;
+    z-index: 1;
+}
+
+.dropdown:hover {
+    background-color: var(--C50);
+    color: var(--C900);
+}
+
+.dropdown>div:nth-child(1) {
+    align-items: center;
+    display: flex;
+    white-space: nowrap;
+}
+
+.dropdown>div:nth-child(1) i {
+    display: inline-flex;
+    margin-right: 16px;
+}
+
+.dropdown .dropdown>div:nth-child(1)>div:nth-child(1) {
+    width: 28px;
+}
+
+.dropdown>div:nth-child(1)>div:nth-child(2) {
+    align-items: center;
+    display: flex;
+    position: absolute;
+    top: 0;
+    right: 16px;
+    height: 32px;
+}
+
+.dropdown>div:nth-child(2) {
+    background-color: var(--C100);
+    border: 1px solid var(--C200);
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 32px;
+}
+
+.dropdown .dropdown {
+    display: flex;
+    padding: 0 92px 0 8px;
+}
+
+.dropdown .dropdown:hover {
+    background-color: var(--C200);
+}
+
+.dropdown.display>div:nth-child(2) {
+    display: block;
 }
 
 /* Containers */
