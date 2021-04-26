@@ -84,9 +84,9 @@ xplore.Inherit = function (parent) {
 };
 
 xplore.constructor = xplore;
-let prototype = xplore.prototype;
+let xprototype = xplore.prototype;
 
-prototype.Show = function (parent) {
+xprototype.Show = function (parent) {
     if (parent && parent.appendChild) {
         this.parent = parent;
     } else {
@@ -118,7 +118,7 @@ prototype.Show = function (parent) {
         this.Load();
 };
 
-prototype.Dispose = function () {
+xprototype.Dispose = function () {
     for (let i = 0; i < this.children.length; i++) {
         this.children[i].Dispose();
     }
@@ -126,7 +126,7 @@ prototype.Dispose = function () {
     this.object.remove();
 };
 
-prototype.Refresh = function () {
+xprototype.Refresh = function () {
     this.object.innerHTML = "";
 
     //Show icon
@@ -143,14 +143,14 @@ prototype.Refresh = function () {
     this.Events();
 };
 
-prototype.RefreshChildren = function () {
+xprototype.RefreshChildren = function () {
     //Children
     for (let i = 0; i < this.children.length; i++) {
         this.children[i].Show(this.object);
     }
 };
 
-prototype.Events = function () {
+xprototype.Events = function () {
     let self = this;
 
     if (this.onclick || this.events["onclick"]) {
@@ -163,7 +163,7 @@ prototype.Events = function () {
     }
 };
 
-prototype.Add = function (child) {
+xprototype.Add = function (child) {
     if (child) {
         //Add array of components
         if (Array.isArray(child)) {
@@ -199,17 +199,17 @@ prototype.Add = function (child) {
     }
 };
 
-prototype.Clear = function () {
+xprototype.Clear = function () {
     this.object.innerHTML = "";
     this.children = [];
     this.Refresh();
 };
 
-prototype.ApplyProperties = function () {
+xprototype.ApplyProperties = function () {
     this.SetVisibility(this.visible);
 };
 
-prototype.SetVisibility = function (visibility) {
+xprototype.SetVisibility = function (visibility) {
     this.visible = visibility;
 
     if (this.object) {
@@ -224,7 +224,7 @@ prototype.SetVisibility = function (visibility) {
     }
 };
 
-prototype.Highlight = function (highlight) {
+xprototype.Highlight = function (highlight) {
     if (highlight === undefined)
         highlight = true;
 
@@ -240,7 +240,7 @@ prototype.Highlight = function (highlight) {
     }
 };
 
-prototype.SetState = function (state) {
+xprototype.SetState = function (state) {
     if (this.object) {
         if (state === xplore.STATE.ENABLED) {
             this.object.classList.remove("disabled");
@@ -254,7 +254,7 @@ prototype.SetState = function (state) {
     }
 };
 
-prototype.Listen = function (name, param, event) {
+xprototype.Listen = function (name, param, event) {
     if (event) {
         //Initialize event name
         if (!this.events[name])
@@ -279,7 +279,7 @@ prototype.Listen = function (name, param, event) {
     }
 };
 
-prototype.Trigger = function (name) {
+xprototype.Trigger = function (name) {
     if (this.events[name]) {
         let event;
 
@@ -290,7 +290,7 @@ prototype.Trigger = function (name) {
     }
 };
 
-prototype.Bind = function (object) {
+xprototype.Bind = function (object) {
     for (let name in object) {
         this.Add(object[name]);
     }
@@ -314,9 +314,9 @@ xplore.Header = function (param) {
 
 };
 
-let propertyheader = xplore.Initialize(xplore.Header);
+let xpropertyheader = xplore.Initialize(xplore.Header);
 
-propertyheader.Refresh = function () {
+xpropertyheader.Refresh = function () {
     this.object.innerHTML = "";
 
     if (this.text) {
@@ -338,9 +338,9 @@ xplore.Button = function (param) {
     xplore.call(this, param, undefined, "button");
 };
 
-let button = xplore.Initialize(xplore.Button);
+let xbutton = xplore.Initialize(xplore.Button);
 
-button.Refresh = function () {
+xbutton.Refresh = function () {
     this.object.innerHTML = "";
 
     //Show icon
@@ -384,9 +384,9 @@ xplore.Textbox = function (param) {
         this.value = this.bind.object[this.bind.name];
 };
 
-let textbox = xplore.Initialize(xplore.Textbox);
+let xtextbox = xplore.Initialize(xplore.Textbox);
 
-textbox.Refresh = function () {
+xtextbox.Refresh = function () {
     this.object.innerHTML = "";
 
     if (this.text) {
@@ -430,7 +430,7 @@ textbox.Refresh = function () {
     this.Events();
 };
 
-textbox.Events = function () {
+xtextbox.Events = function () {
     if (!this.readonly) {
     let input = this.object.querySelector("input");
     let self = this;
@@ -477,9 +477,9 @@ xplore.NumericTextbox = function (param) {
         this.value = this.bind.object[this.bind.name];
 };
 
-let numtextbox = xplore.Initialize(xplore.NumericTextbox);
+let xnumtextbox = xplore.Initialize(xplore.NumericTextbox);
 
-numtextbox.Refresh = function () {
+xnumtextbox.Refresh = function () {
     this.object.innerHTML = "";
 
     if (this.text) {
@@ -523,7 +523,7 @@ numtextbox.Refresh = function () {
     this.Events();
 };
 
-numtextbox.Events = function () {
+xnumtextbox.Events = function () {
     let input = this.object.querySelector("input");
     let self = this;
 
@@ -571,9 +571,9 @@ xplore.TextArea = function (param) {
         this.value = this.bind.object[this.bind.name];
 };
 
-let textarea = xplore.Initialize(xplore.TextArea);
+let xtextarea = xplore.Initialize(xplore.TextArea);
 
-textarea.Refresh = function () {
+xtextarea.Refresh = function () {
     this.object.innerHTML = "";
 
     if (this.text) {
@@ -601,7 +601,7 @@ textarea.Refresh = function () {
     this.Events();
 };
 
-textarea.Events = function () {
+xtextarea.Events = function () {
     let input = this.object.querySelector("textarea");
     let self = this;
 
@@ -642,9 +642,9 @@ xplore.Checkbox = function (param) {
         this.value = this.bind.object[this.bind.name];
 };
 
-let checkbox = xplore.Initialize(xplore.Checkbox);
+let xcheckbox = xplore.Initialize(xplore.Checkbox);
 
-checkbox.Refresh = function () {
+xcheckbox.Refresh = function () {
     this.object.innerHTML = "";
 
     if (this.text) {
@@ -673,7 +673,7 @@ checkbox.Refresh = function () {
     this.Events();
 };
 
-checkbox.Events = function () {
+xcheckbox.Events = function () {
     let input = this.object.querySelector("input");
     let self = this;
 
@@ -712,9 +712,9 @@ xplore.Combobox = function (param) {
         this.value = this.bind.object[this.bind.name];
 };
 
-let combobox = xplore.Initialize(xplore.Combobox);
+let xcombobox = xplore.Initialize(xplore.Combobox);
 
-combobox.Refresh = function () {
+xcombobox.Refresh = function () {
     this.object.innerHTML = "";
 
     let select;
@@ -748,7 +748,7 @@ combobox.Refresh = function () {
     this.Events();
 };
 
-combobox.Events = function () {
+xcombobox.Events = function () {
     let select = this.object.querySelector("select");
     let self = this;
 
@@ -890,9 +890,9 @@ xplore.MonthYear = function (param) {
         };
 };
 
-let monthyear = xplore.Initialize(xplore.MonthYear);
+let xmonthyear = xplore.Initialize(xplore.MonthYear);
 
-monthyear.Refresh = function () {
+xmonthyear.Refresh = function () {
     this.object.innerHTML = "";
 
     let month, year;
@@ -941,7 +941,7 @@ monthyear.Refresh = function () {
     this.Events();
 };
 
-monthyear.Events = function () {
+xmonthyear.Events = function () {
     let self = this;
     let select = this.object.querySelectorAll("select");
     let month = select[0];
@@ -995,9 +995,9 @@ xplore.Menu = function (param) {
         xplore.KeyDown(this.shortcut, this.onclick);
 };
 
-let menu = xplore.Initialize(xplore.Menu);
+let xmenu = xplore.Initialize(xplore.Menu);
 
-menu.Refresh = function () {
+xmenu.Refresh = function () {
     this.object.innerHTML = "";
     this.object.tabIndex = '1';
 
@@ -1017,6 +1017,10 @@ menu.Refresh = function () {
         let shortcut = document.createElement("div");
         shortcut.innerText = this.shortcut;
         text.appendChild(shortcut);
+    } else if (this.children.length && this.parentmenu) {
+        let shortcut = document.createElement("div");
+        shortcut.appendChild(xplore.DisplayIcon("chevron-right"));
+        text.appendChild(shortcut);
     }
 
     this.object.appendChild(text);
@@ -1035,7 +1039,7 @@ menu.Refresh = function () {
     this.Events();
 };
 
-menu.Events = function () {
+xmenu.Events = function () {
     let self = this;
 
     if (this.children.length !== 0) {
@@ -1046,6 +1050,7 @@ menu.Events = function () {
         e.stopPropagation();
 
         if (self.onclick) {
+            if(self.parentmenu)
             self.parentmenu.Collapse();
             self.onclick(self);
         }
@@ -1054,6 +1059,7 @@ menu.Events = function () {
             xplore.activemenu = self;
 
         } else {
+            if(self.parentmenu)
             self.parentmenu.Collapse();
         }
     };
@@ -1083,7 +1089,7 @@ menu.Events = function () {
     });
 };
 
-menu.Collapse = function () {
+xmenu.Collapse = function () {
     this.onmenu = false;
     this.object.classList.remove("display");
     delete xplore.activemenu;
@@ -1130,9 +1136,9 @@ xplore.List = function (param) {
     xplore.call(this, param, undefined, "list");
 };
 
-let list = xplore.Initialize(xplore.List);
+let xlist = xplore.Initialize(xplore.List);
 
-list.Refresh = function () {
+xlist.Refresh = function () {
     this.object.innerHTML = "";
 
     //Show icon
@@ -1162,9 +1168,9 @@ xplore.ListContainer = function (param) {
     this.activelist = 0;
 };
 
-let listcontainer = xplore.Initialize(xplore.ListContainer);
+let xlistcontainer = xplore.Initialize(xplore.ListContainer);
 
-listcontainer.RefreshChildren = function () {
+xlistcontainer.RefreshChildren = function () {
     let self = this;
 
     //Children
@@ -1213,9 +1219,9 @@ xplore.SplitContainer = function (param) {
     this.resizing;
 };
 
-let splitcontainer = xplore.Initialize(xplore.SplitContainer);
+let xsplitcontainer = xplore.Initialize(xplore.SplitContainer);
 
-splitcontainer.Refresh = function () {
+xsplitcontainer.Refresh = function () {
     this.object.innerHTML = "";
 
     this.panel1 = document.createElement("div");
@@ -1235,7 +1241,7 @@ splitcontainer.Refresh = function () {
     this.Events();
 };
 
-splitcontainer.Resize = function () {
+xsplitcontainer.Resize = function () {
     let width = this.parent.clientWidth;
     let height = this.parent.clientHeight;
     let gap = this.splittersize / 2;
@@ -1292,7 +1298,7 @@ splitcontainer.Resize = function () {
     }
 };
 
-splitcontainer.Set = function (child, index) {
+xsplitcontainer.Set = function (child, index) {
     if (child) {
         let panel = index === 0 || index === undefined ? this.panel1 : this.panel2;
 
@@ -1320,7 +1326,7 @@ splitcontainer.Set = function (child, index) {
     }
 };
 
-splitcontainer.Events = function (child, index) {
+xsplitcontainer.Events = function (child, index) {
     let self = this;
 
     this.gap.onmousedown = function (e) {
@@ -1351,6 +1357,31 @@ splitcontainer.Events = function (child, index) {
 };
 
 
+//Grid
+
+xplore.Grid = function (param) {
+    xplore.call(this, param, undefined, "grid");
+
+    param = param || {};
+
+    this.orientation = param.orientation || xplore.ORIENTATION.HORIZONTAL;
+    this.size = param.size;
+};
+
+let xgrid = xplore.Initialize(xplore.Grid);
+
+xgrid.Refresh = function () {
+    this.object.innerHTML = "";
+
+    //Children
+    let div;
+
+    for (let i = 0; i < this.children.length; i++) {
+        div = document.createElement("div");
+        this.object.appendChild(div);
+        this.children[i].Show(div);
+    }
+};
 //Container
 
 xplore.Container = function (param) {
@@ -1372,9 +1403,9 @@ xplore.DockPanel = function (param) {
     this.resizing;
 };
 
-let dockpanel = xplore.Initialize(xplore.DockPanel);
+let xdockpanel = xplore.Initialize(xplore.DockPanel);
 
-dockpanel.Refresh = function () {
+xdockpanel.Refresh = function () {
     this.object.innerHTML = "";
 
     this.left = document.createElement("div");
@@ -1393,7 +1424,7 @@ dockpanel.Refresh = function () {
     this.Events();
 };
 
-dockpanel.Resize = function () {
+xdockpanel.Resize = function () {
     let width = this.parent.clientWidth;
     let height = this.parent.clientHeight;
     let gap = this.splittersize;
@@ -1445,10 +1476,10 @@ dockpanel.Resize = function () {
     }
 };
 
-dockpanel.Add = function () {
+xdockpanel.Add = function () {
 };
 
-dockpanel.Dock = function (child, index) {
+xdockpanel.Dock = function (child, index) {
     if (child) {
         let panel;
 
@@ -1476,7 +1507,7 @@ dockpanel.Dock = function (child, index) {
     }
 };
 
-dockpanel.Set = function (child, index) {
+xdockpanel.Set = function (child, index) {
     if (child) {
         let panel;
 
@@ -1511,7 +1542,7 @@ dockpanel.Set = function (child, index) {
     }
 };
 
-dockpanel.Events = function (child, index) {
+xdockpanel.Events = function (child, index) {
     let self = this;
 
     this.gapleft.onmousedown = function (e) {
@@ -1707,9 +1738,9 @@ xplore.Tab = function (param) {
     }
 };
 
-let tab = xplore.Initialize(xplore.Tab);
+let xtab = xplore.Initialize(xplore.Tab);
 
-tab.Refresh = function () {
+xtab.Refresh = function () {
     let self = this;
     this.object.innerHTML = "";
 
@@ -1752,7 +1783,7 @@ tab.Refresh = function () {
     this.SelectedIndex(0);
 };
 
-tab.SelectedIndex = function (index) {
+xtab.SelectedIndex = function (index) {
     if (this.contents[index]) {
         this.header[index].object.classList.add("selected");
         this.contents[index].style.zIndex = 100;
@@ -1765,7 +1796,7 @@ tab.SelectedIndex = function (index) {
     }
 };
 
-tab.Set = function (object, index) {
+xtab.Set = function (object, index) {
     if (this.contents[index]) {
         if (object.object)
             this.contents[index].appendChild(object.object);
@@ -2235,6 +2266,7 @@ xtreenode.Events = function () {
                 this.children[0].classList.remove("mdi-chevron-right");
                 this.children[0].classList.add("mdi-chevron-down");
             }
+            self.onclick(self);
         }
     };
 };
@@ -2257,11 +2289,11 @@ xplore.Table = function (param) {
     this.filters = param.showsearch || {};
 };
 
-let table = xplore.Initialize(xplore.Table);
+let xtable = xplore.Initialize(xplore.Table);
 
-table.id = 0;
+xtable.id = 0;
 
-table.Refresh = function () {
+xtable.Refresh = function () {
     // Table
     this.table = document.createElement("table");
     this.object.appendChild(this.table);
@@ -2295,7 +2327,7 @@ table.Refresh = function () {
     this.Events();
 };
 
-table.RefreshHeader = function () {
+xtable.RefreshHeader = function () {
     let columns;
 
     if (this.multiheader)
@@ -2452,7 +2484,7 @@ table.RefreshHeader = function () {
     }
 };
 
-table.RefreshBody = function () {
+xtable.RefreshBody = function () {
     let td;
     let counter = 0;
     let row;
@@ -2570,10 +2602,10 @@ table.RefreshBody = function () {
     }
 };
 
-table.RefreshFooter = function () {
+xtable.RefreshFooter = function () {
 };
 
-table.Resize = function () {
+xtable.Resize = function () {
     let columns;
 
     if (this.multiheader)
@@ -2621,7 +2653,7 @@ table.Resize = function () {
     this.style.innerHTML = style;
 };
 
-table.Events = function () {
+xtable.Events = function () {
     let self = this;
     let input;
     let cell;
@@ -2884,7 +2916,7 @@ table.Events = function () {
     }
 };
 
-table.Dispose = function () {
+xtable.Dispose = function () {
     this.style.remove();
     this.object.remove();
 };
@@ -2897,14 +2929,13 @@ xplore.Background = function (param) {
 
     param = param || {}
     this.onclick = param.onclick;
-
     if (param.transparent)
         this.classname.push("transparent");
 };
 
-let background = xplore.Initialize(xplore.Background);
+let xbackground = xplore.Initialize(xplore.Background);
 
-background.Refresh = function () {
+xbackground.Refresh = function () {
     this.object.style.zIndex = ++xplore.ZINDEX;
     this.Events();
 };
@@ -3218,6 +3249,9 @@ xplore.Post = function (url, data, resolve, reject) {
     xhttp.send(data);
 };
 
+xplore.Clone = function (object) {
+    return JSON.parse(JSON.stringify(object));
+};
 Number.prototype.CountDecimals = function () {
     if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
     return this.toString().split(".")[1].length || 0;

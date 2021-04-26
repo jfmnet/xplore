@@ -10,6 +10,13 @@
             "name": "Demo",
             "url": "http://localhost:5502/index.html",
             "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "OpenFAST",
+            "url": "http://localhost:5502/openfast.html",
+            "webRoot": "${workspaceFolder}"
         }
     ]
 }

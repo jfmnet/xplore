@@ -1,6 +1,16 @@
 xplore.main = function () {
-    let view = new mainview();
-    view.Show();
+    DemoCanvas();
+
+    // let button = new xplore.Button({
+    //     text: "Open",
+    //     onclick: function () {
+    //         ReadFrame3DD();
+    //     }
+    // });
+
+    // button.Show();
+    // let view = new mainview();
+    // view.Show();
 };
 
 //DemoCanvas3D();
@@ -40,7 +50,11 @@ function DemoTable() {
 }
 
 function DemoCanvas() {
-    let canvas = new xplore.Canvas2D();
+    let canvas = new xplore.Canvas2D({
+        showtoolbar: true
+    });
+    
+    canvas.settings.rulerposition = 0;
     canvas.Show();
 }
 
@@ -321,4 +335,21 @@ function Model() {
     this.country = "";
     this.subscribe = false;
     this.gender = "Male";
+}
+
+function ReadFrame3DD() {
+    xplore.OpenFile(xplore.FILEFORMAT.TEXT, ".3dd", function (model) {
+        let lines = model.split("\n");
+        ReadNodes(lines);
+    });
+}
+
+function ReadNodes(lines) {
+    let nodes = [];
+
+    for (let line in lines) {
+        if (line.indexOf("# number of nodes ") !== -1) {
+
+        }
+    }
 }
