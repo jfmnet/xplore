@@ -1,5 +1,6 @@
 xplore.Canvas2DSettings = function () {
     this.showgrid = true;
+    this.showusergrid = true;
     this.showruler = true;
     this.showlabel = false;
 
@@ -9,7 +10,8 @@ xplore.Canvas2DSettings = function () {
 
     //Snap
     this.snap = true;
-    this.snaptogrid = true;
+    this.snapongrid = true;
+    this.snaponusergrid = true;
     this.showsnapguide = true;
 
     this.LightTheme = function () {
@@ -38,6 +40,15 @@ xplore.Canvas2DSettings = function () {
     };
 
     this.DarkTheme();
+};
+
+xplore.Canvas2DSettingsModel = function (settings) {
+    this.showgrid = new xplore.Checkbox({ text: "Show Grid", value: settings.showgrid, bind: { name: "showgrid", object: settings } });
+    this.showusergrid = new xplore.Checkbox({ text: "Show Custom Grid", value: settings.showusergrid, bind: { name: "showusergrid", object: settings } });
+    this.showruler = new xplore.Checkbox({ text: "Show Ruler", value: settings.showruler, bind: { name: "showruler", object: settings } });
+
+    this.snapongrid = new xplore.Checkbox({ text: "Snap On Grid", value: settings.snapongrid, bind: { name: "snapongrid", object: settings } });
+    this.snaponusergrid = new xplore.Checkbox({ text: "Snap On Custom Grid", value: settings.snaponusergrid, bind: { name: "snaponusergrid", object: settings } });
 };
 
 xplore.Mouse = function (c) {
@@ -283,7 +294,7 @@ xcanvas.ShowToolbar = function () {
         toolbar.Add(new xplore.Button({
             icon: "cog-outline",
             onclick: function () {
-                self.ZoomAll();
+                self.ShowSettings();
             }
         }));
 
@@ -296,6 +307,7 @@ xcanvas.ShowToolbar = function () {
 xcanvas.Draw = function (drawobject) {
     this.model.Draw(drawobject);
 };
+
 xcanvas.EndDrawing = function () {
     this.model.EndDrawing();
 };
@@ -314,10 +326,11 @@ xcanvas.Render = function () {
     //Clear
     this.PrimitiveRectangle(0, 0, this.width, this.height, this.settings.background);
 
-    if (this.settings.showgrid) {
+    if (this.settings.showgrid)
         this.DrawGrid();
+
+    if (this.settings.showusergrid)
         this.DrawUserGrid();
-    }
 
     this.model.Render(this);
 
@@ -1355,6 +1368,8 @@ xcanvas.ZoomAll = function (inbounds, infactor) {
         this.gridsize = 20;
         this.Render();
     }
+
+    this.StoreBuffer();
 };
 
 xcanvas.Zoom = function (x, y, d) {
@@ -1376,6 +1391,7 @@ xcanvas.ZoomIn = function () {
 
     this.zoomvalue = this.gridsize / (this.defaultgridsize * this.gridvalue.x);
     this.Render();
+    this.StoreBuffer();
 };
 
 xcanvas.ZoomOut = function () {
@@ -1386,6 +1402,7 @@ xcanvas.ZoomOut = function () {
 
     this.zoomvalue = this.gridsize / (this.defaultgridsize * this.gridvalue.x);
     this.Render();
+    this.StoreBuffer();
 };
 
 xcanvas.ZoomRealtime = function (d) {
@@ -1456,6 +1473,17 @@ xcanvas.Events = function () {
         RemoveMouseWheelEvent();
     });
 
+    this.canvas.addEventListener("dblclick", function (event) {
+        event.preventDefault();
+        button = event.which;
+
+        let x = event.layerX;
+        let y = event.layerY;
+
+        self.DoubleClick(x, y, button);
+        onmousedown = false;
+    });
+
     this.canvas.addEventListener("mousedown", function (event) {
         event.preventDefault();
         onmousedown = true;
@@ -1479,6 +1507,7 @@ xcanvas.Events = function () {
             }
 
             event.preventDefault();
+            button = event.which;
 
             let x = event.layerX;
             let y = event.layerY;
@@ -1496,7 +1525,6 @@ xcanvas.Events = function () {
 
         let x = event.layerX;
         let y = event.layerY;
-
 
         self.MouseUp(x, y, movebutton);
     });
@@ -1662,6 +1690,44 @@ xcanvas.Events = function () {
     }
 };
 
+xcanvas.DoubleClick = function (x, y, button) {
+    //On ruler
+    if (this.settings.rulerposition === 0) {
+        if (x < this.rulersize + 20) {
+            if (this.gridy.length > 1) {
+                let y1, y2, ym;
+
+                for (let i = 0; i < this.gridy.length - 1; i++) {
+                    y1 = this.ToCoordY(this.gridy[i]);
+                    y2 = this.ToCoordY(this.gridy[i + 1]);
+                    ym = (y1 + y2) / 2;
+
+                    if (y > ym - 20 && x < ym + 20) {
+                        this.EditUserGrid("Y");
+                        break;
+                    }
+                }
+            }
+
+        } else if (y < this.rulersize + 20) {
+            if (this.gridx.length > 1) {
+                let x1, x2, xm;
+
+                for (let i = 0; i < this.gridx.length - 1; i++) {
+                    x1 = this.ToCoordX(this.gridx[i]);
+                    x2 = this.ToCoordX(this.gridx[i + 1]);
+                    xm = (x1 + x2) / 2;
+
+                    if (x > xm - 20 && x < xm + 20) {
+                        this.EditUserGrid("X");
+                        break;
+                    }
+                }
+            }
+        }
+    }
+};
+
 xcanvas.MouseDown = function (x, y, button) {
     this.canvas.focus();
 
@@ -1751,6 +1817,8 @@ xcanvas.MouseUp = function (x, y, button) {
     } else {
         this.model.MouseUp(this, this.mouse, button);
     }
+
+    this.StoreBuffer();
 };
 
 xcanvas.MouseWheel = function (x, y, delta) {
@@ -1768,5 +1836,61 @@ xcanvas.MouseWheel = function (x, y, delta) {
 
 
 //Settings
+
 xcanvas.ShowSettings = function () {
+    let self = this;
+
+    let form = new xplore.Form({
+        text: "Edit Preferences",
+        onok: function () {
+            self.Render();
+            self.StoreBuffer();
+        }
+    });
+
+    let grid = form.Add(new xplore.PropertyGrid({ text: "Settings" }));
+    grid.Bind(new xplore.Canvas2DSettingsModel(this.settings));
+
+    form.Show();
+};
+
+xcanvas.EditUserGrid = function (axis) {
+    let self = this;
+
+    let form = new xplore.Form({
+        text: "Edit Grid",
+        onok: function () {
+            if (axis === "X") {
+                for (let i = 1; i < self.gridx.length; i++) {
+                    self.gridx[i] = self.gridx[i - 1] + parseFloat(data[i - 1][1]);
+                }
+            } else {
+                for (let i = 1; i < self.gridy.length; i++) {
+                    self.gridy[i] = self.gridy[i - 1] + parseFloat(data[i - 1][1]);
+                }
+            }
+
+            self.Render();
+        }
+    });
+
+    let columns = ["Name", "Length"];
+    let data = [];
+
+    if (axis === "X") {
+        for (let i = 0; i < this.gridx.length - 1; i++) {
+            data.push([String.fromCharCode(65 + i) + "-" + String.fromCharCode(65 + i + 1), (this.gridx[i + 1] - this.gridx[i]).toFixed(3)]);
+        }
+    } else {
+        for (let i = 0; i < this.gridy.length - 1; i++) {
+            data.push([(i + 1) + "-" + (i + 2), (this.gridy[i + 1] - this.gridy[i]).toFixed(3)]);
+        }
+    }
+
+    form.Add(new xplore.Table({
+        columns: columns,
+        data: data
+    }));
+
+    form.Show();
 };

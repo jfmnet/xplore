@@ -124,6 +124,13 @@ xprototype.Dispose = function () {
     }
 
     this.object.remove();
+    this.Clean();
+};
+
+xprototype.Clean = function () {
+    for (let name in this) {
+        delete this[name];
+    }
 };
 
 xprototype.Refresh = function () {
@@ -327,7 +334,7 @@ xpropertyheader.Refresh = function () {
         text.innerText = this.text;
         label.appendChild(text);
 
-    } 
+    }
 
     this.ApplyProperties();
 };
@@ -376,7 +383,7 @@ xplore.Textbox = function (param) {
     this.onchange = param.onchange;
     this.bind = param.bind;
     this.readonly = param.readonly | false;
-    
+
     if (param.inline)
         this.classname.push("inline");
 
@@ -399,19 +406,19 @@ xtextbox.Refresh = function () {
 
         if (this.readonly) {
             let input = document.createElement("div");
-    
+
             if (this.value !== undefined)
                 input.innerHTML = this.value;
-    
+
             label.appendChild(input);
-    
+
         } else {
             let input = document.createElement("input");
             input.type = this.type;
-    
+
             if (this.value !== undefined)
                 input.value = this.value;
-    
+
             label.appendChild(input);
         }
 
@@ -432,24 +439,24 @@ xtextbox.Refresh = function () {
 
 xtextbox.Events = function () {
     if (!this.readonly) {
-    let input = this.object.querySelector("input");
-    let self = this;
+        let input = this.object.querySelector("input");
+        let self = this;
 
-    input.addEventListener('input', function () {
-        self.value = this.value;
+        input.addEventListener('input', function () {
+            self.value = this.value;
 
-        if (self.bind) {
-            self.bind.object[self.bind.name] = self.value;
+            if (self.bind) {
+                self.bind.object[self.bind.name] = self.value;
 
-            if (self.bind.refresh)
-                self.bind.object.Refresh();
-        }
+                if (self.bind.refresh)
+                    self.bind.object.Refresh();
+            }
 
-        if (self.onchange)
-            self.onchange(self);
+            if (self.onchange)
+                self.onchange(self);
 
-        self.Trigger("onchange");
-    });
+            self.Trigger("onchange");
+        });
     }
 };
 
@@ -469,7 +476,7 @@ xplore.NumericTextbox = function (param) {
     this.onchange = param.onchange;
     this.bind = param.bind;
     this.readonly = param.readonly | false;
-    
+
     if (param.inline)
         this.classname.push("inline");
 
@@ -492,19 +499,19 @@ xnumtextbox.Refresh = function () {
 
         if (this.readonly) {
             let input = document.createElement("div");
-    
+
             if (this.value !== undefined)
                 input.innerHTML = this.value;
-    
+
             label.appendChild(input);
-    
+
         } else {
             let input = document.createElement("input");
             input.type = "number";
-    
+
             if (this.value !== undefined)
                 input.value = this.value;
-    
+
             label.appendChild(input);
         }
 
@@ -564,7 +571,7 @@ xplore.TextArea = function (param) {
 
     if (param.inline)
         this.classname.push("inline");
-    
+
     this.readonly = param.readonly | false;
 
     if (this.bind)
@@ -705,7 +712,7 @@ xplore.Combobox = function (param) {
 
     if (param.inline)
         this.classname.push("inline");
-	
+
     this.readonly = param.readonly | false;
 
     if (this.bind)
@@ -1050,8 +1057,8 @@ xmenu.Events = function () {
         e.stopPropagation();
 
         if (self.onclick) {
-            if(self.parentmenu)
-            self.parentmenu.Collapse();
+            if (self.parentmenu)
+                self.parentmenu.Collapse();
             self.onclick(self);
         }
         else if (self.children.length) {
@@ -1059,8 +1066,8 @@ xmenu.Events = function () {
             xplore.activemenu = self;
 
         } else {
-            if(self.parentmenu)
-            self.parentmenu.Collapse();
+            if (self.parentmenu)
+                self.parentmenu.Collapse();
         }
     };
 
@@ -1382,6 +1389,8 @@ xgrid.Refresh = function () {
         this.children[i].Show(div);
     }
 };
+
+
 //Container
 
 xplore.Container = function (param) {
@@ -2016,8 +2025,14 @@ xform.Dispose = function () {
     xplore.ZINDEX -= 2;
     this.object.remove();
 
+    for (let child of this.children) {
+        child.Dispose();
+    }
+
     if (this.modal)
         this.background.Dispose();
+
+    this.Clean();
 };
 
 xform.Close = function () {
@@ -2668,6 +2683,9 @@ xtable.Events = function () {
     let down;
     let selectedclass = "table-cell-selected";
     let selectedrowclass = "table-row-selected";
+    let onedit;
+    let row;
+    let column;
 
     let headerrow = this.multiheader ? this.columns.length : 1;
 
@@ -2688,6 +2706,8 @@ xtable.Events = function () {
 
             //Remove input after losing focus
             if (input) {
+                self.data[row][column] = input.value;
+
                 cell.innerHTML = input.value;
                 input = undefined;
             }
@@ -2723,37 +2743,7 @@ xtable.Events = function () {
                     //Reset counter for the next double-click
                     counter = 0;
 
-                    let text = cell.innerText;
-
-                    //Replace text with input
-                    input = document.createElement("input");
-                    input.type = "text";
-                    input.value = text;
-
-                    //Check when ENTER key is pressed
-                    input.onkeydown = function (key) {
-                        if (key.key === "Enter") {
-                            //Remove input and put back the value
-                            cell.innerHTML = input.value;
-                        }
-                    };
-
-                    cell.innerHTML = "";
-                    cell.append(input);
-
-                    if (input.createTextRange) {
-                        let range = input.createTextRange();
-                        range.move('character', text.length);
-                        range.select();
-                    }
-                    else {
-                        if (input.selectionStart) {
-                            input.focus();
-                            input.setSelectionRange(text.length, text.length);
-                        }
-                        else
-                            input.focus();
-                    }
+                    EditCell(cell);
 
                 } else {
                     //Clear timer if already defined
@@ -2766,6 +2756,7 @@ xtable.Events = function () {
                         //Reset counter and timer
                         counter--;
                         timeout = undefined;
+                        onedit = false;
                     }, 250);
                 }
             }
@@ -2817,6 +2808,40 @@ xtable.Events = function () {
             }
         }
     };
+
+    // document.body.onkeydown = function (event) {
+    //     if (self.object && !onedit) {
+    //         EditCell(cell, event.key);
+    //     }
+    // };
+
+    function EditCell(cell, key) {
+        onedit = true;
+
+        let text = cell.innerText;
+
+        //Replace text with input
+        input = document.createElement("input");
+        input.type = "text";
+        input.value = key || text;
+
+        row = rowindexdown - headerrow;
+        column = cellindexdown - 1;
+
+        //Check when ENTER key is pressed
+        input.onkeydown = function (key) {
+            if (key.key === "Enter") {
+                //Remove input and put back the value
+                self.data[row][column] = input.value;
+                cell.innerHTML = input.value;
+                onedit = false;
+            }
+        };
+
+        cell.innerHTML = "";
+        cell.append(input);
+        input.focus();
+    }
 
     function ClearSelected() {
         for (let selectedcell of cells) {
@@ -2919,6 +2944,8 @@ xtable.Events = function () {
 xtable.Dispose = function () {
     this.style.remove();
     this.object.remove();
+
+    this.Clean();
 };
 
 

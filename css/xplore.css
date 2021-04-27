@@ -126,8 +126,8 @@ i.mdi {
 }
 
 .input.inline {
-    border-bottom: 1px solid var(--C800);
-    padding: 4px 16px;
+    border-bottom: 1px solid var(--C100);
+    padding: 8px 16px;
 }
 
 .input.inline > div, .input.inline label>div {
@@ -335,7 +335,6 @@ textarea {
 .form {
     background-color: #FFF;
     border: 1px solid #CCC;
-    box-shadow: 4px 4px 4px #CCC;
     color: #333;
     position: absolute;
     overflow: hidden;
@@ -393,7 +392,6 @@ textarea {
 }
 
 .form-footer {
-    background-color: var(--C900);
     bottom: 0;
     height: 42px;
     z-index: 1;
@@ -403,10 +401,6 @@ textarea {
     margin-right: 8px;
     width: 40px;
     text-align: center;
-}
-
-.form .input {
-    padding: 4px 0;
 }
 
 .split-container .form {
@@ -993,13 +987,12 @@ th:hover .header-tool {
     right: 0;
     top: 0;
     bottom: 0;
+    padding: 16px;
     overflow-y: auto;
 }
 
 .propertygrid-header {
-    border-bottom: 1px solid var(--C800);
-    border-top: 1px solid var(--C800);
-    background-color: var(--C900);
+    background-color: var(--C50);
     position: sticky;
     font-weight: bold;
     padding: 12px 16px;

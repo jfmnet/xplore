@@ -5,9 +5,9 @@ xplore.CANVASACTIONS = {
 };
 
 xplore.Canvas2DModel = function () {
-    this.keys = "";
+    this.key = "";
     this.list = [];
-    this.action = xplore.CANVASACTIONS.PAN;
+    this.action = xplore.CANVASACTIONS.SELECT;
 };
 
 xplore.Canvas2DModel.constructor = xplore.Canvas2DModel;
@@ -35,7 +35,7 @@ canvasmodel.Render = function (canvas) {
 //List
 
 canvasmodel.Select = function () {
-    this.action =  xplore.CANVASACTIONS.SELECT;
+    this.action = xplore.CANVASACTIONS.SELECT;
     delete this.draw;
 };
 
@@ -63,11 +63,17 @@ canvasmodel.Bounds = function () {
 //Events
 
 canvasmodel.KeyDown = function (canvas, event) {
-    this.keys += event.key;
+    this.key = event.key;
     this.HandleKeys(canvas);
 };
 
 canvasmodel.HandleKeys = function (canvas) {
+    switch (this.key) {
+        case "Escape":
+            this.Select();
+            canvas.Render();
+            break;
+    }
 };
 
 canvasmodel.KeyUp = function (event) {
@@ -135,9 +141,6 @@ canvasmodel.MouseMove = function (canvas, mouse, button) {
             break;
 
         case 2: //Middle Button
-            this.HandleMouseMoveMiddleButton(canvas, mouse);
-            break;
-
         case 3: //Right Button
             this.HandleMouseMoveRightButton(canvas, mouse);
             break;
@@ -181,15 +184,15 @@ canvasmodel.HandleMouseMoveNoButton = function (canvas, mouse) {
                 canvas.PrimitiveLine(x, 0, x, canvas.height, "#008", 1, [2, 2]);
                 canvas.PrimitiveLine(0, y, canvas.width, y, "#008", 1, [2, 2]);
 
-                let count = canvas.gridinterval.CountDecimals();
+                // let count = canvas.gridinterval.CountDecimals();
 
-                if (count > 10) {
-                    canvas.gridinterval = parseFloat(canvas.gridinterval.toFixed(10));
-                    count = canvas.gridinterval.CountDecimals();
-                }
+                // if (count > 10) {
+                //     canvas.gridinterval = parseFloat(canvas.gridinterval.toFixed(10));
+                //     count = canvas.gridinterval.CountDecimals();
+                // }
 
-                let textx = this.snappoint.x.toFixed(count);
-                let texty = this.snappoint.y.toFixed(count);
+                let textx = this.snappoint.x.toFixed(3);
+                let texty = this.snappoint.y.toFixed(3);
 
                 canvas.PrimitiveText(textx + ", " + texty, x + 10, y - 10, "normal 12px arial", "#FFF", 0, "left", "bottom");
             }
@@ -311,9 +314,11 @@ canvasmodel.Pan = function (canvas, mouse) {
 canvasmodel.Snap = function (canvas, mouse) {
     let point;
 
-    if (canvas.settings.snaptogrid) {
+    if (canvas.settings.snapongrid)
         point = this.SnapOnGrid(canvas, mouse);
-    }
+
+    if (canvas.settings.snaponusergrid)
+        point = this.SnapOnUserGrid(canvas, mouse, point);
 
     let snappoint = this.SnapOnPoint(canvas, mouse);
 
@@ -353,6 +358,31 @@ canvasmodel.SnapOnGrid = function (canvas, mouse) {
         x: xplore.Round(mouse.x, canvas.gridinterval),
         y: xplore.Round(mouse.y, canvas.gridinterval),
     }
+};
+
+canvasmodel.SnapOnUserGrid = function (canvas, mouse, point) {
+    point = point || {};
+
+    let x = point.x || mouse.x;
+    let y = point.y || mouse.y;
+    let interval = canvas.gridinterval;
+
+    for (let grid of canvas.gridx) {
+        if (Math.abs(grid - x) < interval) {
+            x = grid;
+            break;
+        }
+    }
+
+    for (let grid of canvas.gridy) {
+        if (Math.abs(grid - y) < interval) {
+            y = grid;
+            break;
+        }
+    }
+
+    if (x !== undefined && y !== undefined)
+        return { x: x, y: y };
 };
 
 canvasmodel.UpdatePoints = function () {

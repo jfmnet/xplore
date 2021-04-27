@@ -154,9 +154,9 @@ xplore.Canvas3DGraphics.UniformGridXY = function (param) {
     this.interval = param.interval || 1;
 };
 
-let xgrid = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.UniformGridXY);
+let xunigrid = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.UniformGridXY);
 
-xgrid.Generate = function () {
+xunigrid.Generate = function () {
     let points = [];
     let color = 0x222222;
 

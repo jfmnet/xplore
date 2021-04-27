@@ -53,9 +53,23 @@ function DemoCanvas() {
     let canvas = new xplore.Canvas2D({
         showtoolbar: true
     });
-    
+
+    canvas.gridx.push(0.05);
+    canvas.gridx.push(2.55);
+    canvas.gridx.push(5.15);
+
+    canvas.gridy.push(0.05);
+    canvas.gridy.push(2.55);
+    canvas.gridy.push(5.15);
+
     canvas.settings.rulerposition = 0;
+    canvas.settings.snapongrid = false;
+    //canvas.settings.showgrid = false;
+
     canvas.Show();
+    canvas.ZoomAll();
+
+    canvas.Draw(xplore.Canvas2DGraphics.Polygon);
 }
 
 function DemoCanvas3D() {
