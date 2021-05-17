@@ -999,3 +999,38 @@ th:hover .header-tool {
     top: 0;
     z-index: 1;
 }
+
+.grid {
+    display: flex;
+    flex-direction: row;
+}
+
+.grid div {
+    flex: 1;
+}
+
+.thumbnail-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    display: block;
+    padding: 16px;
+}
+
+.thumbnail {
+    border: 1px solid var(--C800);
+    display: inline-block;
+    height: 92px;
+    width: 72px;
+    margin: 8px 8px 8px 0px;
+    padding: 8px;
+}
+
+.thumbnail:hover {
+    background-color: var(--C800);
+}
+
+.thumbnail img {
+    margin-bottom: 8px;
+}

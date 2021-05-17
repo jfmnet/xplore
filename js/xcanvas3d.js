@@ -207,3 +207,12 @@ xcanvas3d.ZoomAll = function (noresize) {
     this.camera.updateProjectionMatrix();
     this.controls.update();
 };
+xcanvas3d.ZoomIn = function () {
+    this.control.dollyIn(1.1);
+    this.control.Refresh();
+};
+
+xcanvas3d.ZoomOut = function () {
+    this.control.dollyOut(1.1);
+    this.control.Refresh();
+};

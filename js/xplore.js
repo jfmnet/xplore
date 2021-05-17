@@ -1196,6 +1196,41 @@ xlistcontainer.RefreshChildren = function () {
         this.children[this.activelist].Highlight();
 };
 
+//Thumbnail container
+
+xplore.ThumbnailContainer = function (param) {
+    xplore.call(this, param, undefined, "thumbnail-container");
+
+    this.activelist = 0;
+};
+
+let xthumbnailcontainer = xplore.Initialize(xplore.ThumbnailContainer);
+
+
+//Thumbnail
+
+xplore.Thumbnail = function (param) {
+    xplore.call(this, param, undefined, "thumbnail");
+
+    this.activelist = 0;
+    this.icon = param.icon;
+};
+
+let xthumbnail = xplore.Initialize(xplore.Thumbnail);
+
+xthumbnail.Refresh = function () {
+    this.object.innerHTML = "";
+
+    let image = xplore.DisplayIcon(this.icon);
+    this.object.appendChild(image);
+
+    let text = document.createElement("div");
+    text.innerHTML = this.text;
+    this.object.appendChild(text);
+
+    this.Events();
+};
+
 
 //Scroll container
 

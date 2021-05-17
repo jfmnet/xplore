@@ -154,9 +154,9 @@ xplore.Canvas3DGraphics.UniformGridXY = function (param) {
     this.interval = param.interval || 1;
 };
 
-let xunigrid = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.UniformGridXY);
+let xuniformgrid = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.UniformGridXY);
 
-xunigrid.Generate = function () {
+xuniformgrid.Generate = function () {
     let points = [];
     let color = 0x222222;
 
@@ -307,7 +307,7 @@ xaxis.Generate = function (canvas) {
 };
 
 
-//Cylinder
+//ExtrudedSection
 
 xplore.Canvas3DGraphics.ExtrudedSection = function (param) {
     xplore.Canvas3DGraphics.call(this, param);
@@ -315,6 +315,7 @@ xplore.Canvas3DGraphics.ExtrudedSection = function (param) {
     this.section = param.section || {};
     this.start = param.start || {};
     this.end = param.end || {};
+    this.cut = param.cut;
 };
 
 let xextrude = xplore.Canvas3DGraphics.Initialize(xplore.Canvas3DGraphics.ExtrudedSection);

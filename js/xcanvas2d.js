@@ -36,7 +36,7 @@ xplore.Canvas2DSettings = function () {
         this.rulertext = "#888";
         this.rulerline = "#222";
         this.fontcolor = "#000";
-        this.gridline = "#00F";
+        this.gridline = "#880";
     };
 
     this.DarkTheme();
@@ -127,6 +127,7 @@ xplore.Canvas2D = function (param) {
 
     this.gridx = [];
     this.gridy = [];
+    this.lock = "";
 
     this.settings = new xplore.Canvas2DSettings();
     this.mouse = new xplore.Mouse();
@@ -242,7 +243,6 @@ xcanvas.RestoreBuffer = function () {
     if (!this.buffer)
         this.StoreBuffer();
 
-    this.context.imageSmoothingEnabled = false;
     this.context.drawImage(this.buffer, 0, 0);
 };
 
@@ -329,13 +329,13 @@ xcanvas.Render = function () {
     if (this.settings.showgrid)
         this.DrawGrid();
 
-    if (this.settings.showusergrid)
-        this.DrawUserGrid();
-
     this.model.Render(this);
 
     if (this.settings.showruler)
         this.DrawRuler();
+
+    if (this.settings.showusergrid)
+        this.DrawUserGrid();
 };
 
 xcanvas.DrawGrid = function () {
@@ -427,6 +427,7 @@ xcanvas.DrawGrid = function () {
 
 xcanvas.DrawUserGrid = function () {
     let counter = 0;
+    let coord = 7;
 
     this.SetTextProperties({
         ha: "center",
@@ -441,10 +442,10 @@ xcanvas.DrawUserGrid = function () {
             x2 = this.ToCoordX(this.gridx[i + 1]);
             xm = (x1 + x2) / 2;
 
-            this.PrimitiveRectangle(x1 - 10, this.rulersize, x2 - x1 + 20, 20, "#222", "transparent");
+            //this.PrimitiveRectangle(x1 - 10, this.rulersize, x2 - x1 + 20, 20, "#222", "transparent");
 
             this.SetFillColor("#FFF");
-            this.PrimitiveText_2((this.gridx[i + 1] - this.gridx[i]).toFixed(3), xm, this.rulersize + 10);
+            this.PrimitiveText_2((this.gridx[i + 1] - this.gridx[i]).toFixed(3), xm, this.rulersize - coord);
         }
     }
 
@@ -456,10 +457,10 @@ xcanvas.DrawUserGrid = function () {
             y2 = this.ToCoordY(this.gridy[i + 1]);
             ym = (y1 + y2) / 2;
 
-            this.PrimitiveRectangle(this.rulersize, y1 + 10, 20, y2 - y1 - 20, "#222", "transparent");
+            //this.PrimitiveRectangle(this.rulersize - 20, y1 + 10, 20, y2 - y1 - 20, "#222", "transparent");
 
             this.SetFillColor("#FFF");
-            this.PrimitiveText_2((this.gridy[i + 1] - this.gridy[i]).toFixed(3), this.rulersize + 10, ym, -Math.PI / 2);
+            this.PrimitiveText_2((this.gridy[i + 1] - this.gridy[i]).toFixed(3), this.rulersize - coord, ym, -Math.PI / 2);
         }
     }
 
@@ -473,7 +474,7 @@ xcanvas.DrawUserGrid = function () {
         x = this.ToCoordX(x);
         this.PrimitiveLine_2(x, 0, x, this.height, [2, 2]);
 
-        this.PrimitiveText_2(String.fromCharCode(65 + counter), x, this.rulersize + 10);
+        this.PrimitiveText_2(String.fromCharCode(65 + counter), x, this.rulersize - coord);
         counter++;
     }
 
@@ -483,7 +484,7 @@ xcanvas.DrawUserGrid = function () {
         y = this.ToCoordY(y);
         this.PrimitiveLine_2(0, y, this.width, y, [2, 2]);
 
-        this.PrimitiveText_2(counter, this.rulersize + 10, y);
+        this.PrimitiveText_2(counter, this.rulersize - coord, y);
         counter++;
     }
 };
@@ -858,8 +859,15 @@ xcanvas.SetProperties = function (properties) {
     if (properties.linecolor)
         this.context.strokeStyle = properties.linecolor;
 
-    if (properties.thickness)
-        this.context.lineWidth = properties.thickness;
+    if (properties.thickness) {
+        if (properties.scale)
+            this.context.lineWidth = properties.thickness * this.gridsize / (this.defaultgridsize * this.gridvalue.x);
+        else
+            this.context.lineWidth = properties.thickness;
+
+        if (this.context.lineWidth < 1)
+            this.context.lineWidth = 1;
+    }
 
     if (properties.fillcolor)
         this.context.fillStyle = properties.fillcolor;
@@ -1029,19 +1037,6 @@ xcanvas.SelectRectangle = function (x, y, w, h, linecolor) {
     this.context.restore();
 };
 
-xcanvas.UpdateProperties = function (properties) {
-    this.context.fillStyle = properties.fillcolor;
-    this.context.strokeStyle = properties.linecolor;
-
-    if (properties.scale)
-        this.context.lineWidth = properties.thickness * this.gridsize / (this.defaultgridsize * this.gridvalue.x);
-    else
-        this.context.lineWidth = properties.thickness;
-
-    if (this.context.lineWidth < 1)
-        this.context.lineWidth = 1;
-};
-
 xcanvas.DrawLine = function (x1, y1, x2, y2, properties) {
     x1 = this.ToCoordX(x1);
     y1 = this.ToCoordY(y1);
@@ -1082,7 +1077,7 @@ xcanvas.DrawCircle = function (x, y, r, properties) {
 
     let context = this.context;
 
-    this.UpdateProperties(properties);
+    this.SetProperties(properties);
 
     context.beginPath();
     context.arc(x, y, r, 0, Math.PI * 2, false);
@@ -1120,7 +1115,7 @@ xcanvas.DrawRectangle = function (x, y, w, h, properties) {
     x = this.ToCoordX(x) - w / 2;
     y = this.ToCoordY(y) - h / 2;
 
-    this.UpdateProperties(properties);
+    this.SetProperties(properties);
 
     if (properties.showfill)
         this.context.fillRect(x, y, w, h);
@@ -1149,11 +1144,11 @@ xcanvas.DrawRectangle_2 = function (x, y, w, h, showfill, showline) {
 xcanvas.DrawPolyline = function () {
 };
 
-xcanvas.DrawPolygon = function (points, properties) {
+xcanvas.DrawPolygon = function (points, properties, holes) {
     if (points.length !== 0) {
         let context = this.context;
 
-        this.UpdateProperties(properties);
+        this.SetProperties(properties);
 
         context.beginPath();
 
@@ -1171,6 +1166,39 @@ xcanvas.DrawPolygon = function (points, properties) {
 
         context.closePath();
 
+        //Holes
+
+        if (holes) {
+            for (let i = 0; i < holes.length; i++) {
+                switch (holes[i].type) {
+                    case "polygon":
+
+                        if (holes[i].points.length != 0) {
+                            x = this.ToCoordX(holes[i].points[0].x);
+                            y = this.ToCoordY(holes[i].points[0].y);
+                            context.moveTo(x, y);
+
+                            for (var j = 1; j < holes[i].points.length; j++) {
+                                x = this.ToCoordX(holes[i].points[j].x);
+                                y = this.ToCoordY(holes[i].points[j].y);
+                                context.lineTo(x, y);
+                            }
+
+                            context.closePath();
+                        }
+                        break;
+
+                    case "circle":
+                        x = this.ToCoordX(holes[i].x);
+                        y = this.ToCoordY(holes[i].y);
+                        r = this.ToCoordWidth(holes[i].r);
+
+                        context.moveTo(x + r, y);
+                        context.arc(x, y, r, 0, Math.PI * 2, true);
+                        break;
+                }
+            }
+        }
         if (properties.showfill)
             context.fill();
 
@@ -1454,7 +1482,22 @@ xcanvas.Events = function () {
     let start = 0;
 
     document.body.onkeydown = function (event) {
-        self.model.KeyDown(self, event);
+        if (self.drawgrid && event.key === "Escape") {
+            self.RestoreBuffer();
+            self.drawgrid = -1;
+        }
+        else {
+            if (!event.control && event.key === "x")
+                self.lock = "X";
+            else if (!event.control && event.key === "y")
+                self.lock = "Y";
+            else if (!event.control && event.key === "a")
+                self.lock = "A";
+            else if (!event.control && event.key === "u")
+                self.lock = "";
+
+            self.model.KeyDown(self, event);
+        }
     };
 
     document.body.onkeyup = function (event) {
@@ -1755,7 +1798,8 @@ xcanvas.MouseDown = function (x, y, button) {
     this.mouse.rawprevious.x = x;
     this.mouse.rawprevious.y = y;
 
-    this.model.MouseDown(this, this.mouse, button);
+    if (!this.drawgrid)
+        this.model.MouseDown(this, this.mouse, button);
 };
 
 xcanvas.MouseMove = function (x, y, button) {
@@ -1765,7 +1809,31 @@ xcanvas.MouseMove = function (x, y, button) {
     this.mouse.rawcurrent.x = x;
     this.mouse.rawcurrent.y = y;
 
+    if (button === 0) {
+        if (this.lock === "X") {
+            this.mouse.current.y = this.mouse.down.y;
+            this.mouse.rawcurrent.y = this.mouse.rawdown.y;
+
+        } else if (this.lock === "Y") {
+            this.mouse.current.x = this.mouse.down.x;
+            this.mouse.rawcurrent.x = this.mouse.rawdown.x;
+
+        } else if (this.lock === "A") {
+            if (Math.abs(this.mouse.down.x - this.mouse.current.x) > Math.abs(this.mouse.down.y - this.mouse.current.y)) {
+                this.mouse.current.y = this.mouse.down.y;
+                this.mouse.rawcurrent.y = this.mouse.rawdown.y;
+
+            } else {
+                this.mouse.current.x = this.mouse.down.x;
+                this.mouse.rawcurrent.x = this.mouse.rawdown.x;
+            }
+        }
+    }
+
     if (this.drawgrid === 1) {
+        if (this.settings.snapongrid)
+            x = this.ToCoordX(this.SnapOnGrid(this.mouse.current).x);
+
         this.RestoreBuffer();
         this.PrimitiveLine(x, 0, x, this.height, "#F80", 0.5, [4, 2]);
 
@@ -1789,30 +1857,43 @@ xcanvas.MouseUp = function (x, y, button) {
     this.mouse.current.y = this.ToPointY(y);
 
     if (this.drawgrid === 1) {
-        this.drawgrid = false;
-        this.gridx.push(this.mouse.current.x);
-        this.gridx.sort(function (a, b) {
-            if (a > b)
-                return 1;
-            else if (a < b)
-                return -1;
-            else
-                return 0;
-        });
-        this.Render();
+        this.drawgrid = 0;
+
+        if (x > this.rulersize) {
+            this.gridx.push(this.mouse.current.x);
+
+            this.gridx.sort(function (a, b) {
+                if (a > b)
+                    return 1;
+                else if (a < b)
+                    return -1;
+                else
+                    return 0;
+            });
+
+            this.Render();
+        }
 
     } else if (this.drawgrid === 2) {
-        this.drawgrid = false;
-        this.gridy.push(this.mouse.current.y);
-        this.gridy.sort(function (a, b) {
-            if (a > b)
-                return 1;
-            else if (a < b)
-                return -1;
-            else
-                return 0;
-        });
-        this.Render();
+        this.drawgrid = 0;
+
+        if (y > this.rulersize) {
+            this.gridy.push(this.mouse.current.y);
+
+            this.gridy.sort(function (a, b) {
+                if (a > b)
+                    return 1;
+                else if (a < b)
+                    return -1;
+                else
+                    return 0;
+            });
+
+            this.Render();
+        }
+
+    } else if (this.drawgrid === -1) {
+        this.drawgrid = 0;
 
     } else {
         this.model.MouseUp(this, this.mouse, button);
@@ -1893,4 +1974,11 @@ xcanvas.EditUserGrid = function (axis) {
     }));
 
     form.Show();
+};
+
+xcanvas.SnapOnGrid = function (mouse) {
+    return {
+        x: xplore.Round(mouse.x, this.gridinterval),
+        y: xplore.Round(mouse.y, this.gridinterval),
+    }
 };

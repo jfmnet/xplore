@@ -22,6 +22,10 @@ canvasmodel.Draw = function (drawobject) {
     this.downcount = 0;
 };
 
+canvasmodel.EndDrawing = function () {
+    this.action = xplore.CANVASACTIONS.SELECT;
+    this.downcount = 0;
+};
 
 //Render
 
@@ -41,6 +45,7 @@ canvasmodel.Select = function () {
 
 canvasmodel.ClearSelection = function () {
 };
+
 canvasmodel.Add = function (object) {
     this.list.push(object);
 };
@@ -181,15 +186,12 @@ canvasmodel.HandleMouseMoveNoButton = function (canvas, mouse) {
                 let x = canvas.ToCoordX(this.snappoint.x);
                 let y = canvas.ToCoordY(this.snappoint.y);
 
+                if (canvas.settings.showruler && (x < canvas.rulersize || y < canvas.rulersize)) {
+                    return;
+                }
+
                 canvas.PrimitiveLine(x, 0, x, canvas.height, "#008", 1, [2, 2]);
                 canvas.PrimitiveLine(0, y, canvas.width, y, "#008", 1, [2, 2]);
-
-                // let count = canvas.gridinterval.CountDecimals();
-
-                // if (count > 10) {
-                //     canvas.gridinterval = parseFloat(canvas.gridinterval.toFixed(10));
-                //     count = canvas.gridinterval.CountDecimals();
-                // }
 
                 let textx = this.snappoint.x.toFixed(3);
                 let texty = this.snappoint.y.toFixed(3);
@@ -200,7 +202,7 @@ canvasmodel.HandleMouseMoveNoButton = function (canvas, mouse) {
             if (this.draw) {
                 this.draw.Update(point);
                 canvas.SetProperties(this.draw.properties);
-                this.draw.Render(canvas);
+                this.draw.Render(canvas, true);
             }
             break;
     }
@@ -315,7 +317,7 @@ canvasmodel.Snap = function (canvas, mouse) {
     let point;
 
     if (canvas.settings.snapongrid)
-        point = this.SnapOnGrid(canvas, mouse);
+        point = canvas.SnapOnGrid(mouse);
 
     if (canvas.settings.snaponusergrid)
         point = this.SnapOnUserGrid(canvas, mouse, point);
@@ -351,13 +353,6 @@ canvasmodel.Snap = function (canvas, mouse) {
 
     this.snappoint = point;
     return point;
-};
-
-canvasmodel.SnapOnGrid = function (canvas, mouse) {
-    return {
-        x: xplore.Round(mouse.x, canvas.gridinterval),
-        y: xplore.Round(mouse.y, canvas.gridinterval),
-    }
 };
 
 canvasmodel.SnapOnUserGrid = function (canvas, mouse, point) {
