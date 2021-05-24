@@ -6,6 +6,7 @@ xplore.CANVASACTIONS = {
 
 xplore.Canvas2DModel = function () {
     this.key = "";
+    this.keys = "";
     this.list = [];
     this.action = xplore.CANVASACTIONS.SELECT;
 };
@@ -69,6 +70,10 @@ canvasmodel.Bounds = function () {
 
 canvasmodel.KeyDown = function (canvas, event) {
     this.key = event.key;
+
+    if (event.key !== "Enter")
+        this.keys += event.key;
+
     this.HandleKeys(canvas);
 };
 
@@ -77,6 +82,41 @@ canvasmodel.HandleKeys = function (canvas) {
         case "Escape":
             this.Select();
             canvas.Render();
+            return;
+    }
+
+    switch (this.action) {
+        case xplore.CANVASACTIONS.DRAW:
+            if (this.draw) {
+                if (this.key === "Enter") {
+                    let length = parseFloat(this.keys);
+
+                    let point1 = this.draw.points[this.draw.points.length - 2];
+                    let point2 = this.draw.points[this.draw.points.length - 1];
+
+                    let vector1 = new Vector(point1.x, point1.y, 0);
+                    let vector2 = new Vector(point2.x, point2.y, 0);
+
+                    let normal = vector2.subtract(vector1).normalize();
+                    let point = normal.multiply(length);
+                    point = vector1.add(point);
+
+                    this.draw.Update({ x: point.x, y: point.y });
+                    this.draw.Add(point2);
+
+                    canvas.UpdateMouseDown(point.x, point.y);
+
+                    canvas.RestoreBuffer();
+                    this.draw.Render(canvas, true);
+
+                    this.keys = "";
+
+                } else if (this.key === "." || !Number.isNaN(this.key)) {
+                    canvas.RestoreBuffer();
+                    canvas.PrimitiveText_2(this.keys, canvas.width / 2, canvas.height / 2);
+                    this.draw.Render(canvas, true);
+                } 
+            }
             break;
     }
 };
@@ -177,6 +217,10 @@ canvasmodel.MouseWheel = function (canvas, mouse, button) {
 canvasmodel.HandleMouseMoveNoButton = function (canvas, mouse) {
     switch (this.action) {
         case xplore.CANVASACTIONS.DRAW:
+            //Snap on key        
+            if (this.draw)
+                canvas.SnapOnKey(mouse);
+
             let point = this.Snap(canvas, mouse.current);
 
             canvas.RestoreBuffer();
@@ -201,9 +245,9 @@ canvasmodel.HandleMouseMoveNoButton = function (canvas, mouse) {
 
             if (this.draw) {
                 this.draw.Update(point);
-                canvas.SetProperties(this.draw.properties);
                 this.draw.Render(canvas, true);
             }
+            
             break;
     }
 };

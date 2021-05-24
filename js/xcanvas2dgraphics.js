@@ -109,12 +109,21 @@ xplore.Canvas2DGraphics.DimensionLine = function (x1, y1, x2, y2, text, offset) 
 
     this.points = [
         { x: x1, y: y1 },
+        { x: x1, y: y1 + this.offset * 1.1 },
+        { x: x1 + length, y: y1 + this.offset * 1.1 },
+        { x: x1 + length, y: y1 },
         { x: x1, y: y1 + this.offset },
         { x: x1 + length, y: y1 + this.offset },
-        { x: x1 + length, y: y1 },
     ];
 
     this.Rotate(angle, x1, y1);
+
+    this.arrow = new xplore.Canvas2DGraphics.Arrow(this.points[4].x, this.points[4].y, this.points[5].x, this.points[5].y);
+
+    if (!this.text)
+        this.text = length.toFixed(3);
+
+    this.caption = new xplore.Canvas2DGraphics.Text(this.text, (this.points[4].x + this.points[5].x) / 2, (this.points[4].y + this.points[5].y) / 2);
 };
 
 xplore.Canvas2DGraphics.DimensionLine.prototype = Object.create(xplore.Canvas2DGraphics.prototype);
@@ -123,9 +132,22 @@ xplore.Canvas2DGraphics.DimensionLine.constructor = xplore.Canvas2DGraphics.Dime
 let xdimension = xplore.Canvas2DGraphics.DimensionLine.prototype;
 
 xdimension.Render = function (canvas) {
+    canvas.SetProperties({
+        fillcolor: "#880",
+        linecolor: "#880",
+        thickness: 1
+    });
+
+    canvas.SetTextProperties({
+        font: "13px Arial"
+    });
+
     canvas.DrawLine_2(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y);
-    canvas.DrawLine_2(this.points[1].x, this.points[1].y, this.points[2].x, this.points[2].y);
+    canvas.DrawLine_2(this.points[4].x, this.points[4].y, this.points[5].x, this.points[5].y);
     canvas.DrawLine_2(this.points[2].x, this.points[2].y, this.points[3].x, this.points[3].y);
+
+    this.arrow.Render(canvas);
+    this.caption.Render(canvas);
 };
 
 
@@ -136,7 +158,7 @@ xplore.Canvas2DGraphics.Arrow = function (x1, y1, x2, y2, properties) {
     xplore.Canvas2DGraphics.call(this);
 
     properties = properties || {
-        size: 25,
+        size: 10,
         position: 2,
         fixedsize: true
     };
@@ -239,6 +261,25 @@ arrow.Render = function (canvas) {
     }
 };
 
+
+//Text
+xplore.Canvas2DGraphics.Text = function (text, x, y, a, properties) {
+    xplore.Canvas2DGraphics.call(this);
+
+    this.text = text;
+    this.x = x;
+    this.y = y;
+    this.a = a;
+};
+
+xplore.Canvas2DGraphics.Text.prototype = Object.create(xplore.Canvas2DGraphics.prototype);
+xplore.Canvas2DGraphics.Text.constructor = xplore.Canvas2DGraphics.Text;
+
+let xtext = xplore.Canvas2DGraphics.Text.prototype;
+
+xtext.Render = function (canvas) {
+    canvas.DrawText(this.text, this.x, this.y);
+};
 
 //Line
 
@@ -358,7 +399,8 @@ xpolygon.Render = function (canvas, ondraw) {
         let point1 = this.points[this.points.length - 2];
         let point2 = this.points[this.points.length - 1];
 
-        let dimension = new xplore.Canvas2DGraphics.DimensionLine(point1.x, point1.y, point2.x, point2.y, "2.25", 2);
+        let size = canvas.ToPointWidth(50);
+        let dimension = new xplore.Canvas2DGraphics.DimensionLine(point1.x, point1.y, point2.x, point2.y, undefined, size);
         dimension.Render(canvas);
     }
 };

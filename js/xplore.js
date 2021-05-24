@@ -106,13 +106,14 @@ xprototype.Show = function (parent) {
     if (this.Initialize)
         this.Initialize();
 
-    let fragment = document.createDocumentFragment();
-    fragment.appendChild(this.object);
+    // let fragment = document.createDocumentFragment();
+    // fragment.appendChild(this.object);
+    this.parent.appendChild(this.object);
 
     this.Refresh();
     this.ApplyProperties();
 
-    this.parent.appendChild(fragment);
+    //this.parent.appendChild(this.object);
 
     if (this.Load)
         this.Load();
@@ -339,6 +340,7 @@ xpropertyheader.Refresh = function () {
     this.ApplyProperties();
 };
 
+
 //Button
 
 xplore.Button = function (param) {
@@ -364,7 +366,6 @@ xbutton.Refresh = function () {
     //Bind events
     this.Events();
 };
-
 
 //Textbox
 

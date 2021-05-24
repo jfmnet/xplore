@@ -4,13 +4,15 @@ xplore.main = function () {
     // let button = new xplore.Button({
     //     text: "Open",
     //     onclick: function () {
-    //         ReadFrame3DD();
+    //         //ReadFrame3DD();
     //     }
     // });
 
     // button.Show();
     // let view = new mainview();
     // view.Show();
+
+    //DemoTable();
 };
 
 //DemoCanvas3D();

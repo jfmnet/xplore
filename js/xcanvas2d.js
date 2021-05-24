@@ -1253,13 +1253,13 @@ xcanvas.DrawText = function (text, x, y, font, color, a, ha, va) {
         this.context.fillStyle = color;
         this.context.font = font;
 
-        this.context.fillText(text, ax, ay);
+        this.context.fillText(text, x, y);
 
     } else {
         this.context.save();
         this.context.fillStyle = color;
         this.context.font = font;
-        this.context.translate(ax, ay);
+        this.context.translate(x, y);
         this.context.rotate(a);
         this.context.fillText(text, 0, 0);
         this.context.restore();
@@ -1809,27 +1809,6 @@ xcanvas.MouseMove = function (x, y, button) {
     this.mouse.rawcurrent.x = x;
     this.mouse.rawcurrent.y = y;
 
-    if (button === 0) {
-        if (this.lock === "X") {
-            this.mouse.current.y = this.mouse.down.y;
-            this.mouse.rawcurrent.y = this.mouse.rawdown.y;
-
-        } else if (this.lock === "Y") {
-            this.mouse.current.x = this.mouse.down.x;
-            this.mouse.rawcurrent.x = this.mouse.rawdown.x;
-
-        } else if (this.lock === "A") {
-            if (Math.abs(this.mouse.down.x - this.mouse.current.x) > Math.abs(this.mouse.down.y - this.mouse.current.y)) {
-                this.mouse.current.y = this.mouse.down.y;
-                this.mouse.rawcurrent.y = this.mouse.rawdown.y;
-
-            } else {
-                this.mouse.current.x = this.mouse.down.x;
-                this.mouse.rawcurrent.x = this.mouse.rawdown.x;
-            }
-        }
-    }
-
     if (this.drawgrid === 1) {
         if (this.settings.snapongrid)
             x = this.ToCoordX(this.SnapOnGrid(this.mouse.current).x);
@@ -1915,6 +1894,11 @@ xcanvas.MouseWheel = function (x, y, delta) {
     }
 };
 
+xcanvas.UpdateMouseDown = function (x, y) {
+    this.mouse.down.x = x;
+    this.mouse.down.y = y;
+};
+
 
 //Settings
 
@@ -1980,5 +1964,26 @@ xcanvas.SnapOnGrid = function (mouse) {
     return {
         x: xplore.Round(mouse.x, this.gridinterval),
         y: xplore.Round(mouse.y, this.gridinterval),
+    }
+};
+
+xcanvas.SnapOnKey = function (mouse) {
+    if (this.lock === "X") {
+        mouse.current.y = mouse.down.y;
+        mouse.rawcurrent.y = mouse.rawdown.y;
+
+    } else if (this.lock === "Y") {
+        mouse.current.x = mouse.down.x;
+        mouse.rawcurrent.x = mouse.rawdown.x;
+
+    } else if (this.lock === "A") {
+        if (Math.abs(mouse.down.x - mouse.current.x) > Math.abs(mouse.down.y - mouse.current.y)) {
+            mouse.current.y = mouse.down.y;
+            mouse.rawcurrent.y = mouse.rawdown.y;
+
+        } else {
+            mouse.current.x = mouse.down.x;
+            mouse.rawcurrent.x = mouse.rawdown.x;
+        }
     }
 };
