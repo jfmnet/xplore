@@ -352,6 +352,9 @@ let xbutton = xplore.Initialize(xplore.Button);
 xbutton.Refresh = function () {
     this.object.innerHTML = "";
 
+    if (this.text)
+        this.object.classList.add("has-text");
+
     //Show icon
     if (this.icon)
         this.object.appendChild(xplore.DisplayIcon(this.icon));
@@ -465,7 +468,7 @@ xtextbox.Events = function () {
 //Numeric Textbox
 
 xplore.NumericTextbox = function (param) {
-    xplore.call(this, param, undefined, ["input", "textbox numeric"]);
+    xplore.call(this, param, undefined, ["input", "textbox", "numeric"]);
 
     param = param || {};
 
@@ -1958,6 +1961,9 @@ xform.RefreshHeader = function () {
 
     this.header.innerHTML = "";
 
+    if (this.icon)
+        this.header.appendChild(xplore.DisplayIcon(this.icon));
+
     let text = document.createElement("div");
     text.innerHTML = this.text;
     text.classList.add("text");
@@ -2337,7 +2343,10 @@ xplore.Table = function (param) {
     this.sort = param.sort || false;
     this.showfilter = param.showfilter || false;
     this.showsearch = param.showsearch || false;
+    this.showfooter = param.showfooter || false;
     this.filters = param.showsearch || {};
+
+    this.onchange = param.onchange;
 };
 
 let xtable = xplore.Initialize(xplore.Table);
@@ -2345,6 +2354,8 @@ let xtable = xplore.Initialize(xplore.Table);
 xtable.id = 0;
 
 xtable.Refresh = function () {
+    this.object.innerHTML = "";
+
     // Table
     this.table = document.createElement("table");
     this.object.appendChild(this.table);
@@ -2362,12 +2373,17 @@ xtable.Refresh = function () {
     this.RefreshBody();
 
     //Footer
-    this.footer = document.createElement("tfoot");
-    this.footer.classList.add("table-footer");
-    this.table.appendChild(this.footer);
-    this.RefreshFooter();
+    if (this.showfooter) {
+        this.footer = document.createElement("tfoot");
+        this.footer.classList.add("table-footer");
+        this.table.appendChild(this.footer);
+        this.RefreshFooter();
+    }
 
     //Table style
+    if (this.style)
+        this.style.remove();
+
     this.style = document.createElement("style");
     document.body.appendChild(this.style);
 
@@ -2868,7 +2884,13 @@ xtable.Events = function () {
         input.onkeydown = function (key) {
             if (key.key === "Enter") {
                 //Remove input and put back the value
-                self.data[row][column] = input.value;
+                if (self.data[row][column] !== input.value) {
+                    self.data[row][column] = input.value;
+                    
+                    if (self.onchange)
+                        self.onchange(row, column, input.value);
+                }
+
                 cell.innerHTML = input.value;
                 onedit = false;
             }
@@ -3315,10 +3337,11 @@ xplore.Post = function (url, data, resolve, reject) {
 xplore.Clone = function (object) {
     return JSON.parse(JSON.stringify(object));
 };
+
 Number.prototype.CountDecimals = function () {
     if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
     return this.toString().split(".")[1].length || 0;
-}
+};
 
 xplore.events = {};
 xplore.keydowns = [];
