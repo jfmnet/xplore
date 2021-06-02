@@ -6,7 +6,7 @@ xplore.Canvas3D = function (param) {
     this.aspect = window.innerWidth / window.innerHeight;
     this.cameratype = 0;    //0 - Perspective; 1 - Orthographic
     this.orthosize = 1000;
-    this.backcolor = 0x000000;
+    this.backcolor = "#0b0e10";
     this.showtoolbar = param.showtoolbar;
 
     this.closedspline = new THREE.CatmullRomCurve3();
@@ -123,6 +123,7 @@ xcanvas3d.ShowToolbar = function () {
         toolbar.Show(this.object);
     }
 };
+
 //Resize
 
 xcanvas3d.Resize = function () {  

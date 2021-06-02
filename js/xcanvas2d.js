@@ -27,14 +27,14 @@ xplore.Canvas2DSettings = function () {
     };
 
     this.DarkTheme = function () {
-        this.background = "#000";
-        this.axis = "#333";
-        this.major = "#222";
-        this.minor = "#111";
-        this.ruler = "#111";
+        this.background = "#0b0e10";
+        this.axis = "#2d3b42";
+        this.major = "#1f292e";
+        this.minor = "#11171a";
+        this.ruler = "#182024";
         this.rulerposition = 1;     //0 - Outer; 1 - At (0, 0)
         this.rulertext = "#888";
-        this.rulerline = "#222";
+        this.rulerline = "#2d3b42";
         this.fontcolor = "#000";
         this.gridline = "#880";
     };

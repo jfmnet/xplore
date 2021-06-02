@@ -1,0 +1,32 @@
+:root {
+    --C50: #ECEFF1;
+    --C100: #CFD8DC;
+    --C200: #B0BEC5;
+    --C300: #90A4AE;
+    --C400: #78909C;
+    --C500: #607D8B;
+    --C600: #546E7A;
+    --C700: #455A64;
+    --C800: #37474F;
+    --C900: #263238;
+    --C1000: #182024;
+}
+
+.wizard-form {
+    box-shadow: none;
+}
+
+.wizard-form .thumbnail-container {
+    position: relative;
+    padding: 0;
+}
+
+.wizard-form .thumbnail {
+    margin-bottom: 0;
+    width: 98px;
+}
+
+.wizard-form .table {
+    position: relative;
+    overflow-x: hidden;
+}

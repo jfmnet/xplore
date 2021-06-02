@@ -9,6 +9,7 @@
     --C700: #455A64;
     --C800: #37474F;
     --C900: #263238;
+    --C1000: #182024;
 }
 
 body {
@@ -62,7 +63,7 @@ i.mdi {
 
 .button {
     background-color: #1976D2;
-    border-radius: 24px;
+    border-radius: 4px;
     color: #FFF;
     cursor: pointer;
     align-items: center;
@@ -101,6 +102,10 @@ i.mdi {
     position: relative;
 }
 
+.input:hover {
+    background-color: var(--C800);
+}
+
 .input input, .input select {
     border: 1px solid #CCC;
     background-color: #FFF;
@@ -126,7 +131,7 @@ i.mdi {
 }
 
 .input.inline {
-    border-bottom: 1px solid var(--C100);
+    border-bottom: 1px solid var(--C800);
     padding: 8px 16px;
 }
 
@@ -268,7 +273,7 @@ textarea {
 }
 
 .view {
-    background-color: #FFF;
+    background-color: var(--C900);
     position: absolute;
     left: 0;
     right: 0;
@@ -290,22 +295,18 @@ textarea {
 
 .view-header {
     align-items: center;
-    background-color: var(--C50);
-    box-shadow: 0 0 4px var(--C500);
-    color: var(--C900);
+    background-color: var(--C900);
+    box-shadow: 0 0 4px #000;
+    color: var(--C50);
     display: flex;
-    font-size: 24px;
+    font-size: 20px;
     height: 52px;
     top: 0;
     z-index: 10;
 }
 
 .view-header i {
-    color: var(--C900);
-}
-
-.view-header .text {
-    font-weight: bold;
+    color: var(--C50);
 }
 
 .view-header .buttons {
@@ -333,9 +334,9 @@ textarea {
 }
 
 .form {
-    background-color: #FFF;
-    border: 1px solid #CCC;
-    color: #333;
+    background-color: var(--C900);
+    box-shadow: 0 0 16px #111;
+    color: var(--C50);
     position: absolute;
     overflow: hidden;
     transform: translateZ(0);
@@ -359,6 +360,11 @@ textarea {
     display: flex;
     height: 42px;
     top: 0;
+}
+
+.form-header > .icon {
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 .form-header .text {
@@ -385,6 +391,11 @@ textarea {
 .form-body {
     top: 43px;
     bottom: 43px;
+    padding: 16px;
+}
+
+.form.no-header .form-body {
+    top: 0;
 }
 
 .form.no-footer .form-body {
@@ -413,7 +424,8 @@ textarea {
 }
 
 .split-container .form .form-header {
-    background-color: #27282B;
+    background-color: var(--C900);
+    color: var(--C50);
 }
 
 .split-container .form .form-header .text {
@@ -493,7 +505,7 @@ textarea {
 }
 
 .menu:hover {
-    background-color: #27282B;
+    background-color: var(--C800);
 }
 
 .menu>div:nth-child(1) {
@@ -591,6 +603,7 @@ textarea {
 }
 
 .tab, .tab-header, .tab-body, .tab-body>div {
+    background-color: var(--C900);
     position: absolute;
     left: 0;
     right: 0;
@@ -599,10 +612,10 @@ textarea {
 }
 
 .tab-body>div {
-    background-color: #FFF;
+    background-color: var(--C900);
 }
 
-.tab .button>i {
+.tab .button.has-text>i {
     margin-right: 16px;
 }
 
@@ -656,10 +669,11 @@ textarea {
 }
 
 .tab-header .button {
-    background-color: #FFF;
+    background-color: var(--C900);
     border-radius: 0;
-    color: #666;
-    padding: 0 8px;
+    border: none;
+    color: var(--C200);
+    padding: 0 16px 0 8px;
 }
 
 .tab-header.full>div {
@@ -668,11 +682,9 @@ textarea {
 }
 
 .tab-header>div.selected {
-    background-color: #EEE;
-    border-left: 1px solid #CCC;
-    border-right: 1px solid #CCC;
-    border-bottom: 1px solid #EEE;
-    color: #000;
+    background-color: var(--C1000);
+    border: none;
+    color: var(--C50);
     flex-basis: 0;
     flex-grow: 1;
     z-index: 1;
@@ -688,7 +700,7 @@ textarea {
 
 .tab-body {
     background-color: #EEE;
-    top: 34px;
+    top: 32px;
 }
 
 
@@ -715,7 +727,7 @@ canvas {
     border-radius: 8px 0 0 8px;
     display: block;
     position: absolute;
-    top: 32px;
+    top: 4px;
     right: 0;
 }
 
@@ -814,8 +826,7 @@ table {
 
 td, th {
     white-space: nowrap;
-    /* box-shadow: 0 0 0 0.5px #CCC; */
-    border: 1px solid #CCC;
+    border: 1px solid var(--C700);
     padding: 4px 0;
     text-align: center;
     position: relative;
@@ -823,27 +834,27 @@ td, th {
 
 th {
     border: none;
-    box-shadow: 0 0 0 1px #CCC;
+    box-shadow: 0 0 0 1px var(--C700);
     height: 27px;
     padding: 0;
 }
 
 tr.row-0 th {
-    background-color: var(--C100);
+    background-color: var(--C800);
     position: sticky;
     top: 0;
     z-index: 2;
 }
 
 tr.row-1 th {
-    background-color: var(--C100);
+    background-color: var(--C800);
     position: sticky;
     top: 27px;
     z-index: 2;
 }
 
 tr.row-2 th {
-    background-color: var(--C100);
+    background-color: var(--C800);
     position: sticky;
     top: 55px;
     z-index: 2;
@@ -851,7 +862,7 @@ tr.row-2 th {
 
 tr th:first-of-type {
     border: none;
-    background-color: var(--C100);
+    background-color: var(--C800);
     left: 0;
     z-index: 10;
 }
@@ -874,10 +885,10 @@ th.th-search-cell {
 }
 
 tbody tr td:first-of-type {
-    background-color: var(--C100);
+    background-color: var(--C800);
     border: none;
-    box-shadow: 0 0 0 1px #CCC;
-    color: var(--C900);
+    box-shadow: 0 0 0 1px var(--C700);
+    color: var(--C100);
     position: sticky;
     left: 0;
     min-width: 47px;
@@ -889,7 +900,7 @@ tbody tr td:first-of-type {
 .table-fixed-column {
     background-color: #EEE;
     border: none;
-    box-shadow: 0 0 0 1px #CCC;
+    box-shadow: 0 0 0 1px var(--C700);
     z-index: 3;
 }
 
@@ -898,14 +909,16 @@ tr th.table-fixed-column {
 }
 
 td input {
-    background-color: #FFC;
+    background-color: var(--C100);
     border: none;
     outline: none;
+    margin: -4px;
+    padding: 4px;
     width: calc(100% - 8px);
 }
 
 td.table-cell-selected, .table-selected-bottom, .table-selected-top, .table-selected-left, .table-selected-right {
-    background-color: #FFC;
+    background-color: var(--C800);
 }
 
 .table-row-selected {
@@ -947,18 +960,17 @@ th:hover .header-tool {
 
 .tree {
     background-color: var(--C900);
-    box-shadow: inset 0 0 4px #000;
     position: absolute;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-    overflow-y: scroll;
 }
 
 .tree-header {
-    border-bottom: 1px solid var(--C800);
+    border-bottom: 1px solid var(--C700);
     background-color: var(--C900);
+    color: var(--C50);
     font-weight: bold;
     margin-bottom: 4px;
     padding: 12px 16px;
@@ -982,17 +994,20 @@ th:hover .header-tool {
 }
 
 .propertygrid {
+    background: var(--C900);
     position: absolute;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-    padding: 16px;
     overflow-y: auto;
 }
 
 .propertygrid-header {
-    background-color: var(--C50);
+    background: var(--C900);
+    border-bottom: 1px solid var(--C700);
+    border-top: 1px solid var(--C800);
+    color: var(--C50);
     position: sticky;
     font-weight: bold;
     padding: 12px 16px;
@@ -1015,7 +1030,7 @@ th:hover .header-tool {
     right: 0;
     top: 0;
     display: block;
-    padding: 16px;
+    padding: 16px 0 16px 16px;
 }
 
 .thumbnail {

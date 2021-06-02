@@ -71,9 +71,7 @@ function DemoCanvas() {
     canvas.Show();
     canvas.ZoomAll();
 
-    canvas.Draw(xplore.Canvas2DGraphics.Polygon);
-
-    //canvas.Add(new xplore.Canvas2DGraphics.Arrow(1, 2, 3, 5));
+    canvas.Add(new xplore.Canvas2DGraphics.Girder(54, 8, 6, 0, 8, 9, 0, 20, 26, 0, 0, 8, 8));
     canvas.ZoomAll();
 }
 

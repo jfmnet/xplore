@@ -14,8 +14,8 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "OpenFAST",
-            "url": "http://localhost:5502/openfast.html",
+            "name": "jfmatrix",
+            "url": "http://localhost:5502/jfmatrix.html",
             "webRoot": "${workspaceFolder}"
         }
     ]

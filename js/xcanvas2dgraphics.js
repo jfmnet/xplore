@@ -864,3 +864,65 @@ xusection.Refresh = function () {
         { x: x - w / 2, y: y - h / 2 + tfb }, //12
     ];
 };
+
+
+//Girder
+
+xplore.Canvas2DGraphics.Girder = function (d1, d2, d3, d4, d5, d6, d7, b1, b2, b3, b4, t1, t2) {
+    xplore.Canvas2DGraphics.call(this);
+
+    this.d1 = d1;
+    this.d2 = d2;
+    this.d3 = d3;
+    this.d4 = d4;
+    this.d5 = d5;
+    this.d6 = d6;
+    this.d7 = d7;
+    this.b1 = b1;
+    this.b2 = b2;
+    this.b3 = b3;
+    this.b4 = b4;
+    this.t1 = t1;
+    this.t2 = t2;
+    this.points;
+
+    this.Refresh();
+};
+
+xplore.Canvas2DGraphics.Girder.prototype = Object.create(xplore.Canvas2DGraphics.prototype);
+xplore.Canvas2DGraphics.Girder.constructor = xplore.Canvas2DGraphics.Girder;
+
+let xgirdersection = xplore.Canvas2DGraphics.Girder.prototype;
+
+xgirdersection.Render = function (canvas) {
+    canvas.DrawPolygon(this.points, this.Property());
+};
+
+xgirdersection.Refresh = function () {
+    let y = -this.d1 / 2;
+
+    let b5 = (this.b2 - this.t2 - this.b4 * 2) / 2;
+    let b6 = (this.b1 - this.t1 - this.b3 * 2) / 2;
+    let d8 = this.d1 - this.d2 - this.d3 - this.d4 - this.d5 - this.d6 - this.d7;
+    let t3 = (this.t2 - this.t1) / 2;
+
+    this.points = [
+        { x: -this.b2 / 2, y: y },
+        { x: -this.b2 / 2, y: y + this.d5 },
+        { x: -this.b2 / 2 + b5, y: y + this.d5 + this.d6 },
+        { x: -this.t2 / 2, y: y + this.d5 + this.d6 + this.d7 },
+        { x: -this.t1 / 2, y: y + this.d5 + this.d6 + this.d7 + d8 },
+        { x: -this.t2 / 2 - this.b3, y: this.d1 - this.d2 - this.d3 },
+        { x: -this.b1 / 2, y: this.d1 - this.d2 },
+        { x: -this.b1 / 2, y: this.d1 },
+
+        { x: this.b1 / 2, y: this.d1 },
+        { x: this.b1 / 2, y: this.d1 - this.d2 },
+        { x: this.t2 / 2 + this.b3, y: this.d1 - this.d2 - this.d3 },
+        { x: this.t1 / 2, y: y + this.d5 + this.d6 + this.d7 + d8 },
+        { x: this.t2 / 2, y: y + this.d5 + this.d6 + this.d7 },
+        { x: this.b2 / 2 - b5, y: y + this.d5 + this.d6 },
+        { x: this.b2 / 2, y: y + this.d5 },
+        { x: this.b2 / 2, y: y },
+    ];
+};
