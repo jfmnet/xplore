@@ -19,6 +19,7 @@
 .wizard-form .thumbnail-container {
     position: relative;
     padding: 0;
+    margin-bottom: 32px;
 }
 
 .wizard-form .thumbnail {
@@ -27,6 +28,21 @@
 }
 
 .wizard-form .table {
+    border: none;
     position: relative;
     overflow-x: hidden;
+    width: 100%;
+}
+
+.wizard-form table {
+    width: 100%;
+}
+
+.wizard-form .header {
+    font-size: 14px;
+    padding: 8px 0;
+}
+
+.wizard-form .form-body {
+    padding: 8px;
 }

@@ -22,13 +22,16 @@ xmodel.InitializeMesh = function () {
         nodes: new structuregraphics.Nodes(),
         members: new structuregraphics.Members(),
         supports: new structuregraphics.Supports(),
-        nodalloads: [],
+        nodalloads: new structuregraphics.NodalLoads(),
         memberloads: [],
         dimensions: new structuregraphics.Dimensions()
     };
 };
 
 xmodel.Render = function (canvas) {
+    let index;
+    let node;
+
     //Dimensions
     this.mesh.dimensions.Render(canvas);
 
@@ -37,6 +40,18 @@ xmodel.Render = function (canvas) {
 
     //Supports
     this.mesh.supports.Render(canvas);
+
+    //Nodal loads
+    index = 0;
+
+    for (let item of this.mesh.nodalloads.items) {
+        node = this.model.nodes[item.node];
+        item.x = node.x;
+        item.y = node.y;
+        index++;
+    }
+
+    this.mesh.nodalloads.Render(canvas);
 
     //Nodes
     this.mesh.nodes.Render(canvas);
@@ -67,6 +82,11 @@ xmodel.GenerateMesh = function () {
         this.mesh.supports.Add(new structuregraphics.Support(item.x, item.y));
     }
 
+    //Nodal loads
+    for (let item of this.model.nodalloads) {
+        this.mesh.nodalloads.Add(new structuregraphics.NodalLoad(item.node, item.forcex, item.forcey, item.forcez, item.momentx, item.momenty, item.momentz));
+    }
+
     //Dimensions
     for (let item of this.model.members) {
         node1 = this.model.nodes[item.node1];
@@ -75,6 +95,14 @@ xmodel.GenerateMesh = function () {
         this.mesh.dimensions.Add(new xplore.Canvas2DGraphics.DimensionLine(node1.x, node1.y, node2.x, node2.y, undefined, -0.5));
     }
 };
+
+xmodel.Bounds = function () {
+    let bounds = new xplore.canvasentity.Bounds2F();
+    this.mesh.nodes.Bounds(bounds);
+    return bounds;
+};
+
+//Wizard
 
 xmodel.BeamWizard = function (data) {
     this.model = {
@@ -117,8 +145,33 @@ xmodel.BeamWizard = function (data) {
     this.GenerateMesh();
 };
 
+//Assign
+
+xmodel.AssignLoad = function (load) {
+    let nodalload;
+    let index = 0;
+
+    for (let node of this.mesh.nodes.items) {
+        if (node.selected) {
+            nodalload = JSON.parse(JSON.stringify(load));
+            nodalload.node = index;
+            this.model.nodalloads.push(nodalload);
+            this.GenerateMesh();
+        }
+
+        index++;
+    }
+};
+
+//Selection
+
+xmodel.SelectByRectangle = function (canvas, mouse) {
+    //Nodes
+    this.mesh.nodes.SelectByRectangle(canvas, mouse);
+};
 
 //Analyze
+
 xmodel.Analyze = function () {
     let nodes = this.mesh.nodes.Write();
 

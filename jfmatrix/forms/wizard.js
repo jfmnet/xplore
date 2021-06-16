@@ -14,52 +14,52 @@ wizard.prototype.Show = function () {
         modal: false
     });
 
-    form.Add(new xplore.Header({ text: "Structure" }));
+    let group = form.Add(new xplore.Groupbox({ text: "Structure" }));
 
-    let container = form.Add(new xplore.ThumbnailContainer({ class: "wizard-thumbnail" }));
-    container.Add(new xplore.Thumbnail({
+    let container = group.Add(new xplore.Container({ class: "wizard-thumbnail" }));
+    container.Add(new xplore.List({
         icon: "account",
         text: "Beam",
         onclick: function () {
             self.BeamWizard(container);
         }
     }));
-    container.Add(new xplore.Thumbnail({
+    container.Add(new xplore.List({
         icon: "account",
         text: "2D Truss",
         onclick: function () {
             self.TrussWizard(container);
         }
     }));
-    container.Add(new xplore.Thumbnail({
+    container.Add(new xplore.List({
         icon: "account",
         text: "2D Frame",
         onclick: function () {
             self.FrameWizard(container);
         }
     }));
-    container.Add(new xplore.Thumbnail({
+    container.Add(new xplore.List({
         icon: "account",
         text: "Grid",
         onclick: function () {
             self.BeamWizard(container);
         }
     }));
-    container.Add(new xplore.Thumbnail({
+    container.Add(new xplore.List({
         icon: "account",
         text: "3D Truss",
         onclick: function () {
             self.TrussWizard(container);
         }
     }));
-    container.Add(new xplore.Thumbnail({
+    container.Add(new xplore.List({
         icon: "account",
         text: "3D Frame",
         onclick: function () {
             self.FrameWizard(container);
         }
     }));
-    container.Add(new xplore.Thumbnail({
+    container.Add(new xplore.List({
         icon: "account",
         text: "Empty",
         onclick: function () {
@@ -82,11 +82,10 @@ wizard.prototype.BeamWizard = function (container) {
     let self = this;
 
     container.Clear();
-    container.Add(new xplore.Header({ text: "Details" }));
 
-    let grid = container.Add(new xplore.Container());
+    let group = container.Add(new xplore.Groupbox({ text: "Details" }));
 
-    let spans = grid.Add(new xplore.NumericTextbox({ 
+    let spans = group.Add(new xplore.NumericTextbox({ 
         text: "No. of Spans", 
         value: 1, inline: true,
         onchange: function () {
@@ -103,7 +102,7 @@ wizard.prototype.BeamWizard = function (container) {
         } 
     }));
 
-    let width = grid.Add(new xplore.NumericTextbox({ 
+    let width = group.Add(new xplore.NumericTextbox({ 
         text: "Width", 
         value: 2, 
         inline: true,
@@ -127,7 +126,7 @@ wizard.prototype.BeamWizard = function (container) {
         data.push([i + 1, width.value]);
     }
 
-    let table = grid.Add(new xplore.Table({
+    let table = group.Add(new xplore.Table({
         columns: ["Span", "Width"],
         data: data,
         showfooter: false,

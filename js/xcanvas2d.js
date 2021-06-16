@@ -68,7 +68,7 @@ xplore.Mouse = function (c) {
             canvas.ToPointX(this.current.x),
             canvas.ToPointY(this.current.y),
         );
-    }
+    };
 
     this.ToBounds = function () {
         if (this.down.x < this.current.x) {
@@ -107,7 +107,12 @@ xplore.Mouse = function (c) {
                 );
             }
         }
-    }
+    };
+
+    this.IsInside = function (x, y) {
+        return ((x >= this.down.x && x <= this.current.x) || (x >= this.current.x && x <= this.down.x)) &&
+               ((y >= this.down.y && y <= this.current.y) || (y >= this.current.y && y <= this.down.y));
+    };
 };
 
 xplore.Canvas2D = function (param) {
@@ -124,6 +129,7 @@ xplore.Canvas2D = function (param) {
     this.height = 100;
     this.zoomvalue = 1;
     this.showtoolbar = param.showtoolbar;
+    this.buttons = param.buttons || [];
 
     this.gridx = [];
     this.gridy = [];
@@ -262,6 +268,9 @@ xcanvas.ShowToolbar = function () {
     if (this.showtoolbar) {
         let self = this;
         let toolbar = new xplore.Toolbar();
+
+        for (let button of this.buttons)
+            toolbar.Add(button);
 
         toolbar.Add(new xplore.Button({
             icon: "magnify-plus-outline",
@@ -1496,11 +1505,15 @@ xcanvas.Events = function () {
             else if (!event.control && event.key === "u")
                 self.lock = "";
 
+            self.shiftkey = event.shiftKey;
+            self.ctrlkey = event.ctrlKey;
             self.model.KeyDown(self, event);
         }
     };
 
     document.body.onkeyup = function (event) {
+        self.shiftkey = event.shiftKey;
+        self.ctrlkey = event.ctrlKey;
         self.model.KeyUp(self, event);
     };
 
@@ -1907,6 +1920,7 @@ xcanvas.ShowSettings = function () {
 
     let form = new xplore.Form({
         text: "Edit Preferences",
+        height: 320,
         onok: function () {
             self.Render();
             self.StoreBuffer();
@@ -1985,5 +1999,19 @@ xcanvas.SnapOnKey = function (mouse) {
             mouse.current.x = mouse.down.x;
             mouse.rawcurrent.x = mouse.rawdown.x;
         }
+    }
+};
+
+
+//Selection
+
+xcanvas.SelectByRectangle = function (item, x, y, mouse) {
+    if (this.ctrlkey) {
+        if (mouse.IsInside(x, y))
+            item.selected = !item.selected;
+
+    } else {
+        if (!item.selected)
+            item.selected = mouse.IsInside(x, y);
     }
 };

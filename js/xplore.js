@@ -1439,6 +1439,40 @@ xplore.Container = function (param) {
 xplore.Initialize(xplore.Container);
 
 
+//Groupbox
+xplore.Groupbox = function (param) {
+    xplore.call(this, param, undefined, "group-box");
+};
+
+let xgroup = xplore.Initialize(xplore.Groupbox);
+
+xgroup.Refresh = function () {
+    this.object.innerHTML = "";
+
+    //Header
+    this.header = document.createElement("div");
+    this.header.classList.add("group-header");
+    this.object.appendChild(this.header);
+
+    //Show icon
+    if (this.icon)
+        this.header.appendChild(xplore.DisplayIcon(this.icon));
+
+    //Show text
+    if (this.text)
+        this.header.append(this.text);
+
+    //Body
+    this.body = document.createElement("div");
+    this.body.classList.add("group-body");
+    this.object.appendChild(this.body);
+
+    for (let i = 0; i < this.children.length; i++) {
+        this.children[i].Show(this.body);
+    }
+};
+
+
 //Dock panel
 
 xplore.DockPanel = function (param) {
@@ -2886,7 +2920,7 @@ xtable.Events = function () {
                 //Remove input and put back the value
                 if (self.data[row][column] !== input.value) {
                     self.data[row][column] = input.value;
-                    
+
                     if (self.onchange)
                         self.onchange(row, column, input.value);
                 }

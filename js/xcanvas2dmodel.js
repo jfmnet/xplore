@@ -9,6 +9,7 @@ xplore.Canvas2DModel = function () {
     this.keys = "";
     this.list = [];
     this.action = xplore.CANVASACTIONS.SELECT;
+    this.onfinished;
 };
 
 xplore.Canvas2DModel.constructor = xplore.Canvas2DModel;
@@ -17,10 +18,11 @@ let canvasmodel = xplore.Canvas2DModel.prototype;
 
 //Draw
 
-canvasmodel.Draw = function (drawobject) {
+canvasmodel.Draw = function (drawobject, response) {
     this.action = xplore.CANVASACTIONS.DRAW;
     this.drawobject = drawobject;
     this.downcount = 0;
+    this.onfinished = response;
 };
 
 canvasmodel.EndDrawing = function () {
@@ -158,7 +160,26 @@ canvasmodel.MouseDown = function (canvas, mouse, button) {
                     //Store buffer for the next drawing
                     canvas.StoreBuffer();
                 } else {
-                    this.draw.Add(point);
+                    let first = this.draw.points[0];
+
+                    if (first.x === point.x && first.y === point.y) {
+                        this.draw.points.pop();
+                        this.Add(this.draw);
+
+                        this.downcount = 0;
+                        canvas.Render();
+
+                        //Store buffer for the next drawing
+                        canvas.StoreBuffer();
+
+                        if (this.onfinished)
+                            this.onfinished(this.draw);
+
+                        delete this.draw;
+
+                    } else {
+                        this.draw.Add(point);
+                    }
                 }
 
                 this.UpdatePoints();
@@ -244,8 +265,19 @@ canvasmodel.HandleMouseMoveNoButton = function (canvas, mouse) {
             }
 
             if (this.draw) {
+                let first = this.draw.points[0];
+
                 this.draw.Update(point);
                 this.draw.Render(canvas, true);
+
+                if (first.x === point.x && first.y === point.y) {
+                    let x = canvas.ToCoordX(point.x);
+                    let y = canvas.ToCoordY(point.y);
+
+                    let size = 5;
+                    canvas.PrimitiveLine(x - size, y - size, x + size, y + size, "#FF0", 1);
+                    canvas.PrimitiveLine(x - size, y + size, x + size, y - size, "#FF0", 1);
+                }
             }
             
             break;
@@ -402,8 +434,8 @@ canvasmodel.Snap = function (canvas, mouse) {
 canvasmodel.SnapOnUserGrid = function (canvas, mouse, point) {
     point = point || {};
 
-    let x = point.x || mouse.x;
-    let y = point.y || mouse.y;
+    let x = point.x !== undefined ? point.x : mouse.x;
+    let y = point.y !== undefined ? point.y : mouse.y;
     let interval = canvas.gridinterval;
 
     for (let grid of canvas.gridx) {

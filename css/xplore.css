@@ -89,13 +89,13 @@ i.mdi {
 }
 
 .button.button-cancel {
-    background-color: #CCC;
-    color: #888;
+    background-color: var(--C800);
+    color: var(--C500);
 }
 
 .button.button-cancel:hover {
-    background-color: #DDD;
-    color: #333;
+    background-color: var(--C700);
+    color: var(--C200);
 }
 
 .input {
@@ -107,9 +107,9 @@ i.mdi {
 }
 
 .input input, .input select {
-    border: 1px solid #CCC;
-    background-color: #FFF;
-    color: #333;
+    border: 1px solid var(--C700);
+    background-color: var(--C800);
+    color: var(--C50);
     outline: none;
     padding: 8px 0;
     width: 100%;
@@ -236,6 +236,19 @@ textarea {
 .dropdown.display>div:nth-child(2) {
     display: block;
 }
+
+/* Groupbox */
+
+.group-box {
+    border: 1px solid var(--C700);
+    margin-bottom: 8px;
+}
+
+.group-box .group-header {
+    background-color: var(--C800);
+    padding: 8px 16px;
+}
+
 
 /* Containers */
 
@@ -669,7 +682,7 @@ textarea {
 }
 
 .tab-header .button {
-    background-color: var(--C900);
+    background-color: var(--C700);
     border-radius: 0;
     border: none;
     color: var(--C200);
